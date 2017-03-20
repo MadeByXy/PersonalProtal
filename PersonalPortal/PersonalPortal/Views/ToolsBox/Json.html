@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Json效验及格式化</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <style>
+        body {
+            width: 90%;
+            margin: 0px auto;
+            padding: 30px;
+        }
+
+        textarea {
+            width: 100% !important;
+            min-height: 40px !important;
+        }
+    </style>
+</head>
+<body>
+    <div ng-app="app" ng-controller="controller">
+        <textarea class="highlight well form-control" style="height:300px;" ng-model="inputJson" placeholder="待验证的JSON..."></textarea>
+        <div class="modal fade" id="myModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <figure class="highlight">
+                    <pre>
+<code class="language-html" data-lang="html" ng-bind-html="safeHtml(inputJson.highLight())"></code>
+                    </pre>
+                </figure>
+            </div>
+        </div>
+        <div ng-cloak class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" role="alert">
+            <span ng-bind="warning"></span>
+            <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div ng-cloak class="alert alert-success alert-dismissible" ng-hide="IsNull(success)" role="alert">
+            <span ng-bind="success"></span>
+            <button type="button" class="close" ng-click="success=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <button class="btn btn-default" ng-click="CheckJson()">生成JSON</button>
+        <button class="btn btn-default" ng-click="Trim()">去除空格</button>
+        <button class="btn btn-default" data-toggle="modal" data-target="#myModal">显示着色代码</button>
+    </div>
+    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
+    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('app', []);
+        app.controller('controller', function ($scope, $sce) {
+            $scope.IsNull = function (text) {
+                return text == null || text == undefined || text == '';
+            }
+            $scope.CheckJson = function () {
+                $scope.warning = $scope.success = "";
+                var text = $scope.inputJson;
+                try {
+                    text = JSON.stringify(JSON.parse(text), null, 4);
+                }
+                catch (e) {
+                    $scope.warning = "Json格式错误。";
+                    return;
+                }
+                $scope.success = "Json格式正确。";
+                $scope.inputJson = text;
+            }
+            $scope.Trim = function () {
+                $scope.inputJson = $scope.inputJson.replace(/\s+/g, "");
+            }
+            $scope.safeHtml = function (html) {
+                return $sce.trustAsHtml(html);
+            }
+        });
+
+        String.prototype.highLight = function () {
+            return this.replace(new RegExp('([{]\[\]])', 'g'), '<span class="nt">$1</span>')
+                .replace(new RegExp('(\"[a-zA-Z0-9]*\":)', 'g'), '<span class="nt">$1</span>')
+                .replace(new RegExp('(true|false|[0-9]{1,})', 'g'), '<span class="s">$1</span>');
+        }
+    </script>
+</body>
+</html>

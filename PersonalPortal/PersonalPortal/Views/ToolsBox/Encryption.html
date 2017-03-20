@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>数据加密解密</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <style>
+        body {
+            width: 80%;
+            margin: 0px auto;
+            padding: 30px;
+        }
+
+        textarea {
+            width: 100% !important;
+            height: 600px;
+            min-height: 40px !important;
+            margin-top: 10px !important;
+            margin-bottom: 30px !important;
+        }
+
+        .full {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div ng-app="app" ng-controller="controller">
+        <header class="header">
+            <ul ng-cloak class="nav nav-tabs nav-tabs-justified">
+                <li ng-repeat="x in mainData">
+                    <a href="#" ng-click="setTitle($index)">{{x.title}}</a>
+                </li>
+            </ul>
+        </header>
+        <div ng-cloak class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" style="margin-top:10px;margin-bottom:0;" role="alert">
+            <span ng-bind="warning"></span>
+            <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="navbar-left" style="margin-left: 70px;width:35%;">
+            <textarea class="highlight well form-control" style="height: 600px;" ng-model="leftText"></textarea>
+        </div>
+        <div class="navbar-right" style="margin-right:70px;width:35%;">
+            <textarea class="highlight well form-control" style="height: 600px;" ng-model="rightText"></textarea>
+        </div>
+        <div style="margin:100px auto;width:150px;">
+            <div ng-cloak class="input-group full" style="margin:10px 0;" ng-hide="mainData[selectedIndex].type.length<=1">
+                <button type="button" class="btn btn-default dropdown-toggle full" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span ng-bind="selectedType"></span>  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="x in mainData[selectedIndex].type" value="{{x}}">
+                        <a href="#" ng-click="setValue('selectedType',x)">{{x}}</a>
+                    </li>
+                </ul>
+            </div>
+            <button ng-cloak class="btn btn-default full" ng-click="encode()" style="margin:10px 0;">
+                {{mainData[selectedIndex].toButton.title}}
+                <i class="glyphicon glyphicon-chevron-right"></i>
+            </button>
+            <button ng-cloak class="btn btn-default full" ng-click="decode()" style="margin:10px 0;">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+                {{mainData[selectedIndex].backButton.title}}
+            </button>
+        </div>
+    </div>
+    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
+    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.header li').click(function (e) {
+                e.preventDefault();
+                $('.header li').removeClass('active');
+                $(this).addClass('active');
+            });
+            $($('.header li')[0]).addClass('active');
+        });
+        var app = angular.module('app', []);
+        app.controller('controller', function ($scope, $sce) {
+            $scope.mainData = [{ "title": "Unicode", "type": ["Unicode"], "toButton": { "title": "Unicode", "functionName": { "Unicode": "decToHex" } }, "backButton": { "title": "Native", "functionName": { "Unicode": "hexToDec" } } }, { "title": "BASE64", "type": ["BASE64"], "toButton": { "title": "BASE64", "functionName": { "BASE64": "window.btoa" } }, "backButton": { "title": "Native", "functionName": { "BASE64": "window.atob" } } }, { "title": "URL转码", "type": ["encodeURI", "encodeURIComponent"], "toButton": { "title": "URL编码", "functionName": { "encodeURI": "encodeURI", "encodeURIComponent": "encodeURIComponent" } }, "backButton": { "title": "URL解码", "functionName": { "encodeURI": "decodeURI", "encodeURIComponent": "decodeURIComponent" } } }];
+            $scope.selectedIndex = 0;
+            $scope.selectedType = $scope.mainData[$scope.selectedIndex].type[0];
+
+            $scope.IsNull = function (text) {
+                return text == null || text == undefined || text == '';
+            }
+            $scope.setTitle = function (index) {
+                $scope.selectedIndex = index;
+                $scope.selectedType = $scope.mainData[$scope.selectedIndex].type[0];
+                $scope.rightText = '';
+            }
+            $scope.setValue = function (key, text) {
+                $scope[key] = text;
+            }
+            $scope.encode = function () {
+                //编码
+                try {
+                    $scope.rightText = eval($scope.mainData[$scope.selectedIndex].toButton.functionName[$scope.selectedType] + "('" + $scope.leftText + "')");
+                }
+                catch (e) { $scope.warning = e; }
+            }
+            $scope.decode = function () {
+                //解码
+                try {
+                    $scope.leftText = eval($scope.mainData[$scope.selectedIndex].backButton.functionName[$scope.selectedType] + "('" + $scope.rightText + "')");
+                }
+                catch (e) { $scope.warning = e; }
+            }
+        });
+
+        //js Unicode编码转换
+        function decToHex(str) {
+            var res = [];
+            for (var i = 0; i < str.length; i++)
+                res[i] = ("00" + str.charCodeAt(i).toString(16)).slice(-4);
+            return "\\u" + res.join("\\u");
+        }
+        function hexToDec(str) {
+            str = str.replace(/\\/g, "%");
+            return unescape(str);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>小雨个人网站</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            width: 80%;
+            margin: auto;
+            background: url('/Images/bg.png') 0 0 repeat #dedede;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+
+    </div>
+
+    <div ng-app="app" ng-controller="controller">
+        <nav ng-cloak class="navbar navbar-default" style="border-radius:0 0 4px 4px;">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="Index" target="_self">小雨个人网站</a>
+                </div>
+                <div class="navbar-collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="dropdown" role="presentation" ng-repeat="x in Navigation" onclick="ClickStyle(this)">
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame">{{x.LinkName}}</a>
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{x.LinkName}}<span ng-cloak class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li role="presentation" ng-repeat="item in x.Navigation">
+                                    <a href="{{item.LinkUrl}}" target="Frame">{{item.LinkName}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="row col-lg-6 input-group" style="padding:7px 15px;">
+                        <input type="text" class="form-control" ng-model="searchText" placeholder="搜索">
+                        <div class="input-group-btn">
+                            <a class="btn btn-default" href="{{searchInfo[searchIndex].value+searchText}}" target="Frame">{{searchInfo[searchIndex].name}}</a>
+                            <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>&zwnj;
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="x in searchInfo">
+                                    <a href="#" ng-click="setValue('searchIndex', $index)">{{x.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <iframe id="Frame" name="Frame" scrolling="no" src="/Views/HelloWorld.html"></iframe>
+    </div>
+    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
+    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        //动态调整框架高度
+        $(document).ready(function () {
+            var frame = document.getElementById("Frame");
+            iframeResize = function () {
+                try {
+                    frame.height = Math.min(Frame.document.documentElement.scrollHeight, Frame.document.body.scrollHeight);
+                    frame.scrolling = "no";
+                } catch (e) {
+                    //跨域
+                    frame.height = window.innerHeight - 110;
+                    frame.scrolling = "yes";
+                }
+            }
+            iframeResize();
+            setInterval('iframeResize()', 10);
+        });
+
+        var app = angular.module('app', []);
+        app.controller('controller', function ($scope, $http) {
+            $scope.searchInfo = [{ "name": "百度搜索", "value": "https://www.baidu.com/s?wd=" }, { "name": "必应搜索", "value": "http://cn.bing.com/search?q=" }, { "name": "百度地图", "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D" }, { "name": "高德地图", "value": "http://ditu.amap.com/search?query=" }];
+            $scope.searchIndex = 0;
+            $scope.setValue = function (key, value) {
+                $scope[key] = value;
+            }
+            $scope.search = function () {
+                window.location.href
+                $('#Frame').src = $scope.searchInfo[$scope.searchIndex].value + $scope.searchText;
+            }
+            $http.get("/Controller/Index/GetIndex").success(function (response) {
+                $scope.Navigation = response["Navigation"];
+            });
+        });
+
+        function ClickStyle(item) {
+            $(item).parent().children('li').removeAttr("class", "active");
+            $(item).attr("class", "active");
+        };
+    </script>
+</body>
+</html>

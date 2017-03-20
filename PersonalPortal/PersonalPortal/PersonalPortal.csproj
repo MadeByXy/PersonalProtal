@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B4EA0567-86B9-4581-822F-DA0D02FA0482}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PersonalPortal</RootNamespace>
+    <AssemblyName>PersonalPortal</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <IncludeIisSettings>true</IncludeIisSettings>
+    <IncludeAppPool>true</IncludeAppPool>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Plugins\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\PersonalPortal.accdb" />
+    <Content Include="Controller.ashx" />
+    <Content Include="Images\bg.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css.map" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.min.css.map" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\docs.min.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Scripts\Cookie.js" />
+    <Content Include="Scripts\Developer\Less\base.less" />
+    <Content Include="Scripts\Developer\Less\mixins.less" />
+    <Content Include="Scripts\Developer\Less\responsive.less" />
+    <Content Include="Scripts\Developer\Less\styles.less" />
+    <Content Include="Scripts\Developer\Less\theme-default.less" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\.editorconfig" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\.gitattributes" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\.gitignore" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\.hound.yml" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\.travis.yml" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap-theme.css.map" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap-theme.min.css.map" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\animated.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\core.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\fixed-width.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\font-awesome.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\icons.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\larger.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\list.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\mixins.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\path.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\stacked.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\less\variables.less" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_animated.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_core.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_icons.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_larger.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_list.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_mixins.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_path.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_stacked.scss" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\scss\_variables.scss" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\.gitignore" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\.jscsrc" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\.jshintrc" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\.travis.yml" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\bower.json" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\CHANGELOG.md" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\MIT-LICENSE" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\package.json" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\README.md" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\docs.min.css.map" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Plugins\Newtonsoft.Json.dll" />
+    <Content Include="Scripts\Angular\AugularJs1.4.6.js" />
+    <None Include="Scripts\Angular\Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\Angular\Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\Angular\Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\Angular\Styles\Site.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.min.css" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\js\bootstrap.js" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\js\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\js\npm.js" />
+    <Content Include="Scripts\Developer\Css\styles.css" />
+    <Content Include="Images\github-chart.png" />
+    <Content Include="Images\profile.png" />
+    <Content Include="Images\projects\project-1.png" />
+    <Content Include="Images\projects\project-2.jpg" />
+    <Content Include="Images\projects\project-2.png" />
+    <Content Include="Images\projects\project-3.png" />
+    <Content Include="Images\projects\project-4.png" />
+    <Content Include="Images\projects\project-5.png" />
+    <Content Include="Images\projects\project-featured.png" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap.css" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\js\bootstrap.js" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Scripts\Developer\Plugins\bootstrap\js\npm.js" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\css\font-awesome.css" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Scripts\Developer\Plugins\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\dist\compiler.jar" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\dist\jquery.rss.min.js" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\examples\accordion.html" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\examples\custom-dates.html" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\examples\ezypay.html" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\examples\zotero.html" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\gulpfile.js" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\index.html" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\lib\jquery-1.6.4.min.js" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\spec\jquery.rss.spec.js" />
+    <Content Include="Scripts\Developer\Plugins\jquery-rss\src\jquery.rss.js" />
+    <Content Include="Scripts\JQuery3-1-1.js" />
+    <Content Include="Views\HelloWorld.html" />
+    <Content Include="Views\Index.html" />
+    <Content Include="Views\Portfolio.html" />
+    <Content Include="Views\Resume.html" />
+    <Content Include="Views\ToolsBox\Encryption.html" />
+    <Content Include="Views\ToolsBox\Json.html" />
+    <Content Include="Views\ToolsBox\Regexp.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Content\ApiLimit.cs" />
+    <Compile Include="Content\DataCheck.cs" />
+    <Compile Include="Content\DataConversion.cs" />
+    <Compile Include="Content\Library\DataBase.cs" />
+    <Compile Include="Content\LogControl.cs" />
+    <Compile Include="Controllers\Index.cs" />
+    <Compile Include="Controller.ashx.cs">
+      <DependentUpon>Controller.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\PersonalData.cs" />
+    <Compile Include="Models\ResultModels\ErrorModel.cs" />
+    <Compile Include="Models\ResultModels\IndexModel.cs" />
+    <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\ApplyModels\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>20811</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:20811/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>
+          </IISAppRootUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
