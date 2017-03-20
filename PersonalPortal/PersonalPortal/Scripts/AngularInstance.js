@@ -29,6 +29,12 @@ var Angular = function (func, appName, factoryName, controllerName) {
         service.IsNull = function (text) {
             return text == null || text == undefined || text == '';
         }
+
+        service.Enter = function (event, id) {
+            if (event.keyCode == 13) {
+                document.getElementById(id).click();
+            }
+        }
         return service;
     });
     app.controller(controllerName ? controllerName : 'controller', func);

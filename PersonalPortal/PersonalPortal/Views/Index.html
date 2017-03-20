@@ -44,9 +44,9 @@
                         </li>
                     </ul>
                     <div class="row col-lg-6 input-group" style="padding:7px 15px;">
-                        <input type="text" class="form-control" ng-model="searchText" placeholder="搜索">
+                        <input type="text" class="form-control" ng-model="searchText" ng-keypress="Enter($event,'search')" placeholder="搜索">
                         <div class="input-group-btn">
-                            <a class="btn btn-default" href="{{searchInfo[searchIndex].value+searchText}}" target="Frame">{{searchInfo[searchIndex].name}}</a>
+                            <a id="search" class="btn btn-default" href="{{searchInfo[searchIndex].value+searchText}}" target="Frame">{{searchInfo[searchIndex].name}}</a>
                             <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span>&zwnj;
                             </button>
@@ -84,12 +84,14 @@
         Angular(function ($scope, factory) {
             $scope.searchInfo = [{ "name": "百度搜索", "value": "https://www.baidu.com/s?wd=" }, { "name": "必应搜索", "value": "http://cn.bing.com/search?q=" }, { "name": "百度地图", "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D" }, { "name": "高德地图", "value": "http://ditu.amap.com/search?query=" }];
             $scope.searchIndex = 0;
+
             $scope.SetValue = function (key, value) {
                 $scope[key] = value;
             }
             factory.Query('/Controller/Index/GetIndex').then(function (data) {
                 $scope.Navigation = data.Navigation;
             });
+            $scope.Enter = factory.Enter;
         });
 
         function ClickStyle(item) {
