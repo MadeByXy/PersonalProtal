@@ -29,7 +29,7 @@
                 <label for="IgnoreCase" style="display: contents;font-weight: 500;margin: 0;">忽略大小写</label>
             </span>
             <span class="input-group-btn">
-                <button class="btn btn-success" type="button" ng-click="matchClick();">匹配测试</button>
+                <button class="btn btn-success" type="button" ng-click="MatchClick();">匹配测试</button>
             </span>
         </div>
         <div class="navbar-form" style="padding:0;">
@@ -40,7 +40,7 @@
             <span class="input-group-addon" id="sizing-text">替换文本</span>
             <input type="text" class="form-control" ng-model="inputReplace" placeholder="在此输入要替换的文字...">
             <span class="input-group-btn">
-                <button class="btn btn-success" type="button" ng-click="replaceClick();">替换测试</button>
+                <button class="btn btn-success" type="button" ng-click="ReplaceClick();">替换测试</button>
             </span>
         </div>
         <div class="navbar-form" style="padding:0;">
@@ -48,13 +48,10 @@
             <textarea class="highlight well form-control" style="height:170px;" readonly="readonly" ng-bind="replacedText"></textarea>
         </div>
     </div>
-    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
-    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
-    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        var app = angular.module('app', []);
-        app.controller('controller', function ($scope, $sce) {
-            $scope.matchClick = function () {
+        Angular(function ($scope, $sce) {
+            $scope.MatchClick = function () {
                 var match = new RegExp($scope.inputRegexp, $scope.ignoreCase == true ? "ig" : "g");
                 var result = $scope.inputText.match(match);
                 if (result == null) {
@@ -64,7 +61,7 @@
                     $scope.matchedText = "共找到" + result.length + "处匹配：\r\n" + result.join("\r\n");
                 }
             }
-            $scope.replaceClick = function () {
+            $scope.ReplaceClick = function () {
                 var match = new RegExp($scope.inputRegexp, $scope.ignoreCase == true ? "ig" : "g");
                 $scope.replacedText = $scope.inputText.replace(match, $scope.inputReplace);
             }

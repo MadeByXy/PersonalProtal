@@ -25,7 +25,7 @@
             <div class="modal-dialog">
                 <figure class="highlight">
                     <pre>
-<code class="language-html" data-lang="html" ng-bind-html="safeHtml(inputJson.highLight())"></code>
+<code class="language-html" data-lang="html" ng-bind-html="Html(inputJson.highLight())"></code>
                     </pre>
                 </figure>
             </div>
@@ -42,15 +42,12 @@
         <button class="btn btn-default" ng-click="Trim()">去除空格</button>
         <button class="btn btn-default" data-toggle="modal" data-target="#myModal">显示着色代码</button>
     </div>
-    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
-    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
-    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        var app = angular.module('app', []);
-        app.controller('controller', function ($scope, $sce) {
-            $scope.IsNull = function (text) {
-                return text == null || text == undefined || text == '';
-            }
+        Angular(function ($scope, factory) {
+            $scope.IsNull = factory.IsNull;
+            $scope.Html = factory.Html;
+
             $scope.CheckJson = function () {
                 $scope.warning = $scope.success = "";
                 var text = $scope.inputJson;
@@ -66,9 +63,6 @@
             }
             $scope.Trim = function () {
                 $scope.inputJson = $scope.inputJson.replace(/\s+/g, "");
-            }
-            $scope.safeHtml = function (html) {
-                return $sce.trustAsHtml(html);
             }
         });
 

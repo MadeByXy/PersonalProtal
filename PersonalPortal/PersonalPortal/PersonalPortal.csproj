@@ -191,6 +191,7 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\lib\jquery-1.6.4.min.js" />
     <Content Include="Scripts\Developer\Plugins\jquery-rss\spec\jquery.rss.spec.js" />
     <Content Include="Scripts\Developer\Plugins\jquery-rss\src\jquery.rss.js" />
+    <Content Include="Scripts\AngularInstance.js" />
     <Content Include="Scripts\JQuery3-1-1.js" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />
@@ -209,19 +210,20 @@
     <Compile Include="Content\DataConversion.cs" />
     <Compile Include="Content\Library\DataBase.cs" />
     <Compile Include="Content\LogControl.cs" />
+    <Compile Include="Controllers\DynamicProgramming.cs" />
     <Compile Include="Controllers\Index.cs" />
     <Compile Include="Controller.ashx.cs">
       <DependentUpon>Controller.ashx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\PersonalData.cs" />
+    <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
+    <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
     <Compile Include="Models\ResultModels\IndexModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\ApplyModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

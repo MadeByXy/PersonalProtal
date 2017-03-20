@@ -30,7 +30,7 @@
         <header class="header">
             <ul ng-cloak class="nav nav-tabs nav-tabs-justified">
                 <li ng-repeat="x in mainData">
-                    <a href="#" ng-click="setTitle($index)">{{x.title}}</a>
+                    <a href="#" ng-click="SetTitle($index)">{{x.title}}</a>
                 </li>
             </ul>
         </header>
@@ -38,10 +38,10 @@
             <span ng-bind="warning"></span>
             <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="navbar-left" style="margin-left: 70px;width:35%;">
+        <div class="navbar-left" style="width:35%;">
             <textarea class="highlight well form-control" style="height: 600px;" ng-model="leftText"></textarea>
         </div>
-        <div class="navbar-right" style="margin-right:70px;width:35%;">
+        <div class="navbar-right" style="width:35%;">
             <textarea class="highlight well form-control" style="height: 600px;" ng-model="rightText"></textarea>
         </div>
         <div style="margin:100px auto;width:150px;">
@@ -51,23 +51,21 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li ng-repeat="x in mainData[selectedIndex].type" value="{{x}}">
-                        <a href="#" ng-click="setValue('selectedType',x)">{{x}}</a>
+                        <a href="#" ng-click="SetValue('selectedType',x)">{{x}}</a>
                     </li>
                 </ul>
             </div>
-            <button ng-cloak class="btn btn-default full" ng-click="encode()" style="margin:10px 0;">
+            <button ng-cloak class="btn btn-default full" ng-click="Encode()" style="margin:10px 0;">
                 {{mainData[selectedIndex].toButton.title}}
                 <i class="glyphicon glyphicon-chevron-right"></i>
             </button>
-            <button ng-cloak class="btn btn-default full" ng-click="decode()" style="margin:10px 0;">
+            <button ng-cloak class="btn btn-default full" ng-click="Decode()" style="margin:10px 0;">
                 <i class="glyphicon glyphicon-chevron-left"></i>
                 {{mainData[selectedIndex].backButton.title}}
             </button>
         </div>
     </div>
-    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
-    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
-    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
         $(document).ready(function () {
             $('.header li').click(function (e) {
@@ -77,31 +75,29 @@
             });
             $($('.header li')[0]).addClass('active');
         });
-        var app = angular.module('app', []);
-        app.controller('controller', function ($scope, $sce) {
+
+        Angular(function ($scope, factory) {
             $scope.mainData = [{ "title": "Unicode", "type": ["Unicode"], "toButton": { "title": "Unicode", "functionName": { "Unicode": "decToHex" } }, "backButton": { "title": "Native", "functionName": { "Unicode": "hexToDec" } } }, { "title": "BASE64", "type": ["BASE64"], "toButton": { "title": "BASE64", "functionName": { "BASE64": "window.btoa" } }, "backButton": { "title": "Native", "functionName": { "BASE64": "window.atob" } } }, { "title": "URL转码", "type": ["encodeURI", "encodeURIComponent"], "toButton": { "title": "URL编码", "functionName": { "encodeURI": "encodeURI", "encodeURIComponent": "encodeURIComponent" } }, "backButton": { "title": "URL解码", "functionName": { "encodeURI": "decodeURI", "encodeURIComponent": "decodeURIComponent" } } }];
             $scope.selectedIndex = 0;
             $scope.selectedType = $scope.mainData[$scope.selectedIndex].type[0];
 
-            $scope.IsNull = function (text) {
-                return text == null || text == undefined || text == '';
-            }
-            $scope.setTitle = function (index) {
+            $scope.IsNull = factory.IsNull;
+            $scope.SetTitle = function (index) {
                 $scope.selectedIndex = index;
                 $scope.selectedType = $scope.mainData[$scope.selectedIndex].type[0];
                 $scope.rightText = '';
             }
-            $scope.setValue = function (key, text) {
+            $scope.SetValue = function (key, text) {
                 $scope[key] = text;
             }
-            $scope.encode = function () {
+            $scope.Encode = function () {
                 //编码
                 try {
                     $scope.rightText = eval($scope.mainData[$scope.selectedIndex].toButton.functionName[$scope.selectedType] + "('" + $scope.leftText + "')");
                 }
                 catch (e) { $scope.warning = e; }
             }
-            $scope.decode = function () {
+            $scope.Decode = function () {
                 //解码
                 try {
                     $scope.leftText = eval($scope.mainData[$scope.selectedIndex].backButton.functionName[$scope.selectedType] + "('" + $scope.rightText + "')");

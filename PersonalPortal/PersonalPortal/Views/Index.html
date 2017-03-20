@@ -17,15 +17,14 @@
             border-radius: 4px;
             margin-bottom: 30px;
         }
+        .ng-cloak{
+            display:none;
+        }
     </style>
 </head>
 <body>
-    <div>
-
-    </div>
-
     <div ng-app="app" ng-controller="controller">
-        <nav ng-cloak class="navbar navbar-default" style="border-radius:0 0 4px 4px;">
+        <nav ng-cloak class="navbar navbar-default ng-cloak" style="border-radius:0 0 4px 4px;">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="Index" target="_self">小雨个人网站</a>
@@ -53,7 +52,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li ng-repeat="x in searchInfo">
-                                    <a href="#" ng-click="setValue('searchIndex', $index)">{{x.name}}</a>
+                                    <a href="#" ng-click="SetValue('searchIndex', $index)">{{x.name}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -63,9 +62,7 @@
         </nav>
         <iframe id="Frame" name="Frame" scrolling="no" src="/Views/HelloWorld.html"></iframe>
     </div>
-    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
-    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
-    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
         //动态调整框架高度
         $(document).ready(function () {
@@ -84,19 +81,14 @@
             setInterval('iframeResize()', 10);
         });
 
-        var app = angular.module('app', []);
-        app.controller('controller', function ($scope, $http) {
+        Angular(function ($scope, factory) {
             $scope.searchInfo = [{ "name": "百度搜索", "value": "https://www.baidu.com/s?wd=" }, { "name": "必应搜索", "value": "http://cn.bing.com/search?q=" }, { "name": "百度地图", "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D" }, { "name": "高德地图", "value": "http://ditu.amap.com/search?query=" }];
             $scope.searchIndex = 0;
-            $scope.setValue = function (key, value) {
+            $scope.SetValue = function (key, value) {
                 $scope[key] = value;
             }
-            $scope.search = function () {
-                window.location.href
-                $('#Frame').src = $scope.searchInfo[$scope.searchIndex].value + $scope.searchText;
-            }
-            $http.get("/Controller/Index/GetIndex").success(function (response) {
-                $scope.Navigation = response["Navigation"];
+            factory.Query('/Controller/Index/GetIndex').then(function (data) {
+                $scope.Navigation = data.Navigation;
             });
         });
 

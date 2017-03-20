@@ -7,12 +7,17 @@
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/Scripts/Developer/Plugins/font-awesome/css/font-awesome.css" />
     <link id="theme-style" rel="stylesheet" href="/Scripts/Developer/Css/styles.css" />
+    <style>
+        .ng-cloak {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div ng-app="app" ng-controller="controller">
         <!-- ******HEADER****** -->
         <header class="header">
-            <div ng-cloak class="container">
+            <div ng-cloak class="container ng-cloak">
                 <img class="profile-image img-responsive pull-left" src="/Images/profile.png" style="width: 240px;" />
                 <div class="profile-content pull-left">
                     <h1 class="name">{{FullName}}</h1>
@@ -42,7 +47,7 @@
                     <section class="about section">
                         <div class="section-inner">
                             <h2 class="heading">关于我</h2>
-                            <div class="content" ng-bind-html="GetHtml(AboutMe)">
+                            <div class="content" ng-bind-html="Html(AboutMe)">
                             </div>
                         </div>
                     </section>
@@ -150,7 +155,7 @@
                             <div class="content testimonials">
                                 <div class="item" ng-repeat="x in JobList">
                                     <h3 class="title">{{x.JobTitle}}<span class="place"> - {{x.CompanyName}}</span> <span class="year">({{x.StartTime}} - {{x.EndTime}})</span></h3>
-                                    <blockquote ng-bind-html="GetHtml(x.Description)" class="quote"></blockquote>
+                                    <blockquote ng-bind-html="Html(x.Description)" class="quote"></blockquote>
                                 </div>
                             </div>
                         </div>
@@ -315,26 +320,16 @@
             </div><!--//container-->
         </footer><!--//footer-->
     </div>
-    <script type="text/javascript" src="/Scripts/JQuery3-1-1.js"></script>
-    <script type="text/javascript" src="/Scripts/Angular/AugularJs1.4.6.js"></script>
-    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
         var personId = 1;
-        var app = angular.module('app', []);
-        app.controller('controller', function ($scope, $http, $sce) {
-            $http({
-                method: 'GET',
-                url: '/Controller/PersonalData/GetPersonalData',
-                params: { 'personId': personId },
-
-            }).success(function (response) {
-                for (item in response) {
-                    $scope[item] = response[item];
+        Angular(function ($scope, factory) {
+            factory.Query('/Controller/PersonalData/GetPersonalData?personId=' + personId).then(function (data) {
+                for (item in data) {
+                    $scope[item] = data[item];
                 }
-                $scope.GetHtml = function (text) {
-                    return $sce.trustAsHtml(text);
-                };
             });
+            $scope.Html = factory.Html;
         });
     </script>
 </body>
