@@ -135,47 +135,53 @@ namespace PersonalPortal.Content.Library
 
         private static DataTable GetDataTable(string sql)
         {
-            try
+            lock (Conn)
             {
-                TimerStop();
-                DbCommand dbCommand = Conn.CreateCommand();
-                dbCommand.CommandText = sql;
-                DataTable dataTable = new DataTable();
-                switch (dataBaseType)
+                try
                 {
-                    case DataBaseType.Oracle:
-                        new OleDbDataAdapter((OleDbCommand)dbCommand).Fill(dataTable);
-                        break;
-                    case DataBaseType.SqlServer:
-                        new SqlDataAdapter((SqlCommand)dbCommand).Fill(dataTable);
-                        break;
-                } 
-                TimerStart();
-                return dataTable;
-            }
-            catch (Exception e)
-            {
-                Close();
-                throw e;
+                    TimerStop();
+                    DbCommand dbCommand = Conn.CreateCommand();
+                    dbCommand.CommandText = sql;
+                    DataTable dataTable = new DataTable();
+                    switch (dataBaseType)
+                    {
+                        case DataBaseType.Oracle:
+                            new OleDbDataAdapter((OleDbCommand)dbCommand).Fill(dataTable);
+                            break;
+                        case DataBaseType.SqlServer:
+                            new SqlDataAdapter((SqlCommand)dbCommand).Fill(dataTable);
+                            break;
+                    }
+                    TimerStart();
+                    return dataTable;
+                }
+                catch (Exception e)
+                {
+                    Close();
+                    throw e;
+                }
             }
         }
 
         private static int ExcuteNonQuery(string sql)
         {
-            try
+            lock (Conn)
             {
-                TimerStop();
-                DbCommand dbCommand;
-                dbCommand = Conn.CreateCommand();
-                dbCommand.CommandText = sql;
-                int result = dbCommand.ExecuteNonQuery();
-                TimerStart();
-                return result;
-            }
-            catch (Exception e)
-            {
-                Close();
-                throw e;
+                try
+                {
+                    TimerStop();
+                    DbCommand dbCommand;
+                    dbCommand = Conn.CreateCommand();
+                    dbCommand.CommandText = sql;
+                    int result = dbCommand.ExecuteNonQuery();
+                    TimerStart();
+                    return result;
+                }
+                catch (Exception e)
+                {
+                    Close();
+                    throw e;
+                }
             }
         }
 

@@ -205,6 +205,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\Algorithm\DynamicProgramming.cs" />
+    <Compile Include="Content\Algorithm\Sort.cs" />
     <Compile Include="Content\ApiLimit.cs" />
     <Compile Include="Content\DataCheck.cs" />
     <Compile Include="Content\DataConversion.cs" />
@@ -216,6 +218,7 @@
       <DependentUpon>Controller.ashx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\PersonalData.cs" />
+    <Compile Include="Controllers\Sort.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
     <Compile Include="Models\ResultModels\ErrorModel.cs" />

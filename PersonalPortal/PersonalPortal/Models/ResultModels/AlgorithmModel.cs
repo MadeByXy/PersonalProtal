@@ -1,7 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PersonalPortal.Models.ResultModels
 {
+    public class InfoAttribute : Attribute
+    {
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; }
+    }
+
     /// <summary>
     /// 算法测试结果模型
     /// </summary>
@@ -25,7 +34,7 @@ namespace PersonalPortal.Models.ResultModels
             /// <summary>
             /// 结果
             /// </summary>
-            public int Result { get; set; }
+            public string Result { get; set; }
         }
     }
 }
