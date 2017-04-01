@@ -25,6 +25,10 @@
         .ng-cloak {
             display: none;
         }
+
+        .dropdown:hover {
+            box-shadow: 0px 1px 3px #999;
+        }
     </style>
 </head>
 <body>
@@ -36,7 +40,7 @@
                 </div>
                 <div class="navbar-collapse">
                     <ul class="nav navbar-nav navbar-left">
-                        <li class="dropdown" role="presentation" ng-repeat="x in Navigation" onclick="ClickStyle(this)">
+                        <li class="dropdown" role="presentation" ng-repeat="x in Navigation" ng-class="{true:'active'}[selectIndex == $index]" ng-click="SetValue('selectIndex', $index)">
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame">{{x.LinkName}}</a>
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 {{x.LinkName}}<span ng-cloak class="caret"></span>
@@ -65,7 +69,7 @@
                 </div>
             </div>
         </nav>
-        <iframe id="Frame" name="Frame" class="shadow" scrolling="no" src="/Views/HelloWorld.html"></iframe>
+        <iframe id="Frame" name="Frame" class="shadow" src="/Views/HelloWorld.html"></iframe>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
@@ -98,11 +102,6 @@
             });
             $scope.Enter = factory.Enter;
         });
-
-        function ClickStyle(item) {
-            $(item).parent().children('li').removeAttr("class", "active");
-            $(item).attr("class", "active");
-        };
     </script>
 </body>
 </html>

@@ -29,7 +29,7 @@
     <div ng-app="app" ng-controller="controller">
         <header class="header">
             <ul ng-cloak class="nav nav-tabs nav-tabs-justified">
-                <li ng-repeat="x in mainData">
+                <li ng-repeat="x in mainData" ng-class="{true:'active'}[selectedIndex == $index]">
                     <a href="#" ng-click="SetTitle($index)">{{x.title}}</a>
                 </li>
             </ul>
@@ -67,15 +67,6 @@
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.header li').click(function (e) {
-                e.preventDefault();
-                $('.header li').removeClass('active');
-                $(this).addClass('active');
-            });
-            $($('.header li')[0]).addClass('active');
-        });
-
         Angular(function ($scope, factory) {
             $scope.mainData = [{ "title": "Unicode", "type": ["Unicode"], "toButton": { "title": "Unicode", "functionName": { "Unicode": "decToHex" } }, "backButton": { "title": "Native", "functionName": { "Unicode": "hexToDec" } } }, { "title": "BASE64", "type": ["BASE64"], "toButton": { "title": "BASE64", "functionName": { "BASE64": "window.btoa" } }, "backButton": { "title": "Native", "functionName": { "BASE64": "window.atob" } } }, { "title": "URL转码", "type": ["encodeURI", "encodeURIComponent"], "toButton": { "title": "URL编码", "functionName": { "encodeURI": "encodeURI", "encodeURIComponent": "encodeURIComponent" } }, "backButton": { "title": "URL解码", "functionName": { "encodeURI": "decodeURI", "encodeURIComponent": "decodeURIComponent" } } }];
             $scope.selectedIndex = 0;

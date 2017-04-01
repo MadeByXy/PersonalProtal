@@ -1,16 +1,16 @@
-﻿//写cookies
-function setCookie(name, value, json) {
+﻿//写入cookies
+function setCookie(name, value, isJson) {
     var exp = new Date();
     exp.setTime(exp.getTime() + 60 * 60 * 1000);
-    document.cookie = name + "=" + escape(json ? JSON.stringify(value) : value) + ";expires=" + exp.toGMTString();
+    document.cookie = name + "=" + escape(isJson ? JSON.stringify(value) : value) + ";expires=" + exp.toGMTString();
 }
 
 //读取cookies
-function getCookie(name, json) {
+function getCookie(name, isJson) {
     var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
     if (arr = document.cookie.match(reg)) {
         var result = unescape(arr[2]);
-        return json ? JSON.parse(result) : result;
+        return isJson ? JSON.parse(result) : result;
     }
     else { return null; }
 }
