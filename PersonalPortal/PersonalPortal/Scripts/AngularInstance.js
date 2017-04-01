@@ -4,6 +4,8 @@ document.write("<script type='text/javascript' src='/Scripts/AugularJs1.4.6.js'>
 document.write("<script type='text/javascript' src='/Scripts/Cookie.js'></script>");
 
 var Angular = function (func, appName, factoryName, controllerName) {
+    $("[data-toggle='tooltip']").tooltip({ trigger: 'hover' });  //激活提示
+
     var app = angular.module(appName ? appName : 'app', []);
     app.factory(factoryName ? factoryName : 'factory', function ($http, $sce, $q) {
         var service = {};
