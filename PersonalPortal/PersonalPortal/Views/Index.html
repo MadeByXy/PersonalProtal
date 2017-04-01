@@ -17,14 +17,19 @@
             border-radius: 4px;
             margin-bottom: 30px;
         }
-        .ng-cloak{
-            display:none;
+
+        .shadow {
+            box-shadow: 0 2px 2px 1px #999;
+        }
+
+        .ng-cloak {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div ng-app="app" ng-controller="controller">
-        <nav ng-cloak class="navbar navbar-default ng-cloak" style="border-radius:0 0 4px 4px;">
+        <nav ng-cloak class="navbar navbar-default ng-cloak shadow" style="border-radius:0 0 4px 4px;">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="Index" target="_self">小雨个人网站</a>
@@ -60,7 +65,7 @@
                 </div>
             </div>
         </nav>
-        <iframe id="Frame" name="Frame" scrolling="no" src="/Views/HelloWorld.html"></iframe>
+        <iframe id="Frame" name="Frame" class="shadow" scrolling="no" src="/Views/HelloWorld.html"></iframe>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
