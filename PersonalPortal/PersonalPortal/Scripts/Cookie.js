@@ -1,16 +1,24 @@
 ﻿//写入cookies
 function setCookie(name, value, isJson) {
+    name = encodeURIComponent(encodeURIComponent(name));
     var exp = new Date();
     exp.setTime(exp.getTime() + 60 * 60 * 1000);
-    document.cookie = name + "=" + escape(isJson ? JSON.stringify(value) : value) + ";expires=" + exp.toGMTString();
+    var temp;
+    try { temp = JSON.stringify(value); value = temp; } catch (e) { value = encodeURIComponent(encodeURIComponent(value)); }
+    document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
 }
 
 //读取cookies
 function getCookie(name, isJson) {
+    name = encodeURIComponent(encodeURIComponent(name));
     var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
     if (arr = document.cookie.match(reg)) {
         var result = unescape(arr[2]);
-        return isJson ? JSON.parse(result) : result;
+        try {
+            return JSON.parse(result);
+        } catch (e) {
+            return decodeURIComponent(decodeURIComponent(result));
+        }
     }
     else { return null; }
 }

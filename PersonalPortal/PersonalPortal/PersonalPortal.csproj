@@ -208,6 +208,7 @@
     <Compile Include="Content\DataConversion.cs" />
     <Compile Include="Content\Library\DataBase.cs" />
     <Compile Include="Content\LogControl.cs" />
+    <Compile Include="Content\Network.cs" />
     <Compile Include="Controllers\DynamicProgramming.cs" />
     <Compile Include="Controllers\Index.cs" />
     <Compile Include="Controller.ashx.cs">

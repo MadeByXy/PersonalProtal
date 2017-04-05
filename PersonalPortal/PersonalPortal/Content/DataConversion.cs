@@ -21,6 +21,7 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static JObject ToJson(object data)
         {
+            if (data.GetType() == typeof(string)){ return ToJson(data.ToString()); }
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -63,6 +64,7 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static string ToXml(object data)
         {
+            if (data.GetType() == typeof(string)) { return ToXml(data.ToString()); }
             XmlSerializer serializer = new XmlSerializer(data.GetType());
             using (MemoryStream stream = new MemoryStream())
             {

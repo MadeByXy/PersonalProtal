@@ -95,6 +95,9 @@
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
+        function IPCallBack(data) {
+            console.log(data);
+        }
         //动态调整框架高度
         $(document).ready(function () {
             var frame = document.getElementById("Frame");
@@ -127,6 +130,14 @@
             }
             factory.Query('/Controller/Index/GetIndex').then(function (data) {
                 $scope.Navigation = data.Navigation;
+            });
+            factory.Query('/Controller/Index/DelegateQuery?url=http://whois.pconline.com.cn/ipJson.jsp').then(function (data) {
+                var info = JSON.parse(data.Result.match(/{\"[^}]*\"}/g)[0]);
+                console.log('外网IP:', info.ip);
+                console.log('所在城市:', info.pro, info.city);
+                factory.Query('/Controller/Index/DelegateQuery?url=https%253A%252F%252Ffree-api.heweather.com%252Fv5%252Fweather%253Fkey%253Db8572b0c0502416996c8bbe7613233e9%2526city%253D' + info.city).then(function (data) {
+                    console.log("当前温度：" + JSON.parse(data.Result).HeWeather5[0].now.tmp);
+                });
             });
             $scope.Enter = factory.Enter;
         });
