@@ -67,6 +67,7 @@
     <Content Include="Controller.ashx" />
     <Content Include="Images\bg.png" />
     <Content Include="favicon.ico" />
+    <Content Include="Scripts\AngularJs1.4.6.js" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css.map" />
@@ -145,7 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Plugins\Newtonsoft.Json.dll" />
-    <Content Include="Scripts\AugularJs1.4.6.js" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css" />
@@ -235,7 +235,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>20811</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

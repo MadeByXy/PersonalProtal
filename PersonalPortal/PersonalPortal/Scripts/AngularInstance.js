@@ -1,6 +1,6 @@
 ﻿document.write("<script type='text/javascript' src='/Scripts/JQuery3-1-1.js'></script>");
 document.write("<script type='text/javascript' src='/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/AugularJs1.4.6.js'></script>");
+document.write("<script type='text/javascript' src='/Scripts/AngularJs1.4.6.js'></script>");
 document.write("<script type='text/javascript' src='/Scripts/Cookie.js'></script>");
 
 var Angular = function (func, appName, factoryName, controllerName) {
