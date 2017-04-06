@@ -9,6 +9,9 @@ namespace PersonalPortal.Controllers
 {
     public class Index : ApiController
     {
+        /// <summary>
+        /// 获取标题链接
+        /// </summary>
         [HttpGet]
         [HttpPost]
         public IndexModel GetIndex()
@@ -29,6 +32,24 @@ namespace PersonalPortal.Controllers
                 }
                 model.Navigation.Add(item);
             }
+            return model;
+        }
+
+        /// <summary>
+        /// 获取快捷方式链接
+        /// </summary>
+        [HttpGet]
+        [HttpPost]
+        public ShortCutModel GetShortCut(string userIp)
+        {
+            DataTable data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp='{0}'", userIp);
+            if (data.Rows.Count == 0)
+            {
+                for (int i = 0; i < 8; i++) { DataBase.ExecuteSql("insert into shortCut (shortCutIp) values ('{0}')", userIp); }
+                data = DataBase.ExecuteSql<DataTable>(string.Format("select * from shortCut where shortCutIp='{0}'", userIp));
+            }
+            ShortCutModel model = new ShortCutModel();
+            model.ShortCutList = DataConversion.ToEntity<ShortCutItem>(data);
             return model;
         }
 

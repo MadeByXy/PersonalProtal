@@ -221,9 +221,13 @@
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
     <Compile Include="Models\ResultModels\IndexModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
+    <Compile Include="Models\ResultModels\ShortCutModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Style\Css\" />
+    <Folder Include="Style\Fonts\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

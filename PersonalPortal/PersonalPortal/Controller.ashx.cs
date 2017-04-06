@@ -193,6 +193,12 @@ namespace PersonalPortal
                                 List<object> objectList = new List<object>();
                                 foreach (ParameterInfo parameterInfo in method.GetParameters())
                                 {
+                                    if (parameterInfo.Name == "userIp" && parameterInfo.ParameterType == typeof(string))
+                                    {
+                                        //获取客户端IP
+                                        objectList.Add(GetUserIp(context));
+                                        continue;
+                                    }
                                     object param = DataConversion.ToEntity(parameterInfo, paramsDic);
                                     string message;
                                     if (DataCheck.AttributeCheck(param, out message))
@@ -238,6 +244,28 @@ namespace PersonalPortal
                     , returnType);
                 return 404;
             }
+        }
+
+        /// <summary>
+        /// 获取请求的真实地址
+        /// </summary>
+        private static string GetUserIp(HttpContext context)
+        {
+            string clientIP = "";
+            clientIP = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            if (string.IsNullOrEmpty(clientIP) || (clientIP.ToLower() == "unknown"))
+            {
+                clientIP = context.Request.ServerVariables["HTTP_X_REAL_IP"];
+                if (string.IsNullOrEmpty(clientIP))
+                {
+                    clientIP = context.Request.ServerVariables["REMOTE_ADDR"];
+                }
+            }
+            else
+            {
+                clientIP = clientIP.Split(',')[0];
+            }
+            return clientIP;
         }
 
         private static ErrorModel GetErrorModel(string message, string detail)
