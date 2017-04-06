@@ -11,11 +11,11 @@ var Angular = function (func, appName, factoryName, controllerName) {
         var service = {};
 
         service.Query = function (apiUrl) {  //网络请求
-            var cookie = getCookie(apiUrl, true);
+            var cookie = getCookie(apiUrl);
             var defer = $q.defer();
             if (cookie == null) {
                 $http.get(apiUrl).success(function (response) {
-                    setCookie(apiUrl, response, true);
+                    setCookie(apiUrl, response);
                     defer.resolve(response);
                 });
             } else {

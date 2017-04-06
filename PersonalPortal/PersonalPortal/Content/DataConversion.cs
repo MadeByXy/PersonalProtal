@@ -21,7 +21,7 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static JObject ToJson(object data)
         {
-            if (data.GetType() == typeof(string)){ return ToJson(data.ToString()); }
+            if (data.GetType() == typeof(string)) { return ToJson(data.ToString()); }
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -92,7 +92,7 @@ namespace PersonalPortal.Content
         public static object ToEntity(ParameterInfo parameterInfo, Dictionary<string, object> data)
         {
             Type tyoe = parameterInfo.ParameterType;
-            if (parameterInfo.ParameterType.Namespace.Split('.')[0] == "DysoftApi")
+            if (parameterInfo.ParameterType.Namespace.Split('.')[0] == nameof(PersonalPortal))
             {
                 //实体类
                 object result = Activator.CreateInstance(parameterInfo.ParameterType);
