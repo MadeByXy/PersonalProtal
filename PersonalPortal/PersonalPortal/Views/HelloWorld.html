@@ -5,12 +5,49 @@
     <title>欢迎页</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <style>
+        .main {
+            background: url('/Images/helloWorld.jpg') 0 0 repeat #dedede;
+            margin: 0;
+            height: 800px;
+            color: white;
+            font-family: Montserrat-Bold;
+        }
+
+            .main div, h1 {
+                width: 700px;
+            }
+
+            .main div {
+                padding: 50px 30px;
+                background-color: black;
+                opacity: 0.4;
+            }
+
+            .main h1 {
+                font-weight: bolder;
+            }
+    </style>
 </head>
 <body>
-    <div class="jumbotron" style="padding-left:10px;padding-right:10px;margin:0;">
-        <h1>Hello, world!</h1>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+    <div class="jumbotron main">
+        <div>
+            <h1>Hello。</h1>
+            <h1>这是小雨的个人网站。</h1>
+        </div>
     </div>
+    <footer class="bs-docs-footer" style="margin:0;padding-top:30px;padding-bottom:10px;">
+        <div class="container">
+            <p style="margin-bottom:10px;">本网站为肖禹个人网站，感谢以下开源项目：</p>
+            <ul class="bs-docs-footer-links">
+                <li><a href="https://github.com/twbs/bootstrap">GitHub 仓库</a></li>
+                <li><a href="../getting-started/#examples">实例</a></li>
+                <li><a href="http://www.youzhan.org">优站精选</a></li>
+                <li><a href="../about/">关于</a></li>
+            </ul>
+        </div>
+    </footer>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
     </script>
