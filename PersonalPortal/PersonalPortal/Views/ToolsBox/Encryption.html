@@ -23,43 +23,47 @@
         .full {
             width: 100%;
         }
+
+        .ng-cloak {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div ng-app="app" ng-controller="controller">
         <header class="header">
             <ul ng-cloak class="nav nav-tabs nav-tabs-justified">
-                <li ng-repeat="x in mainData">
-                    <a href="#" ng-click="SetTitle($index)">{{x.title}}</a>
+                <li ng-repeat="x in mainData" ng-class="{true:'active'}[selectedIndex == $index]">
+                    <a href="#" ng-click="SetTitle($index)" ng-bind="x.title"></a>
                 </li>
             </ul>
         </header>
-        <div ng-cloak class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" style="margin-top:10px;margin-bottom:0;" role="alert">
+        <div ng-cloak class="alert alert-danger alert-dismissible ng-cloak" ng-hide="IsNull(warning)" style="margin-top:10px;margin-bottom:0;" role="alert">
             <span ng-bind="warning"></span>
             <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="navbar-left" style="width:35%;">
+        <div class="navbar-left" style="width: 35%;">
             <textarea class="highlight well form-control" style="height: 600px;" ng-model="leftText"></textarea>
         </div>
-        <div class="navbar-right" style="width:35%;">
+        <div class="navbar-right" style="width: 35%; margin-right: 0;">
             <textarea class="highlight well form-control" style="height: 600px;" ng-model="rightText"></textarea>
         </div>
-        <div style="margin:100px auto;width:150px;">
-            <div ng-cloak class="input-group full" style="margin:10px 0;" ng-hide="mainData[selectedIndex].type.length<=1">
+        <div style="margin: 100px auto; width: 150px;">
+            <div ng-cloak class="input-group full" style="margin: 10px 0;" ng-hide="mainData[selectedIndex].type.length<=1">
                 <button type="button" class="btn btn-default dropdown-toggle full" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span ng-bind="selectedType"></span>  <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
                     <li ng-repeat="x in mainData[selectedIndex].type" value="{{x}}">
-                        <a href="#" ng-click="SetValue('selectedType',x)">{{x}}</a>
+                        <a href="#" ng-click="SetValue('selectedType',x)" ng-bind="x"></a>
                     </li>
                 </ul>
             </div>
-            <button ng-cloak class="btn btn-default full" ng-click="Encode()" style="margin:10px 0;">
+            <button ng-cloak class="btn btn-default full ng-cloak" ng-click="Encode()" style="margin:10px 0;">
                 {{mainData[selectedIndex].toButton.title}}
                 <i class="glyphicon glyphicon-chevron-right"></i>
             </button>
-            <button ng-cloak class="btn btn-default full" ng-click="Decode()" style="margin:10px 0;">
+            <button ng-cloak class="btn btn-default full ng-cloak" ng-click="Decode()" style="margin:10px 0;">
                 <i class="glyphicon glyphicon-chevron-left"></i>
                 {{mainData[selectedIndex].backButton.title}}
             </button>
@@ -67,15 +71,6 @@
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        $(document).ready(function () {
-            $('.header li').click(function (e) {
-                e.preventDefault();
-                $('.header li').removeClass('active');
-                $(this).addClass('active');
-            });
-            $($('.header li')[0]).addClass('active');
-        });
-
         Angular(function ($scope, factory) {
             $scope.mainData = [{ "title": "Unicode", "type": ["Unicode"], "toButton": { "title": "Unicode", "functionName": { "Unicode": "decToHex" } }, "backButton": { "title": "Native", "functionName": { "Unicode": "hexToDec" } } }, { "title": "BASE64", "type": ["BASE64"], "toButton": { "title": "BASE64", "functionName": { "BASE64": "window.btoa" } }, "backButton": { "title": "Native", "functionName": { "BASE64": "window.atob" } } }, { "title": "URL转码", "type": ["encodeURI", "encodeURIComponent"], "toButton": { "title": "URL编码", "functionName": { "encodeURI": "encodeURI", "encodeURIComponent": "encodeURIComponent" } }, "backButton": { "title": "URL解码", "functionName": { "encodeURI": "decodeURI", "encodeURIComponent": "decodeURIComponent" } } }];
             $scope.selectedIndex = 0;

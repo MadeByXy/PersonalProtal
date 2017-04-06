@@ -20,8 +20,11 @@ namespace PersonalPortal.Content
         {
             try
             {
-                text = HttpUtility.UrlDecode(text);
-                text = Regex.Replace(text, @"^'|([^\\])'", @"$1\'");
+                if (text != null)
+                {
+                    text = HttpUtility.UrlDecode(text);
+                    text = Regex.Replace(text, @"^'|([^\\])'", @"$1\'");
+                }
                 return text;
             }
             catch
@@ -47,9 +50,9 @@ namespace PersonalPortal.Content
             {
                 foreach (PropertyInfo property in parameter.GetType().GetProperties())
                 {
-                    foreach (Attribute checkAttribute in Attribute.GetCustomAttributes(property))
+                    foreach (Attribute checkAttribute in Attribute.GetCustomAttributes(property, typeof(CheckAttribute)))
                     {
-                        if (!((ICheck)checkAttribute).Check(property.GetValue(parameter, null), ref resultMessage))
+                        if (!((CheckAttribute)checkAttribute).Check(property.GetValue(parameter, null), ref resultMessage))
                         {
                             return false;
                         }
@@ -60,12 +63,12 @@ namespace PersonalPortal.Content
             }
         }
 
-        private interface ICheck
+        public abstract class CheckAttribute : Attribute
         {
             /// <summary>
             /// 字段名称
             /// </summary>
-            string Name { get; set; }
+            public abstract string Name { get; set; }
 
             /// <summary>
             /// 验证数据是否合法
@@ -73,17 +76,17 @@ namespace PersonalPortal.Content
             /// <param name="value">值</param>
             /// <param name="resultMessage">错误信息</param>
             /// <returns></returns>
-            bool Check(object value, ref string resultMessage);
+            public abstract bool Check(object value, ref string resultMessage);
         }
 
         /// <summary>
         /// 数字区间检测
         /// </summary>
-        public class NumberIntervalAttribute : Attribute, ICheck
+        public class NumberIntervalAttribute : CheckAttribute
         {
             private string name;
             private double min, max;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
@@ -99,7 +102,7 @@ namespace PersonalPortal.Content
                 set { max = value; }
             }
 
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 double realValue = double.Parse(value.ToString());
                 if (value == null || (Min <= realValue && Max >= realValue))
@@ -117,11 +120,11 @@ namespace PersonalPortal.Content
         /// <summary>
         /// 时间区间检测
         /// </summary>
-        public class DateIntervalAttribute : Attribute, ICheck
+        public class DateIntervalAttribute : CheckAttribute
         {
             private string earliest, latest, name;
             private DateTime rarliestDate, latestDate;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
@@ -155,7 +158,7 @@ namespace PersonalPortal.Content
                 }
             }
 
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 if (value == null || (RarliestDate <= (DateTime)value && LatestDate >= (DateTime)value))
                 {
@@ -172,11 +175,11 @@ namespace PersonalPortal.Content
         /// <summary>
         /// 时间格式检测
         /// </summary>
-        public class DateAttribute : Attribute, ICheck
+        public class DateAttribute : CheckAttribute
         {
             private string name;
             private string[] format;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
@@ -190,7 +193,7 @@ namespace PersonalPortal.Content
                 set { format = value; }
             }
 
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 try
                 {
@@ -211,15 +214,15 @@ namespace PersonalPortal.Content
         /// <summary>
         /// Email格式检测
         /// </summary>
-        public class EmailAttribute : Attribute, ICheck
+        public class EmailAttribute : CheckAttribute
         {
             private string name;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
             }
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 if (value == null || Regex.IsMatch(value.ToString(), @"[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?"))
                 {
@@ -236,11 +239,11 @@ namespace PersonalPortal.Content
         /// <summary>
         /// 枚举类型检测
         /// </summary>
-        public class EnumAttribute : Attribute, ICheck
+        public class EnumAttribute : CheckAttribute
         {
             private string name;
             private Type enumType;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
@@ -250,7 +253,7 @@ namespace PersonalPortal.Content
                 get { return enumType; }
                 set { enumType = value; }
             }
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 if (value == null || (value.GetType() == typeof(string) && string.IsNullOrEmpty(value.ToString())) || Enum.IsDefined(EnumType, value))
                 {
@@ -267,15 +270,15 @@ namespace PersonalPortal.Content
         /// <summary>
         /// 非空检测
         /// </summary>
-        public class NonEmptyAttribute : Attribute, ICheck
+        public class NonEmptyAttribute : CheckAttribute
         {
             private string name;
-            public string Name
+            public override string Name
             {
                 get { return name; }
                 set { name = value; }
             }
-            public bool Check(object value, ref string resultMessage)
+            public override bool Check(object value, ref string resultMessage)
             {
                 if (value != null && value != DataConversion.DefaultValue(value.GetType()))
                 {

@@ -17,21 +17,51 @@
             border-radius: 4px;
             margin-bottom: 30px;
         }
-        .ng-cloak{
-            display:none;
+
+        .shadow {
+            box-shadow: 0 2px 2px 1px #999;
         }
+
+        .ng-cloak {
+            display: none;
+        }
+
+        .dropdown:hover {
+            box-shadow: 0px 1px 3px #999;
+        }
+
+        .toTop {
+            margin: 100px 90px;
+            display: none;
+        }
+
+            .toTop a {
+                background-color: white;
+                text-decoration: none;
+                width: 45px;
+                height: 45px;
+                float: right;
+                line-height: 45px;
+                text-align: center;
+                border-radius: 5px;
+                opacity: 0.8;
+            }
+
+                .toTop a:hover {
+                    background-color: #eee;
+                }
     </style>
 </head>
 <body>
     <div ng-app="app" ng-controller="controller">
-        <nav ng-cloak class="navbar navbar-default ng-cloak" style="border-radius:0 0 4px 4px;">
+        <nav ng-cloak class="navbar navbar-default ng-cloak shadow" style="border-radius:0 0 4px 4px;">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="Index" target="_self">小雨个人网站</a>
                 </div>
                 <div class="navbar-collapse">
                     <ul class="nav navbar-nav navbar-left">
-                        <li class="dropdown" role="presentation" ng-repeat="x in Navigation" onclick="ClickStyle(this)">
+                        <li class="dropdown" role="presentation" ng-repeat="x in Navigation" ng-class="{true:'active'}[selectIndex == $index]" ng-click="SetValue('selectIndex', $index)">
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame">{{x.LinkName}}</a>
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 {{x.LinkName}}<span ng-cloak class="caret"></span>
@@ -60,21 +90,31 @@
                 </div>
             </div>
         </nav>
-        <iframe id="Frame" name="Frame" scrolling="no" src="/Views/HelloWorld.html"></iframe>
+        <iframe id="Frame" name="Frame" class="shadow" src="/Views/HelloWorld.html"></iframe>
+        <div class="navbar-fixed-bottom toTop"><a data-toggle="tooltip" data-placement="left" title="返回顶部" class="glyphicon glyphicon-chevron-up" href="#top"></a></div>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
+        function IPCallBack(data) {
+            console.log(data);
+        }
         //动态调整框架高度
         $(document).ready(function () {
             var frame = document.getElementById("Frame");
             iframeResize = function () {
                 try {
                     frame.height = Math.min(Frame.document.documentElement.scrollHeight, Frame.document.body.scrollHeight);
+                    if (frame.height > window.screen.availHeight) {
+                        $(".toTop").show();
+                    } else {
+                        $(".toTop").hide();
+                    }
                     frame.scrolling = "no";
                 } catch (e) {
                     //跨域
                     frame.height = window.innerHeight - 110;
                     frame.scrolling = "yes";
+                    $(".toTop").hide();
                 }
             }
             iframeResize();
@@ -91,13 +131,16 @@
             factory.Query('/Controller/Index/GetIndex').then(function (data) {
                 $scope.Navigation = data.Navigation;
             });
+            factory.Query('/Controller/Index/DelegateQuery?url=http://whois.pconline.com.cn/ipJson.jsp').then(function (data) {
+                var info = JSON.parse(data.Result.match(/{\"[^}]*\"}/g)[0]);
+                console.log('外网IP:', info.ip);
+                console.log('所在城市:', info.pro, info.city);
+                factory.Query('/Controller/Index/DelegateQuery?url=https%253A%252F%252Ffree-api.heweather.com%252Fv5%252Fweather%253Fkey%253Db8572b0c0502416996c8bbe7613233e9%2526city%253D' + info.city).then(function (data) {
+                    console.log("当前温度：" + JSON.parse(data.Result).HeWeather5[0].now.tmp);
+                });
+            });
             $scope.Enter = factory.Enter;
         });
-
-        function ClickStyle(item) {
-            $(item).parent().children('li').removeAttr("class", "active");
-            $(item).attr("class", "active");
-        };
     </script>
 </body>
 </html>

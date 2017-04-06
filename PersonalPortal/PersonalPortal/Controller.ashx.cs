@@ -35,23 +35,15 @@ namespace PersonalPortal
             //获取结果返回类型
 
             ReturnTypeEnum returnType = ReturnTypeEnum.Json;
-            context.Response.ContentType = "application/json;";
+            context.Response.ContentType = "application/json";
             foreach (string mime in context.Request.AcceptTypes)
             {
                 if (mime.Contains("application/xml"))
                 {
                     returnType = ReturnTypeEnum.Xml;
-                    context.Response.ContentType = "application/xml;";
+                    context.Response.ContentType = "application/xml";
                 }
             }
-
-            //解决Ajax跨域问题
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            foreach (string item in new string[] { "GET", "POST", "OPTIONS" })
-            {
-                context.Response.Headers.Add("Access-Control-Allow-Methods", item);
-            }
-            context.Response.Headers.Add("Access-Control-Allow-Headers", "content-type");
 
             string result;
             context.Response.StatusCode = GetResult(context, returnType, out result);

@@ -1,6 +1,7 @@
 ﻿using PersonalPortal.Content;
 using PersonalPortal.Content.Library;
 using PersonalPortal.ResultModels.Models;
+using System;
 using System.Data;
 using static PersonalPortal.ResultModels.Models.IndexModel;
 
@@ -29,6 +30,20 @@ namespace PersonalPortal.Controllers
                 model.Navigation.Add(item);
             }
             return model;
+        }
+
+        /// <summary>
+        /// 委托请求以解决js的跨域问题
+        /// </summary>
+        [HttpGet]
+        public string DelegateQuery(string url)
+        {
+            try
+            {
+                return Network.GetHtml(url, null);
+            }
+            catch (Exception e) { return e.ToString(); }
+
         }
     }
 }

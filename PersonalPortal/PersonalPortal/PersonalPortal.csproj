@@ -145,11 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Plugins\Newtonsoft.Json.dll" />
-    <Content Include="Scripts\Angular\AugularJs1.4.6.js" />
-    <None Include="Scripts\Angular\Scripts\jquery-1.4.1-vsdoc.js" />
-    <Content Include="Scripts\Angular\Scripts\jquery-1.4.1.js" />
-    <Content Include="Scripts\Angular\Scripts\jquery-1.4.1.min.js" />
-    <Content Include="Scripts\Angular\Styles\Site.css" />
+    <Content Include="Scripts\AugularJs1.4.6.js" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css" />
@@ -212,6 +208,7 @@
     <Compile Include="Content\DataConversion.cs" />
     <Compile Include="Content\Library\DataBase.cs" />
     <Compile Include="Content\LogControl.cs" />
+    <Compile Include="Content\Network.cs" />
     <Compile Include="Controllers\DynamicProgramming.cs" />
     <Compile Include="Controllers\Index.cs" />
     <Compile Include="Controller.ashx.cs">
