@@ -10,7 +10,22 @@
 </head>
 <body>
     <div ng-cloak ng-app="app" ng-controller="controller" class="jumbotron main ng-cloak">
-        <div class="nav navbar-nav navbar-left">
+        <div class="weather">
+            <img ng-src="{{weatherIcon}}" />
+            <div style="padding-top:20px;">
+                <p ng-bind="temperature"></p>
+                <p ng-bind="weather"></p>
+                <p ng-bind="wind"></p>
+            </div>
+            <div>
+                <p><span ng-bind="time"></span>(实时:<span ng-bind="currentTemp"></span>℃)</p>
+                <p ng-bind="city"></p>
+            </div>
+        </div>
+        <div class="logo visible-lg visible-md">
+            <img src="/Images/logo.png" />
+        </div>
+        <div class="nav navbar-nav navbar-left content">
             <div class="shortCut" ng-repeat="item in ShortCutList" ng-mouseenter="SetValue('hover_', true, $index)" ng-mouseleave="SetValue('hover_', false, $index)">
                 <!--添加Button-->
                 <button ng-cloak class="mainButton ng-cloak" ng-show="IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal" data-target="#myModal">
@@ -53,27 +68,42 @@
             </div>
         </div>
     </div>
-    <footer class="bs-docs-footer" style="margin:0;padding-top:30px;padding-bottom:10px;">
-        <div class="container">
-            <p style="margin-bottom:10px;">本网站为肖禹个人网站，感谢以下开源项目：</p>
+    <footer class="bs-docs-footer content" style="padding-top: 30px; padding-bottom: 10px;">
+        <div class="container" style="width: 90%;">
+            <p style="margin-bottom: 10px;">本网站为肖禹个人网站，感谢以下开源项目：</p>
             <ul class="bs-docs-footer-links">
-                <li><a href="https://github.com/twbs/bootstrap" target="_blank">GitHub 仓库</a></li>
-                <li><a href="http://www.bootcss.com/" target="_blank">BootStrap中文网</a></li>
-                <li><a href="http://www.youzhan.org" target="_blank">优站精选</a></li>
-                <li><a href="../about/">关于</a></li>
+                <li><a href="https://github.com/twbs/bootstrap" target="_blank">Bootstrap</a></li>
+                <li><a href="https://github.com/angular/angular.js" target="_blank">AngularJS</a></li>
+                <li><a href="http://themes.3rdwavemedia.com/website-templates/free-responsive-website-template-for-developers/" target="_blank">Developer</a></li>
             </ul>
         </div>
     </footer>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        $(".shortCut").width((document.body.scrollWidth - 290 - 8) / 4.0);
-        Angular(function ($scope, factory) {
+        setInterval(function () {
+            var width = document.body.scrollWidth - 70;
+            var scale;
+            if (width > 1000) {
+                scale = 4.0;
+            } else if (width > 750) {
+                scale = 3.0;
+            } else if (width > 400) {
+                scale = 2.0;
+            } else {
+                scale = 1.0;
+            }
+            $(".shortCut").width((width - 54 * scale) / scale);
+        }, 10);
+
+        Angular(function ($scope, $interval, factory) {
             var colorLibrary = ['#3b5999', '#0084ff', '#55acee', '#0077B5', '#00AFF0', '#007ee5', '#21759b', '#1ab7ea', '#0077b5', '#4c75a3', '#34465d', '#410093', '#dd4b39', '#bd081c', '#cd201f', '#eb4924', '#ff5700', '#b92b27', '#af0606', '#df2029', '#da552f', '#ff6600', '#ff3300', '#f57d00', '#25D366', '#da552f', '#df2029', '#02b875', '#00b489', '#3aaf85', '#e4405f', '#ea4c89', '#ff0084', '#f94877', '#131418', '#FFFC00'];
+
             $scope.GetShortCut = function (refresh) {
                 factory.Query('/Controller/Index/GetShortCut', refresh).then(function (data) {
                     $scope.ShortCutList = data.ShortCutList;
                 });
             }
+
             $scope.GetShortCut(false);
             $scope.IsNull = factory.IsNull;
 
@@ -111,11 +141,7 @@
                     try {
                         name = name.match(regex)[3];
                     } catch (e) { }
-
-                    console.log(name, 206% colorLibrary.length);
-                    $scope['style_' + index] = {
-                        "background-color": colorLibrary[$scope.GetNumber(name) % colorLibrary.length]
-                    }
+                    $scope['style_' + index] = { "background-color": colorLibrary[$scope.GetNumber(name) % colorLibrary.length] }
                     return name;
                 }
                 return '';
@@ -123,10 +149,21 @@
 
             factory.Query('/Controller/Index/DelegateQuery?url=http://whois.pconline.com.cn/ipJson.jsp').then(function (data) {
                 var info = JSON.parse(data.Result.match(/{\"[^}]*\"}/g)[0]);
-                console.log('外网IP:', info.ip);
-                console.log('所在城市:', info.pro, info.city);
+                $scope.city = info.city;
                 factory.Query('https://free-api.heweather.com/v5/weather?key=b8572b0c0502416996c8bbe7613233e9&city=' + info.city).then(function (data) {
-                    console.log("当前温度：" + data.HeWeather5[0].now.tmp);
+                    var weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+                    var date = new Date();
+                    $scope.time = weekday[date.getDay()] + ' ' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
+
+                    data = data.HeWeather5[0];
+                    var now = data.now;
+                    var today = data.daily_forecast[0];
+                    var number = /[0-9]/g;
+                    $scope.currentTemp = now.tmp;
+                    $scope.wind = now.wind.dir + ' ' + now.wind.sc + (number.test(now.wind.sc) ? '级' : '');
+                    $scope.weather = now.cond.txt;
+                    $scope.weatherIcon = '/Images/weather/' + now.cond.code + '.png';
+                    $scope.temperature = today.tmp.min + '~' + today.tmp.max + '℃';
                 });
             });
 
@@ -137,6 +174,14 @@
                 }
                 return number;
             }
+
+            var width = document.body.scrollWidth - 70;
+            var scale;
+            if (width > 1000) { scale = 4.0; }
+            else if (width > 750) { scale = 3.0; }
+            else if (width > 400) { scale = 2.0; }
+            else { scale = 1.0; }
+            $(".shortCut").width((width - 54 * scale) / scale);
         });
     </script>
 </body>
