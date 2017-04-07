@@ -10,10 +10,10 @@ var Angular = function (func, appName, factoryName, controllerName) {
     app.factory(factoryName ? factoryName : 'factory', function ($http, $sce, $q) {
         var service = {};
 
-        service.Query = function (apiUrl) {  //网络请求
+        service.Query = function (apiUrl, refresh) {  //网络请求
             var cookie = getCookie(apiUrl);
             var defer = $q.defer();
-            if (cookie == null) {
+            if (cookie == null || refresh) {
                 $http.get(apiUrl).success(function (response) {
                     setCookie(apiUrl, response);
                     defer.resolve(response);

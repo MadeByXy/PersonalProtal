@@ -1,5 +1,6 @@
 ﻿using PersonalPortal.Content;
 using PersonalPortal.Content.Library;
+using PersonalPortal.Models.ApplyModels;
 using PersonalPortal.ResultModels.Models;
 using System;
 using System.Data;
@@ -51,6 +52,17 @@ namespace PersonalPortal.Controllers
             ShortCutModel model = new ShortCutModel();
             model.ShortCutList = DataConversion.ToEntity<ShortCutItem>(data);
             return model;
+        }
+
+        /// <summary>
+        /// 添加快捷方式链接
+        /// </summary>
+        [HttpGet]
+        [HttpPost]
+        public string SetShortCut(ShortCutView data, string userIp)
+        {
+            return DataBase.ExecuteSql<bool>("update shortCut set shortCutName='{0}', shortCutUrl='{1}' where ID={2} and shortCutIp='{3}'"
+                 , data.ShortCutName, data.ShortCutUrl, data.Id, userIp) ? "true" : "false";
         }
 
         /// <summary>

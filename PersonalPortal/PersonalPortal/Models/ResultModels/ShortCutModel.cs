@@ -14,7 +14,7 @@ namespace PersonalPortal.ResultModels.Models
         /// <summary>
         /// 标签ID
         /// </summary>
-        public string ShortCutIp { get; set; }
+        public int Id { get; set; }
         /// <summary>
         /// 标签名称
         /// </summary>
