@@ -78,6 +78,7 @@
             </ul>
         </div>
     </footer>
+    <script type="text/javascript" src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
         setInterval(function () {
@@ -147,24 +148,21 @@
                 return '';
             }
 
-            factory.Query('/Controller/Index/DelegateQuery?url=http://whois.pconline.com.cn/ipJson.jsp').then(function (data) {
-                var info = JSON.parse(data.Result.match(/{\"[^}]*\"}/g)[0]);
-                $scope.city = info.city;
-                factory.Query('https://free-api.heweather.com/v5/weather?key=b8572b0c0502416996c8bbe7613233e9&city=' + info.city).then(function (data) {
-                    var weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-                    var date = new Date();
-                    $scope.time = weekday[date.getDay()] + ' ' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
+            $scope.city = remote_ip_info.city;
+            factory.Query('https://free-api.heweather.com/v5/weather?key=b8572b0c0502416996c8bbe7613233e9&city=' + remote_ip_info.city).then(function (data) {
+                var weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+                var date = new Date();
+                $scope.time = weekday[date.getDay()] + ' ' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
 
-                    data = data.HeWeather5[0];
-                    var now = data.now;
-                    var today = data.daily_forecast[0];
-                    var number = /[0-9]/g;
-                    $scope.currentTemp = now.tmp;
-                    $scope.wind = now.wind.dir + ' ' + now.wind.sc + (number.test(now.wind.sc) ? '级' : '');
-                    $scope.weather = now.cond.txt;
-                    $scope.weatherIcon = '/Images/weather/' + now.cond.code + '.png';
-                    $scope.temperature = today.tmp.min + '~' + today.tmp.max + '℃';
-                });
+                data = data.HeWeather5[0];
+                var now = data.now;
+                var today = data.daily_forecast[0];
+                var number = /[0-9]/g;
+                $scope.currentTemp = now.tmp;
+                $scope.wind = now.wind.dir + ' ' + now.wind.sc + (number.test(now.wind.sc) ? '级' : '');
+                $scope.weather = now.cond.txt;
+                $scope.weatherIcon = '/Images/weather/' + now.cond.code + '.png';
+                $scope.temperature = today.tmp.min + '~' + today.tmp.max + '℃';
             });
 
             $scope.GetNumber = function (name) {
