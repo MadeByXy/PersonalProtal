@@ -269,6 +269,7 @@
       <DependentUpon>Controller.ashx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\PersonalData.cs" />
+    <Compile Include="Controllers\Project.cs" />
     <Compile Include="Controllers\Sort.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
     <Compile Include="Models\ResultModels\IndexModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
+    <Compile Include="Models\ResultModels\ProjectModel.cs" />
     <Compile Include="Models\ResultModels\ShortCutModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
