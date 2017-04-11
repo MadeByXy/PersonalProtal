@@ -139,8 +139,9 @@
             }
 
             $scope.SubmitShortCut = function () {
-                factory.Query('/Controller/Index/SetShortCut?Id=' + $scope.inputId + "&ShortCutName=" + encodeURIComponent($scope.inputName) + "&ShortCutUrl=" + encodeURIComponent($scope.inputUrl), true, false);
-                $scope.GetShortCut(true);
+                factory.Query('/Controller/Index/SetShortCut?Id=' + $scope.inputId + "&ShortCutName=" + encodeURIComponent($scope.inputName) + "&ShortCutUrl=" + encodeURIComponent($scope.inputUrl), true, false).then(function () {
+                    $scope.GetShortCut(true);
+                });
             }
 
             $scope.SetValue = function (key, value, added) {
