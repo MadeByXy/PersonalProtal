@@ -40,7 +40,7 @@
                 <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal"
                         data-target="#myModal" class="float left ng-cloak glyphicon glyphicon-pencil"></button>
                 <!--删除Button-->
-                <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="Save($index)"
+                <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="Delete($index)"
                         class="float right ng-cloak glyphicon glyphicon-remove closeButton"></button>
             </div>
         </div>
@@ -54,15 +54,23 @@
                             <span class="input-group-addon" id="basic-name">网站名称</span>
                             <input type="text" ng-model="inputName" class="form-control" aria-describedby="basic-name">
                         </div>
+                        <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning1 && IsNull(inputName)" role="alert">
+                            <span>网站名称不能为空哦~</span>
+                            <button type="button" class="close" ng-click="ShowWarning1 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
                         <br />
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-url">网站地址</span>
                             <input type="text" ng-model="inputUrl" class="form-control" aria-describedby="basic-url">
                         </div>
+                        <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning2 && IsNull(inputUrl)" role="alert">
+                            <span>网站地址不能为空哦~</span>
+                            <button type="button" class="close" ng-click="ShowWarning2 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="Save()">保存</button>
+                        <button id="modelClose" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" ng-click="Save()">保存</button>
                     </div>
                 </div>
             </div>
@@ -114,14 +122,23 @@
                 }
             }
 
+            $scope.Delete = function (index) {
+                $scope.inputId = $scope.ShortCutList[index].Id;
+                $scope.inputName = '';
+                $scope.inputUrl = '';
+                $scope.SubmitShortCut();
+            }
+
             $scope.Save = function (index) {
-                if (!$scope.IsNull(index)) {
-                    //删除
-                    $scope.inputId = $scope.ShortCutList[index].Id;
-                    $scope.inputName = '';
-                    $scope.inputUrl = '';
+                $scope.ShowWarning1 = $scope.ShowWarning2 = true;
+                if (!$scope.IsNull($scope.inputName) && !$scope.IsNull($scope.inputUrl)) {
+                    $scope.SubmitShortCut();
+                    $('#modelClose').click();
                 }
-                factory.Query('/Controller/Index/SetShortCut?Id=' + $scope.inputId + "&ShortCutName=" + $scope.inputName + "&ShortCutUrl=" + encodeURIComponent($scope.inputUrl), true);
+            }
+
+            $scope.SubmitShortCut = function () {
+                factory.Query('/Controller/Index/SetShortCut?Id=' + $scope.inputId + "&ShortCutName=" + encodeURIComponent($scope.inputName) + "&ShortCutUrl=" + encodeURIComponent($scope.inputUrl), true, false);
                 $scope.GetShortCut(true);
             }
 
@@ -130,6 +147,7 @@
             }
 
             $scope.SetModel = function (index) {
+                $scope.ShowWarning1 = $scope.ShowWarning2 = false;
                 //填充模态框
                 $scope.inputId = $scope.ShortCutList[index].Id;
                 $scope.inputName = $scope.ShortCutList[index].ShortCutName;

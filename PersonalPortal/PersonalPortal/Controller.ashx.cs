@@ -65,7 +65,7 @@ namespace PersonalPortal
                     {
                         if (!string.IsNullOrEmpty(key) && key != ControllerKey)
                         {
-                            paramsDic.Add(key, DataCheck.SqlDefense(context.Request.QueryString[key]));
+                            paramsDic.Add(key, DataCheck.SqlDefense(context.Request.QueryString[key], false));
                         }
                     }
                     break;

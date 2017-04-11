@@ -16,14 +16,14 @@ namespace PersonalPortal.Content
         /// </summary>
         /// <param name="text">数据</param>
         /// <returns></returns>
-        public static string SqlDefense(string text)
+        public static string SqlDefense(string text, bool decode = true)
         {
             try
             {
                 if (text != null)
                 {
-                    text = HttpUtility.UrlDecode(text);
-                    text = Regex.Replace(text, @"^'|([^\\])'", @"$1\'");
+                    if (decode) { text = HttpUtility.UrlDecode(text); }
+                    text = text.Replace("'", "''");
                 }
                 return text;
             }
