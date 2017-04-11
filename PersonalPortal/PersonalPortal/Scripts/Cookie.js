@@ -1,5 +1,6 @@
 ﻿//写入cookies
 function setCookie(name, value) {
+    if (getCookie(name) != null) { delCookie(name); }
     name = encodeURIComponent(encodeURIComponent(name));
     var exp = new Date();
     exp.setTime(exp.getTime() + 60 * 60 * 1000);

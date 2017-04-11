@@ -98,24 +98,26 @@
                 var size = 8;
                 if ($scope.Scale == 5) { size = 10; }
                 else if ($scope.Scale == 3) { size = 9; }
-                factory.Query('/Controller/Index/GetShortCut?size=' + size, refresh).then(function (data) {
-                    $scope.ShortCutList = data.ShortCutList;
-                });
+                if (refresh || $scope.IsNull($scope.ShortCutList) || $scope.ShortCutList.length != size) {
+                    factory.Query('/Controller/Index/GetShortCut?size=' + size, refresh).then(function (data) {
+                        $scope.ShortCutList = data.ShortCutList;
+                    });
+                }
             }
 
             $scope.Resize = function () {
                 //重计算快捷方式宽度
                 var width = document.body.scrollWidth - 70;
-                var scale = Math.floor(width / 300);
+                var scale = Math.min(Math.floor(width / 300), 5);
                 if (scale != $scope.Scale) {
                     $scope.Scale = scale;
-                    $scope.GetShortCut(true);
+                    $scope.GetShortCut(false);
                 }
                 $(".shortCut").width((width - 54 * scale) * 1.0 / scale);
             }
 
-            $scope.GetShortCut(false);
             $scope.IsNull = factory.IsNull;
+            $scope.GetShortCut(false);
 
             $scope.Goto = function (url) {
                 if (!$scope.IsNull(url)) {
@@ -193,7 +195,7 @@
                 return number;
             }
 
-            $interval(function () { $scope.Resize(); }, 200);
+            $interval(function () { $scope.Resize(); }, 100);
         });
     </script>
 </body>
