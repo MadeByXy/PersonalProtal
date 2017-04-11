@@ -90,28 +90,28 @@
     <script type="text/javascript" src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
-        setInterval(function () {
-            var width = document.body.scrollWidth - 70;
-            var scale;
-            if (width > 1000) {
-                scale = 4.0;
-            } else if (width > 750) {
-                scale = 3.0;
-            } else if (width > 400) {
-                scale = 2.0;
-            } else {
-                scale = 1.0;
-            }
-            $(".shortCut").width((width - 54 * scale) / scale);
-        }, 10);
-
-        Angular(function ($scope, factory) {
+        Angular(function ($scope, $interval, factory) {
             var colorLibrary = ['#3b5999', '#0084ff', '#55acee', '#0077B5', '#00AFF0', '#007ee5', '#21759b', '#1ab7ea', '#0077b5', '#4c75a3', '#34465d', '#410093', '#dd4b39', '#bd081c', '#cd201f', '#eb4924', '#ff5700', '#b92b27', '#af0606', '#df2029', '#da552f', '#ff6600', '#ff3300', '#f57d00', '#25D366', '#da552f', '#df2029', '#02b875', '#00b489', '#3aaf85', '#e4405f', '#ea4c89', '#ff0084', '#f94877', '#131418', '#FFFC00'];
+            $scope.Scale = 4.0;
 
             $scope.GetShortCut = function (refresh) {
-                factory.Query('/Controller/Index/GetShortCut', refresh).then(function (data) {
+                var size = 8;
+                if ($scope.Scale == 5) { size = 10; }
+                else if ($scope.Scale == 3) { size = 9; }
+                factory.Query('/Controller/Index/GetShortCut?size=' + size, refresh).then(function (data) {
                     $scope.ShortCutList = data.ShortCutList;
                 });
+            }
+
+            $scope.Resize = function () {
+                //重计算快捷方式宽度
+                var width = document.body.scrollWidth - 70;
+                var scale = Math.floor(width / 300);
+                if (scale != $scope.Scale) {
+                    $scope.Scale = scale;
+                    $scope.GetShortCut(true);
+                }
+                $(".shortCut").width((width - 54 * scale) * 1.0 / scale);
             }
 
             $scope.GetShortCut(false);
@@ -193,13 +193,7 @@
                 return number;
             }
 
-            var width = document.body.scrollWidth - 70;
-            var scale;
-            if (width > 1000) { scale = 4.0; }
-            else if (width > 750) { scale = 3.0; }
-            else if (width > 400) { scale = 2.0; }
-            else { scale = 1.0; }
-            $(".shortCut").width((width - 54 * scale) / scale);
+            $interval(function () { $scope.Resize(); }, 200);
         });
     </script>
 </body>

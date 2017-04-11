@@ -41,13 +41,14 @@ namespace PersonalPortal.Controllers
         /// </summary>
         [HttpGet]
         [HttpPost]
-        public ShortCutModel GetShortCut(string userIp)
+        public ShortCutModel GetShortCut(string userIp, int size)
         {
-            DataTable data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp='{0}'", userIp);
+            if (size == 0) { size = 8; }
+            DataTable data = DataBase.ExecuteSql<DataTable>("select top {1} * from shortCut where shortCutIp='{0}'", userIp, size);
             if (data.Rows.Count == 0)
             {
-                for (int i = 0; i < 8; i++) { DataBase.ExecuteSql("insert into shortCut (shortCutIp) values ('{0}')", userIp); }
-                data = DataBase.ExecuteSql<DataTable>(string.Format("select * from shortCut where shortCutIp='{0}'", userIp));
+                for (int i = 0; i < 10; i++) { DataBase.ExecuteSql("insert into shortCut (shortCutIp) values ('{0}')", userIp); }
+                data = DataBase.ExecuteSql<DataTable>("select top {1} * from shortCut where shortCutIp='{0}'", userIp, size);
             }
             ShortCutModel model = new ShortCutModel();
             model.ShortCutList = DataConversion.ToEntity<ShortCutItem>(data);
