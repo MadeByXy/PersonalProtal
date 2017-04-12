@@ -98,6 +98,9 @@
                 var size = 8;
                 if ($scope.Scale == 5) { size = 10; }
                 else if ($scope.Scale == 3) { size = 9; }
+                console.log(size);
+                console.log($scope.ShortCutList);
+                console.log(refresh || $scope.IsNull($scope.ShortCutList) || $scope.ShortCutList.length != size);
                 if (refresh || $scope.IsNull($scope.ShortCutList) || $scope.ShortCutList.length != size) {
                     factory.Query('/Controller/Index/GetShortCut?size=' + size, refresh).then(function (data) {
                         $scope.ShortCutList = data.ShortCutList;

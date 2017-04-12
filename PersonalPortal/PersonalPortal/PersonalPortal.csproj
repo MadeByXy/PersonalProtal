@@ -129,14 +129,22 @@
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="Scripts\code-beautify\lib\beautify-css.js" />
-    <Content Include="Scripts\code-beautify\lib\beautify-html.js" />
-    <Content Include="Scripts\code-beautify\lib\beautify.js" />
-    <Content Include="Scripts\code-beautify\lib\cli.js" />
-    <Content Include="Scripts\code-beautify\lib\unpackers\javascriptobfuscator_unpacker.js" />
-    <Content Include="Scripts\code-beautify\lib\unpackers\myobfuscate_unpacker.js" />
-    <Content Include="Scripts\code-beautify\lib\unpackers\p_a_c_k_e_r_unpacker.js" />
-    <Content Include="Scripts\code-beautify\lib\unpackers\urlencode_unpacker.js" />
+    <Content Include="Scripts\code-beautify\beautify-css.js" />
+    <Content Include="Scripts\code-beautify\beautify-html.js" />
+    <Content Include="Scripts\code-beautify\beautify.js" />
+    <Content Include="Scripts\CodeMirrorInstance.js" />
+    <Content Include="Scripts\CodeMirror\language\clike.js" />
+    <Content Include="Scripts\CodeMirror\language\css.js" />
+    <Content Include="Scripts\CodeMirror\language\htmlmixed.js" />
+    <Content Include="Scripts\CodeMirror\language\javascript.js" />
+    <Content Include="Scripts\CodeMirror\language\lua.js" />
+    <Content Include="Scripts\CodeMirror\language\python.js" />
+    <Content Include="Scripts\CodeMirror\language\xml.js" />
+    <Content Include="Scripts\CodeMirror\lib\active-line.js" />
+    <Content Include="Scripts\CodeMirror\lib\codemirror.css" />
+    <Content Include="Scripts\CodeMirror\lib\codemirror.js" />
+    <Content Include="Scripts\CodeMirror\lib\matchbrackets.js" />
+    <Content Include="Scripts\CodeMirror\theme\mdn-like.css" />
     <Content Include="Scripts\Cookie.js" />
     <Content Include="Scripts\Developer\Less\base.less" />
     <Content Include="Scripts\Developer\Less\mixins.less" />
@@ -197,7 +205,6 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\package.json" />
     <Content Include="Scripts\Developer\Plugins\jquery-rss\README.md" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\docs.min.css.map" />
-    <Content Include="Scripts\code-beautify\config\defaults.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

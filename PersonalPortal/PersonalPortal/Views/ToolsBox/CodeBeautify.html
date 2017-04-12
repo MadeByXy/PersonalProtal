@@ -5,6 +5,8 @@
     <title>Html美化</title>
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <link rel="stylesheet" href="/Scripts/CodeMirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="/Scripts/CodeMirror/theme/mdn-like.css" />
     <style>
         body {
             width: 90%;
@@ -20,62 +22,70 @@
         .button {
             width: 100px;
         }
+
+        .ng-cloak {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div ng-app="app" ng-controller="controller">
-        <textarea class="highlight well form-control" style="height:300px;" ng-model="text"></textarea>
-        <div class="modal fade" aria-hidden="true">
-            <div class="modal-dialog">
-                <figure class="highlight">
-                    <pre>
-<code class="language-html" data-lang="html" ng-bind-html="Html(inputJson.highLight())"></code>
-                    </pre>
-                </figure>
-            </div>
-        </div>
+    <div style="margin-bottom:15px;"><textarea id="code" class="hidden"></textarea></div>
+    <div ng-cloak class="ng-cloak" ng-app="app" ng-controller="controller">
         <button class="btn btn-default button" ng-click="Beautify()">美化{{BeautifyType[SelectIndex]}}</button>
         <button class="btn btn-default button" ng-click="Compress()">压缩{{BeautifyType[SelectIndex]}}</button>
         <div class="dropup" style="display:inline-block;">
-            <a ng-cloak class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 美化方式：{{BeautifyType[SelectIndex]}}  <span ng-cloak class="caret"></span>
             </a>
             <ul class="dropdown-menu">
                 <li role="presentation" ng-repeat="item in BeautifyType">
-                    <a href="javascript:void(0);" ng-click="SetValue('SelectIndex', $index)" ng-bind="item"></a>
+                    <a href="javascript:void(0);" ng-click="SetIndex($index)" ng-bind="item"></a>
                 </li>
             </ul>
         </div>
     </div>
+    <script type="text/javascript" src="/Scripts/CodeMirrorInstance.js"></script>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
-    <script type="text/javascript" src="/Scripts/code-beautify/lib/beautify.js"></script>
-    <script type="text/javascript" src="/Scripts/code-beautify/lib/beautify-css.js"></script>
-    <script type="text/javascript" src="/Scripts/code-beautify/lib/beautify-html.js"></script>
+    <script type="text/javascript" src="/Scripts/code-beautify/beautify.js"></script>
+    <script type="text/javascript" src="/Scripts/code-beautify/beautify-css.js"></script>
+    <script type="text/javascript" src="/Scripts/code-beautify/beautify-html.js"></script>
     <script>
+        var CodeEditor = Mirror('code', 'htmlmixed');
+        $('.CodeMirror').height(window.screen.availHeight - 280);
+
         Angular(function ($scope, factory) {
             $scope.BeautifyType = ["HTML", "JS", "CSS"];
             $scope.IsNull = factory.IsNull;
             $scope.Html = factory.Html;
             $scope.SelectIndex = 0;
 
-            $scope.SetValue = function (key, value) {
-                $scope[key] = value;
+            $scope.SetIndex = function (index) {
+                $scope.SelectIndex = index;
+                switch (index) {
+                    case 0:
+                        CodeEditor.setOption('mode', 'htmlmixed'); return;
+                    case 1:
+                        CodeEditor.setOption('mode', 'javascript'); return;
+                    case 2:
+                        CodeEditor.setOption('mode', 'css'); return;
+                    default: return;
+                }
             }
 
             $scope.Beautify = function () {
                 switch ($scope.SelectIndex) {
                     case 0:
-                        $scope.text = html_beautify($scope.text); return;
+                        CodeEditor.setValue(html_beautify(CodeEditor.getValue())); return;
                     case 1:
-                        $scope.text = js_beautify($scope.text); return;
+                        CodeEditor.setValue(js_beautify(CodeEditor.getValue())); return;
                     case 2:
-                        $scope.text = css_beautify($scope.text); return;
+                        CodeEditor.setValue(css_beautify(CodeEditor.getValue())); return;
                     default: return;
                 }
             }
 
             $scope.Compress = function () {
-                $scope.text = $scope.text.replace(/\n+/g, "").replace(/<!--.*?-->/ig, "").replace(/\/\*.*?\*\//ig, "").replace(/[ ]+</ig, "<");
+                CodeEditor.setValue(CodeEditor.getValue().replace(/\n+/g, "").replace(/<!--.*?-->/ig, "").replace(/\/\*.*?\*\//ig, "").replace(/[ ]+</ig, "<"));
             }
         });
     </script>
