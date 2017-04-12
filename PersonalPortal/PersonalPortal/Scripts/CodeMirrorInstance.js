@@ -1,4 +1,4 @@
-document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/lib/codemirror.css' />");
+﻿document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/lib/codemirror.css' />");
 document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/theme/mdn-like.css' />");
 
 document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lib/codemirror.js'></script>");
