@@ -303,7 +303,6 @@
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
-    <Compile Include="Models\ResultModels\IndexModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
     <Compile Include="Models\ResultModels\ProjectModel.cs" />
     <Compile Include="Models\ResultModels\ShortCutModel.cs" />
