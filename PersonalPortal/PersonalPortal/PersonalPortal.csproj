@@ -133,6 +133,11 @@
     <Content Include="Scripts\code-beautify\beautify-html.js" />
     <Content Include="Scripts\code-beautify\beautify.js" />
     <Content Include="Scripts\CodeMirrorInstance.js" />
+    <Content Include="Scripts\CodeMirror\fold\brace-fold.js" />
+    <Content Include="Scripts\CodeMirror\fold\foldcode.js" />
+    <Content Include="Scripts\CodeMirror\fold\foldgutter.css" />
+    <Content Include="Scripts\CodeMirror\fold\foldgutter.js" />
+    <Content Include="Scripts\CodeMirror\fold\xml-fold.js" />
     <Content Include="Scripts\CodeMirror\language\clike.js" />
     <Content Include="Scripts\CodeMirror\language\css.js" />
     <Content Include="Scripts\CodeMirror\language\htmlmixed.js" />
@@ -144,6 +149,12 @@
     <Content Include="Scripts\CodeMirror\lib\codemirror.css" />
     <Content Include="Scripts\CodeMirror\lib\codemirror.js" />
     <Content Include="Scripts\CodeMirror\lib\matchbrackets.js" />
+    <Content Include="Scripts\CodeMirror\lint\css-lint.js" />
+    <Content Include="Scripts\CodeMirror\lint\html-lint.js" />
+    <Content Include="Scripts\CodeMirror\lint\javascript-lint.js" />
+    <Content Include="Scripts\CodeMirror\lint\json-lint.js" />
+    <Content Include="Scripts\CodeMirror\lint\lint.css" />
+    <Content Include="Scripts\CodeMirror\lint\lint.js" />
     <Content Include="Scripts\CodeMirror\theme\mdn-like.css" />
     <Content Include="Scripts\Cookie.js" />
     <Content Include="Scripts\Developer\Less\base.less" />

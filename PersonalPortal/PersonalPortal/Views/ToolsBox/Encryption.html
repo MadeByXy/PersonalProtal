@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-    <div ng-app="app" ng-controller="controller">
+    <div ng-cloak class="ng-cloak" ng-app="app" ng-controller="controller">
         <header class="header">
             <ul ng-cloak class="nav nav-tabs nav-tabs-justified">
                 <li ng-repeat="x in mainData" ng-class="{true:'active'}[selectedIndex == $index]">
@@ -38,7 +38,7 @@
                 </li>
             </ul>
         </header>
-        <div ng-cloak class="alert alert-danger alert-dismissible ng-cloak" ng-hide="IsNull(warning)" style="margin-top:10px;margin-bottom:0;" role="alert">
+        <div class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" style="margin-top:10px;margin-bottom:0;" role="alert">
             <span ng-bind="warning"></span>
             <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
@@ -59,11 +59,11 @@
                     </li>
                 </ul>
             </div>
-            <button ng-cloak class="btn btn-default full ng-cloak" ng-click="Encode()" style="margin:10px 0;">
+            <button class="btn btn-default full" ng-click="Encode()" style="margin:10px 0;">
                 {{mainData[selectedIndex].toButton.title}}
                 <i class="glyphicon glyphicon-chevron-right"></i>
             </button>
-            <button ng-cloak class="btn btn-default full ng-cloak" ng-click="Decode()" style="margin:10px 0;">
+            <button class="btn btn-default full" ng-click="Decode()" style="margin:10px 0;">
                 <i class="glyphicon glyphicon-chevron-left"></i>
                 {{mainData[selectedIndex].backButton.title}}
             </button>

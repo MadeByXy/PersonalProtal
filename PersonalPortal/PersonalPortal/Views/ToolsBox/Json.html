@@ -12,45 +12,38 @@
             padding: 30px;
         }
 
-        textarea {
-            width: 100% !important;
-            min-height: 40px !important;
+        .ng-cloak {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div ng-app="app" ng-controller="controller">
-        <textarea class="highlight well form-control" style="height:300px;" ng-model="inputJson" placeholder="待验证的JSON..."></textarea>
-        <div class="modal fade" id="myModal" aria-hidden="true">
-            <div class="modal-dialog">
-                <figure class="highlight">
-                    <pre>
-<code class="language-html" data-lang="html" ng-bind-html="Html(inputJson.highLight())"></code>
-                    </pre>
-                </figure>
-            </div>
-        </div>
-        <div ng-cloak class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" role="alert">
+    <div style="margin-bottom:15px;"><textarea id="code" class="hidden" placeholder="待验证的JSON..."></textarea></div>
+    <div ng-cloak class="ng-cloak" ng-app="app" ng-controller="controller">
+        <div class="alert alert-danger alert-dismissible" ng-hide="IsNull(warning)" role="alert">
             <span ng-bind="warning"></span>
             <button type="button" class="close" ng-click="warning=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div ng-cloak class="alert alert-success alert-dismissible" ng-hide="IsNull(success)" role="alert">
+        <div class="alert alert-success alert-dismissible" ng-hide="IsNull(success)" role="alert">
             <span ng-bind="success"></span>
             <button type="button" class="close" ng-click="success=''" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <button class="btn btn-default" ng-click="CheckJson()">生成JSON</button>
         <button class="btn btn-default" ng-click="Trim()">去除空格</button>
-        <button class="btn btn-default" data-toggle="modal" data-target="#myModal">显示着色代码</button>
     </div>
+    <script type="text/javascript" src="/Scripts/CodeMirrorInstance.js"></script>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
+        var CodeEditor = Mirror('code', 'javascript');
+        $('.CodeMirror').height(window.screen.availHeight - 320);
+
         Angular(function ($scope, factory) {
             $scope.IsNull = factory.IsNull;
             $scope.Html = factory.Html;
 
             $scope.CheckJson = function () {
                 $scope.warning = $scope.success = "";
-                var text = $scope.inputJson;
+                var text = CodeEditor.getValue();
                 try {
                     text = JSON.stringify(JSON.parse(text), null, 4);
                 }
@@ -59,18 +52,12 @@
                     return;
                 }
                 $scope.success = "Json格式正确。";
-                $scope.inputJson = text;
+                CodeEditor.setValue(text);
             }
             $scope.Trim = function () {
-                $scope.inputJson = $scope.inputJson.replace(/\s+/g, "");
+                CodeEditor.setValue(CodeEditor.getValue().replace(/\s+/g, ""));
             }
         });
-
-        String.prototype.highLight = function () {
-            return this.replace(new RegExp('([{]\[\]])', 'g'), '<span class="nt">$1</span>')
-                .replace(new RegExp('(\"[a-zA-Z0-9]*\":)', 'g'), '<span class="nt">$1</span>')
-                .replace(new RegExp('(true|false|[0-9]{1,})', 'g'), '<span class="s">$1</span>');
-        }
     </script>
 </body>
 </html>
