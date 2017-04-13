@@ -48,7 +48,7 @@
                     text = JSON.stringify(JSON.parse(text), null, 4);
                 }
                 catch (e) {
-                    $scope.warning = "Json格式错误。";
+                    $scope.warning = "Json格式错误。" + e.message.replace("JSON.parse:", "");
                     return;
                 }
                 $scope.success = "Json格式正确。";
