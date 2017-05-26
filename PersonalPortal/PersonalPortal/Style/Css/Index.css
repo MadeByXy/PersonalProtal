@@ -1,7 +1,18 @@
 ﻿body {
+    background: url('/Images/bg.png') 0 0 repeat #dedede;
+    /*background-color: #f7fafc;*/
+}
+
+.main {
     width: 80%;
     margin: auto;
-    background: url('/Images/bg.png') 0 0 repeat #dedede;
+    opacity: 0.9;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    z-index: -1;
 }
 
 iframe {
@@ -21,6 +32,7 @@ iframe {
 
 .navbar-brand:hover, .dropdown:hover {
     box-shadow: 0px 1px 3px #999;
+    border-radius: 4px;
 }
 
 .toTop {

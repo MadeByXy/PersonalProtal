@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/Style/Css/Index.css" />
 </head>
-<body>
-    <div ng-app="app" ng-controller="controller">
+<body id="particles-js">
+    <div class="main" ng-app="app" ng-controller="controller">
         <nav ng-cloak class="navbar navbar-default ng-cloak shadow" style="border-radius:0 0 4px 4px;">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -48,6 +48,9 @@
         <div class="navbar-fixed-bottom toTop"><a data-toggle="tooltip" data-placement="left" title="返回顶部" class="glyphicon glyphicon-chevron-up visible-lg" href="#top"></a></div>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript" src="/Scripts/particles/particles.js"></script>
+    <script type="text/javascript" src="/Scripts/particles/lib/stats.js"></script>
+    <script type="text/javascript" src="/Scripts/particles/app.js"></script>
     <script>
         //动态调整框架高度
         $(document).ready(function () {
@@ -61,6 +64,8 @@
                         $(".toTop").hide();
                     }
                     frame.scrolling = "no";
+
+                    Frame.document.onmousemove = mouseMove;
                 } catch (e) {
                     //跨域
                     frame.height = window.innerHeight - 110;

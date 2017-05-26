@@ -268,6 +268,9 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\src\jquery.rss.js" />
     <Content Include="Scripts\AngularInstance.js" />
     <Content Include="Scripts\JQuery3-1-1.js" />
+    <Content Include="Scripts\particles\app.js" />
+    <Content Include="Scripts\particles\lib\stats.js" />
+    <Content Include="Scripts\particles\particles.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />

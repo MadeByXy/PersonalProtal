@@ -9,91 +9,101 @@
     <link rel="stylesheet" href="/Style/Css/HelloWorld.css" />
 </head>
 <body>
-    <div ng-cloak ng-app="app" ng-controller="controller" class="jumbotron main ng-cloak">
-        <div class="weather">
-            <img ng-src="{{weatherIcon}}" />
-            <div style="padding-top:20px;">
-                <p ng-bind="temperature"></p>
-                <p ng-bind="weather"></p>
-                <p ng-bind="wind"></p>
+    <div ng-cloak ng-app="app" ng-controller="controller">
+        <div class="jumbotron main ng-cloak">
+            <div class="weather">
+                <img ng-src="{{weatherIcon}}" />
+                <div style="padding-top:20px;">
+                    <p ng-bind="temperature"></p>
+                    <p ng-bind="weather"></p>
+                    <p ng-bind="wind"></p>
+                </div>
+                <div>
+                    <p><span ng-bind="time"></span>(实时:<span ng-bind="currentTemp"></span>℃)</p>
+                    <p ng-bind="city"></p>
+                </div>
             </div>
-            <div>
-                <p><span ng-bind="time"></span>(实时:<span ng-bind="currentTemp"></span>℃)</p>
-                <p ng-bind="city"></p>
+            <div class="logo visible-lg visible-md">
+                <img src="/Images/logo.png" />
             </div>
-        </div>
-        <div class="logo visible-lg visible-md">
-            <img src="/Images/logo.png" />
-        </div>
-        <div class="nav navbar-nav navbar-left content">
-            <div class="shortCut" ng-repeat="item in ShortCutList" ng-mouseenter="SetValue('hover_', true, $index)" ng-mouseleave="SetValue('hover_', false, $index)">
-                <!--添加Button-->
-                <button ng-cloak class="mainButton ng-cloak" ng-show="IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal" data-target="#myModal">
-                    <span class="glyphicon glyphicon-plus icon"></span>
-                </button>
-                <!--链接Button-->
-                <button ng-cloak class="mainButton ng-cloak" ng-hide="IsNull(item.ShortCutUrl)" ng-click="Goto(item.ShortCutUrl)" ng-style="style_{{$index}}">
-                    <span class="bigSize" ng-bind="GetName(item.ShortCutUrl, $index)"></span>
-                </button>
-                <p ng-bind="item.ShortCutName" ng-click="Goto(item.ShortCutUrl)"></p>
-                <!--修改Button-->
-                <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal"
-                        data-target="#myModal" class="float left ng-cloak glyphicon glyphicon-pencil"></button>
-                <!--删除Button-->
-                <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="Delete($index)"
-                        class="float right ng-cloak glyphicon glyphicon-remove closeButton"></button>
+            <div class="nav navbar-nav navbar-left content">
+                <div class="shortCut" ng-repeat="item in ShortCutList" ng-mouseenter="SetValue('hover_', true, $index)" ng-mouseleave="SetValue('hover_', false, $index)">
+                    <!--添加Button-->
+                    <button ng-cloak class="mainButton ng-cloak" ng-show="IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal" data-target="#myModal">
+                        <span class="glyphicon glyphicon-plus icon"></span>
+                    </button>
+                    <!--链接Button-->
+                    <button ng-cloak class="mainButton ng-cloak" ng-hide="IsNull(item.ShortCutUrl)" ng-click="Goto(item.ShortCutUrl)" ng-style="style_{{$index}}">
+                        <span class="bigSize" ng-bind="GetName(item.ShortCutUrl, $index)"></span>
+                    </button>
+                    <p ng-bind="item.ShortCutName" ng-click="Goto(item.ShortCutUrl)"></p>
+                    <!--修改Button-->
+                    <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="SetModel($index)" data-toggle="modal"
+                            data-target="#myModal" class="float left ng-cloak glyphicon glyphicon-pencil"></button>
+                    <!--删除Button-->
+                    <button ng-cloak ng-show="hover_{{$index}} && !IsNull(item.ShortCutUrl)" ng-click="Delete($index)"
+                            class="float right ng-cloak glyphicon glyphicon-remove closeButton"></button>
+                </div>
             </div>
-        </div>
-        <!--模态框-->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document" style="margin-top:180px;">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-name">网站名称</span>
-                            <input type="text" ng-model="inputName" class="form-control" aria-describedby="basic-name">
+            <!--模态框-->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document" style="margin-top:180px;">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-name">网站名称</span>
+                                <input type="text" ng-model="inputName" class="form-control" aria-describedby="basic-name">
+                            </div>
+                            <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning1 && IsNull(inputName)" role="alert">
+                                <span>网站名称不能为空哦~</span>
+                                <button type="button" class="close" ng-click="ShowWarning1 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <br />
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-url">网站地址</span>
+                                <input type="text" ng-model="inputUrl" class="form-control" aria-describedby="basic-url">
+                            </div>
+                            <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning2 && IsNull(inputUrl)" role="alert">
+                                <span>网站地址不能为空哦~</span>
+                                <button type="button" class="close" ng-click="ShowWarning2 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
                         </div>
-                        <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning1 && IsNull(inputName)" role="alert">
-                            <span>网站名称不能为空哦~</span>
-                            <button type="button" class="close" ng-click="ShowWarning1 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <div class="modal-footer">
+                            <button id="modelClose" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" ng-click="Save()">保存</button>
                         </div>
-                        <br />
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-url">网站地址</span>
-                            <input type="text" ng-model="inputUrl" class="form-control" aria-describedby="basic-url">
-                        </div>
-                        <div ng-cloak class="alert alert-danger alert-dismissible hint ng-cloak" ng-show="ShowWarning2 && IsNull(inputUrl)" role="alert">
-                            <span>网站地址不能为空哦~</span>
-                            <button type="button" class="close" ng-click="ShowWarning2 = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="modelClose" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary" ng-click="Save()">保存</button>
                     </div>
                 </div>
             </div>
         </div>
+        <footer class="bs-docs-footer content" style="padding-top: 30px; padding-bottom: 10px;">
+            <div class="container" style="width: 90%;">
+                <p style="margin-bottom: 10px;">本网站为肖禹个人网站，感谢以下开源项目：</p>
+                <ul class="bs-docs-footer-links">
+                    <li ng-repeat="item in ThanksList">
+                        <a ng-href="{{item.Url}}" target="_blank" ng-bind="item.Name"></a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
     </div>
-    <footer class="bs-docs-footer content" style="padding-top: 30px; padding-bottom: 10px;">
-        <div class="container" style="width: 90%;">
-            <p style="margin-bottom: 10px;">本网站为肖禹个人网站，感谢以下开源项目：</p>
-            <ul class="bs-docs-footer-links">
-                <li><a href="https://github.com/twbs/bootstrap" target="_blank">Bootstrap</a></li>
-                <li><a href="https://github.com/angular/angular.js" target="_blank">AngularJS</a></li>
-                <li><a href="http://themes.3rdwavemedia.com/website-templates/free-responsive-website-template-for-developers/" target="_blank">Developer</a></li>
-                <li><a href="https://github.com/beautify-web/js-beautify/" target="_blank">js-beautify</a></li>
-                <li><a href="https://github.com/codemirror/codemirror/" target="_blank">CodeMirror</a></li>
-            </ul>
-        </div>
-    </footer>
     <script type="text/javascript" src="http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js"></script>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script>
         Angular(function ($scope, $interval, factory) {
             var colorLibrary = ['#3b5999', '#0084ff', '#55acee', '#0077B5', '#00AFF0', '#007ee5', '#21759b', '#1ab7ea', '#0077b5', '#4c75a3', '#34465d', '#410093', '#dd4b39', '#bd081c', '#cd201f', '#eb4924', '#ff5700', '#b92b27', '#af0606', '#df2029', '#da552f', '#ff6600', '#ff3300', '#f57d00', '#25D366', '#da552f', '#df2029', '#02b875', '#00b489', '#3aaf85', '#e4405f', '#ea4c89', '#ff0084', '#f94877', '#131418', '#FFFC00'];
             $scope.Scale = 4.0;
+
+            $scope.ThanksList = [
+                { "Name": "Bootstrap", "Url": "https://github.com/twbs/bootstrap" },
+                { "Name": "AngularJS", "Url": "https://github.com/angular/angular.js" },
+                { "Name": "Developer", "Url": "http://themes.3rdwavemedia.com/website-templates/free-responsive-website-template-for-developers" },
+                { "Name": "js-beautify", "Url": "https://github.com/beautify-web/js-beautify" },
+                { "Name": "CodeMirror", "Url": "https://github.com/codemirror/codemirror" },
+                { "Name": "particles.js", "Url": "https://github.com/VincentGarreau/particles.js" },
+                { "Name": "RequireJS", "Url": "https://github.com/requirejs/requirejs" },
+            ];
 
             $scope.GetShortCut = function (refresh) {
                 var size = 8;
@@ -171,22 +181,26 @@
                 return '';
             }
 
-            $scope.city = remote_ip_info.city;
-            factory.Query('https://free-api.heweather.com/v5/weather?key=b8572b0c0502416996c8bbe7613233e9&city=' + remote_ip_info.city).then(function (data) {
-                var weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-                var date = new Date();
-                $scope.time = weekday[date.getDay()] + ' ' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
+            try {
+                $scope.city = remote_ip_info.city;
+                factory.Query('https://free-api.heweather.com/v5/weather?key=b8572b0c0502416996c8bbe7613233e9&city=' + remote_ip_info.city).then(function (data) {
+                    var weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+                    var date = new Date();
+                    $scope.time = weekday[date.getDay()] + ' ' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
 
-                data = data.HeWeather5[0];
-                var now = data.now;
-                var today = data.daily_forecast[0];
-                var number = /[0-9]/g;
-                $scope.currentTemp = now.tmp;
-                $scope.wind = now.wind.dir + ' ' + now.wind.sc + (number.test(now.wind.sc) ? '级' : '');
-                $scope.weather = now.cond.txt;
-                $scope.weatherIcon = '/Images/weather/' + now.cond.code + '.png';
-                $scope.temperature = today.tmp.min + '~' + today.tmp.max + '℃';
-            });
+                    data = data.HeWeather5[0];
+                    var now = data.now;
+                    var today = data.daily_forecast[0];
+                    var number = /[0-9]/g;
+                    $scope.currentTemp = now.tmp;
+                    $scope.wind = now.wind.dir + ' ' + now.wind.sc + (number.test(now.wind.sc) ? '级' : '');
+                    $scope.weather = now.cond.txt;
+                    $scope.weatherIcon = '/Images/weather/' + now.cond.code + '.png';
+                    $scope.temperature = today.tmp.min + '~' + today.tmp.max + '℃';
+                });
+            } catch (e) {
+                $('.weather').css('visibility', 'hidden');
+            }
 
             $scope.GetNumber = function (name) {
                 var number = 0;
