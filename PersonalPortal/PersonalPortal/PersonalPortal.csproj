@@ -47,8 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
       <HintPath>Plugins\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -216,6 +215,7 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\package.json" />
     <Content Include="Scripts\Developer\Plugins\jquery-rss\README.md" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\docs.min.css.map" />
+    <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -271,7 +271,7 @@
     <Content Include="Scripts\particles\app.js" />
     <Content Include="Scripts\particles\lib\stats.js" />
     <Content Include="Scripts\particles\particles.js" />
-    <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\Require.js" />
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
     <Content Include="Views\HelloWorld.html" />
