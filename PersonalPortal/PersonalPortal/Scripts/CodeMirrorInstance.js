@@ -1,30 +1,32 @@
-﻿document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/lib/codemirror.css' />");
-document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/fold/foldgutter.css' />");
-document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/theme/mdn-like.css' />");
-document.write("<link rel='stylesheet' href='/Scripts/CodeMirror/lint/lint.css' />");
-
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lib/codemirror.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lib/matchbrackets.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lib/active-line.js'></script>");
-
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/fold/foldcode.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/fold/foldgutter.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/fold/brace-fold.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/fold/xml-fold.js'></script>");
-
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lint/lint.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lint/json-lint.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lint/css-lint.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lint/html-lint.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/lint/javascript-lint.js'></script>");
-
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/clike.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/css.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/htmlmixed.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/javascript.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/lua.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/python.js'></script>");
-document.write("<script type='text/javascript' src='/Scripts/CodeMirror/language/xml.js'></script>");
+﻿var loader = {
+    Css: [{
+        baseUrl: "/Scripts/CodeMirror/",
+        scripts: ["lib/codemirror", "fold/foldgutter", "theme/mdn-like", "lint/lint"]
+    }],
+    Js: [{
+        baseUrl: "/Scripts/CodeMirror/lib/",
+        scripts: ["codemirror", "matchbrackets", "active-line"]
+    }, {
+        baseUrl: "/Scripts/CodeMirror/fold/",
+        scripts: ["foldcode", "foldgutter", "brace-fold", "xml-fold"]
+    }, {
+        baseUrl: "/Scripts/CodeMirror/lint/",
+        scripts: ["lint", "json-lint", "css-lint", "html-lint", "javascript-lint"]
+    }, {
+        baseUrl: "/Scripts/CodeMirror/language/",
+        scripts: ["clike", "css", "htmlmixed", "javascript", "lua", "python", "xml"]
+    }]
+}
+for (var i = 0; i < loader.Css.length; i++) {
+    for (var ii = 0; ii < loader.Css[i].scripts.length; ii++) {
+        document.write("<link rel='stylesheet' href='" + loader.Css[i].baseUrl + loader.Css[i].scripts[ii] + ".css' />");
+    }
+}
+for (var i = 0; i < loader.Js.length; i++) {
+    for (var ii = 0; ii < loader.Js[i].scripts.length; ii++) {
+        document.write("<script type='text/javascript' src='" + loader.Js[i].baseUrl + loader.Js[i].scripts[ii] + ".js'></script>");
+    }
+}
 
 var Mirror = function (id, language) {
     var editor = CodeMirror.fromTextArea(document.getElementById(id), {
