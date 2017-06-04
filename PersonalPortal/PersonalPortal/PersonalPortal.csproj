@@ -271,7 +271,6 @@
     <Content Include="Scripts\particles\app.js" />
     <Content Include="Scripts\particles\lib\stats.js" />
     <Content Include="Scripts\particles\particles.js" />
-    <Content Include="Scripts\Require.js" />
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
     <Content Include="Views\HelloWorld.html" />
