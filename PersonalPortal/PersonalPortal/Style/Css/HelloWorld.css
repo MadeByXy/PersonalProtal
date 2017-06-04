@@ -108,6 +108,10 @@
 
 .weather {
     color: black;
+    cursor: default;
+    -moz-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
     .weather * {
