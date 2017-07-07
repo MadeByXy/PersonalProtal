@@ -1,5 +1,7 @@
 ﻿Spider = {
-    Url = 'https://www.zhihu.com/search?type=content&q=',
+    Url = 'https://www.zhihu.com/r/search?q={keyWord}&correction=0&type=content&offset={page}',
     KeyWord = { ".net" },
-    Regex = { "<a target=\"_blank\" href=\"([^\"]*)\" class=\"js-title-link\">" }
+    CurrentPage = 0,
+    Regex = { '<a target="_blank" href="([^"]*)" class="js-title-link">', '"next":"([^"]*)"' },
+    Type = "json"
 }

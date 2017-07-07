@@ -1,4 +1,5 @@
 ﻿using Neo.IronLua;
+using PersonalPortal.Content.Library;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace PersonalPortal.Content
     public class Spider
     {
         private string LuaName { get; set; }
+
         public Spider(string luaName)
         {
             LuaName = luaName;
@@ -28,13 +30,22 @@ namespace PersonalPortal.Content
                     var spider = global.Spider;
                     foreach (var keyWord in spider.KeyWord)
                     {
-                        string html = Network.GetHtml(spider.Url + keyWord, null);
-                        foreach (var regex in spider.Regex)
+                        while (true)
                         {
-                            foreach (Match match in Regex.Matches(html, regex.Value))
+                            //遍历关键字
+                            Uri url = new Uri(spider.Url.ToString().Replace("{keyWord}", keyWord).Replace("{page}", spider.CurrentPage));
+
+                            string html = Network.GetHtml(url.ToString(), null);
+
+                            spider.DataProcessing(html);
+
+                            foreach (var item in spider.Results)
                             {
-                                var temp = match.Groups[0].Value;
+                                DataBase.ExecuteSql("insert into Spider (spiderUrl, spiderTitle, spiderData, spiderDate) values ('{0}', '{1}', '{2}', date())",
+                                    item.SpiderUrl, item.SpiderTitle, item.SpiderData);
                             }
+
+                            if (!spider.Continue) { break; }
                         }
                     }
                 }
