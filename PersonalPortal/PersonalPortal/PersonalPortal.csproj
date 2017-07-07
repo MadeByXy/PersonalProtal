@@ -47,6 +47,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Neo.Lua">
+      <HintPath>Plugins\Neo.Lua.dll</HintPath>
+    </Reference>
+    <Reference Include="Neo.Lua.Desktop">
+      <HintPath>Plugins\Neo.Lua.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Plugins\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -216,6 +222,8 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\README.md" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\docs.min.css.map" />
     <Content Include="packages.config" />
+    <Content Include="Lua\Spider.lua" />
+    <Content Include="Lua\Spider\zhihu.lua" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -291,9 +299,11 @@
     <Compile Include="Content\ApiLimit.cs" />
     <Compile Include="Content\DataCheck.cs" />
     <Compile Include="Content\DataConversion.cs" />
+    <Compile Include="Content\Extands.cs" />
     <Compile Include="Content\Library\DataBase.cs" />
     <Compile Include="Content\LogControl.cs" />
     <Compile Include="Content\Network.cs" />
+    <Compile Include="Content\Spider.cs" />
     <Compile Include="Controllers\DynamicProgramming.cs" />
     <Compile Include="Controllers\Index.cs" />
     <Compile Include="Controller.ashx.cs">
@@ -302,6 +312,7 @@
     <Compile Include="Controllers\PersonalData.cs" />
     <Compile Include="Controllers\Project.cs" />
     <Compile Include="Controllers\Sort.cs" />
+    <Compile Include="Controllers\Spider.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
@@ -309,6 +320,7 @@
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
     <Compile Include="Models\ResultModels\ProjectModel.cs" />
     <Compile Include="Models\ResultModels\ShortCutModel.cs" />
+    <Compile Include="Models\ResultModels\SpiderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
