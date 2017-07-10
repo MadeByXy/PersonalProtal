@@ -55,3 +55,23 @@ iframe {
         .toTop a:hover {
             background-color: #eee;
         }
+
+.Suggestion {
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    border-radius: 4px;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+    .Suggestion ul {
+        cursor: pointer;
+        margin: 0;
+        padding: 5px 20px;
+    }
+
+        .Suggestion ul:hover {
+            background-color: #eee;
+        }

@@ -28,7 +28,12 @@
                         </li>
                     </ul>
                     <div class="row col-lg-6 input-group" style="padding:7px 15px;">
-                        <input type="text" class="form-control" ng-model="searchText" ng-keypress="Search($event)" placeholder="搜索">
+                        <div style="position: inherit;">
+                            <input type="text" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keypress="Search($event)" placeholder="搜索">
+                            <div class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems)&&SuggestionItems.length != 0">
+                                <ul ng-repeat="item in SuggestionItems | limitTo : 5" ng-click="SetValue('searchText', item);SetValue('SuggestionItems',[]);" ng-bind="item"></ul>
+                            </div>
+                        </div>
                         <div class="input-group-btn">
                             <a id="search" class="btn btn-default" ng-click="Search()" ng-bind="SearchInfo[searchIndex].name"></a>
                             <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -77,18 +82,34 @@
             setInterval('iframeResize()', 10);
         });
 
+        function transfer(text) {
+            return text;
+        }
+
         Angular(function ($scope, factory) {
             $scope.SearchInfo = [{ "name": "百度搜索", "value": "https://www.baidu.com/s?wd=" }, { "name": "必应搜索", "value": "http://cn.bing.com/search?q=" }, { "name": "百度地图", "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D" }, { "name": "高德地图", "value": "http://ditu.amap.com/search?query=" }];
             $scope.Navigation = [{ "LinkName": "个人资料", "LinkUrl": "/Views/Resume.html", "Navigation": [] }, { "LinkName": "个人作品集", "LinkUrl": "/Views/Portfolio.html", "Navigation": [] }, { "LinkName": "个人工具箱", "LinkUrl": "#", "Navigation": [{ "LinkName": "Json验证及格式化", "LinkUrl": "/Views/ToolsBox/Json.html", "Navigation": [] }, { "LinkName": "数据加密解密", "LinkUrl": "/Views/ToolsBox/Encryption.html", "Navigation": [] }, { "LinkName": "正则表达式测试", "LinkUrl": "/Views/ToolsBox/Regexp.html", "Navigation": [] }, { "LinkName": "HTML/CSS美化", "LinkUrl": "/Views/ToolsBox/CodeBeautify.html", "Navigation": [] }] }];
             $scope.searchIndex = 0;
+            $scope.IsNull = factory.IsNull;
 
             $scope.SetValue = function (key, value) {
                 $scope[key] = value;
             }
 
             $scope.Search = function (event) {
+                $scope.SuggestionItems = [];
                 if (event == null || event.keyCode == 13) {
                     Frame.location = $scope.SearchInfo[$scope.searchIndex].value + encodeURIComponent($scope.searchText);
+                }
+            }
+
+            $scope.Suggestion = function () {
+                if (!$scope.IsNull($scope.searchText)) {
+                    factory.Query('Controller/Index/DelegateQuery?url=http%3A%2F%2Fsuggestion.baidu.com%2Fsu%3Fjson%3D0%26cb%3Dtransfer%26wd%3D' + $scope.searchText, true, false).then(function (data) {
+                        console.log(eval(data.Result).s)
+                        $scope.SuggestionItems = eval(data.Result).s;
+                        console.log($scope.SuggestionItems);
+                    });
                 }
             }
         });
