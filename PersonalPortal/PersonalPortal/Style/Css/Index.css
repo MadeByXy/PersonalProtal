@@ -66,12 +66,21 @@ iframe {
     padding: 10px;
 }
 
-    .Suggestion ul {
+    .Suggestion li {
         cursor: pointer;
         margin: 0;
         padding: 5px 20px;
+        display: block;
     }
 
-        .Suggestion ul:hover {
-            background-color: #eee;
-        }
+    .Suggestion .active {
+        background-color: #eee;
+    }
+
+.Switch {
+    display: table;
+    float: right;
+    padding: 7px 15px;
+    position: relative;
+    left: 20px;
+}
