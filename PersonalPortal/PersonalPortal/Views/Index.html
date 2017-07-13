@@ -28,7 +28,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <div class="row col-lg-6 input-group" style="padding:7px 15px;">
+                    <div class="row col-lg-6 input-group" style="margin:7px 15px;">
                         <div style="position: inherit;">
                             <input type="text" ng-blur="SetValueByTimeout('SuggestionItems',[])" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keypress="Search($event)" placeholder="搜索">
                             <ul class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems)&&SuggestionItems.length != 0">
