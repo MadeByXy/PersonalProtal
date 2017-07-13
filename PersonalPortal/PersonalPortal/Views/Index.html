@@ -89,14 +89,22 @@
             setInterval('iframeResize()', 10);
         });
 
-        $('input[type="checkbox"]').bootstrapSwitch({ 'state': true });
-
-        $('input[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
-            if (state) {
-                $('.particles-js-canvas-el').show();
+        $.get('Controller/Index/GetBackGround', function (data) {
+            if (data.Result == "true") {
+                $('input[type="checkbox"]').bootstrapSwitch({ 'state': data.Result });
             } else {
+                $('input[type="checkbox"]').bootstrapSwitch(false);
                 $('.particles-js-canvas-el').hide();
             }
+
+            $('input[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                if (state) {
+                    $('.particles-js-canvas-el').show();
+                } else {
+                    $('.particles-js-canvas-el').hide();
+                }
+                $.get('Controller/Index/SetBackGround?on=' + state);
+            });
         });
 
         function transfer(text) {

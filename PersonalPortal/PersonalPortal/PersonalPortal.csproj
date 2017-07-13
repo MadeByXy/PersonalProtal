@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <IncludeIisSettings>true</IncludeIisSettings>
     <IncludeAppPool>true</IncludeAppPool>
   </PropertyGroup>
@@ -66,6 +66,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="XYZZ.Library, Version=1.0.0.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Plugins\XYZZ.Library.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\PersonalPortal.accdb" />
@@ -124,6 +128,8 @@
     <Content Include="Images\weather\900.png" />
     <Content Include="Images\weather\901.png" />
     <Content Include="Images\weather\999.png" />
+    <Content Include="Plugins\System.Data.SQLite.DLL" />
+    <Content Include="Plugins\XYZZ.Library.dll" />
     <Content Include="Scripts\AngularJs1.4.6.js" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
@@ -302,7 +308,6 @@
     <Compile Include="Content\DataCheck.cs" />
     <Compile Include="Content\DataConversion.cs" />
     <Compile Include="Content\Extands.cs" />
-    <Compile Include="Content\Library\DataBase.cs" />
     <Compile Include="Content\LogControl.cs" />
     <Compile Include="Content\Network.cs" />
     <Compile Include="Content\Spider.cs" />
