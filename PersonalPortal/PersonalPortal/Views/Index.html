@@ -36,7 +36,7 @@
                             </ul>
                         </div>
                         <div class="input-group-btn">
-                            <a id="search" class="btn btn-default" ng-click="Search()" ng-bind="SearchInfo[searchIndex].name"></a>
+                            <a id="search" class="btn btn-default" ng-click="Search($event)" ng-bind="SearchInfo[searchIndex].name"></a>
                             <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span>&zwnj;
                             </button>
@@ -189,6 +189,7 @@
                         }
                         return;
                     case 13: //Enter
+                    case undefined:  //鼠标点击事件
                         $scope.SuggestionItems = [];
                         Frame.location = $scope.SearchInfo[$scope.searchIndex].value + encodeURIComponent($scope.searchText);
                         return;
