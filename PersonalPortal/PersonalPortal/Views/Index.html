@@ -29,9 +29,9 @@
                         </li>
                     </ul>
                     <div class="row col-lg-6 input-group" style="margin:7px 15px;">
-                        <div style="position: inherit;">
-                            <input type="text" ng-blur="SetValueByTimeout('SuggestionItems',[])" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keypress="Search($event)" placeholder="搜索">
-                            <ul class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems)&&SuggestionItems.length != 0">
+                        <div style="position: inherit;" ng-mouseleave="SetValue('SuggestionItems', null)">
+                            <input type="text" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keydown="Search($event)" placeholder="搜索">
+                            <ul class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems) && SuggestionItems.length != 0">
                                 <li ng-class="{true:'active'}[SuggestionIndex == $index]" ng-mousemove="SetValue('SuggestionIndex', $index)" ng-repeat="item in SuggestionItems" ng-click="SetValue('searchText', item);" ng-bind="item"></li>
                             </ul>
                         </div>
@@ -113,11 +113,11 @@
 
         Angular(function ($scope, factory) {
             $scope.SearchInfo = [{
-                "name": "百度搜索",
-                "value": "https://www.baidu.com/s?wd="
-            }, {
                 "name": "必应搜索",
                 "value": "http://cn.bing.com/search?q="
+            }, {
+                "name": "百度搜索",
+                "value": "https://www.baidu.com/s?wd="
             }, {
                 "name": "百度地图",
                 "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D"
@@ -161,17 +161,10 @@
                 $scope[key] = value;
             }
 
-            $scope.SetValueByTimeout = function (key, value) {
-                //用于降低blur的优先级
-                setTimeout(function () {
-                    $scope[key] = value;
-                }, 1);
-            }
-
             $scope.Search = function (event) {
                 switch (event.keyCode) {
                     case 38: //向上
-                        if ($scope.SuggestionItems.length != 0) {
+                        if ($scope.SuggestionItems && $scope.SuggestionItems.length != 0) {
                             $scope.SuggestionIndex--;
                             if ($scope.SuggestionIndex < 0) {
                                 $scope.SuggestionIndex = $scope.SuggestionItems.length - 1;
@@ -180,7 +173,7 @@
                         }
                         return;
                     case 40: //向下
-                        if ($scope.SuggestionItems.length != 0) {
+                        if ($scope.SuggestionItems && $scope.SuggestionItems.length != 0) {
                             $scope.SuggestionIndex++;
                             if ($scope.SuggestionIndex >= $scope.SuggestionItems.length) {
                                 $scope.SuggestionIndex = 0;
