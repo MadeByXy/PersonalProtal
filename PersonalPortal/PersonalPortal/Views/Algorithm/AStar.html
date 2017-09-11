@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AStar算法</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap-slider.min.css" rel="stylesheet" />
+    <link href="/Style/Css/Algorithm/AStar.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="main" ng-app="app" ng-controller="controller">
+        <!--参数区-->
+        <div class="container_head">
+            <div class="item">
+                <span>地图大小:</span>
+                <input ng-model="position_x" type="number" />
+                <span>x</span>
+                <input ng-model="position_y" type="number" />
+            </div>
+            <div class="item">
+                <span>节点间隔:</span>
+                <input ng-model="Spacing" type="number" />
+            </div>
+            <div class="item">
+                <span>障碍比例:</span>
+                <input class="slider" data-slider-min="0" data-slider-max="30" data-slider-step="1" data-slider-value="10" />
+            </div>
+            <div class="item">
+                <button ng-click="CreateMap()">生成地图</button>
+            </div>
+            <div class="item">
+                <button ng-click="FindWay()">计算最短路径</button>
+            </div>
+        </div>
+        <!--效果区-->
+        <div class="container_content">
+            <canvas id="content" width="960" height="540"></canvas>
+        </div>
+        <!--可视化数据-->
+        <div class="container_bottom"></div>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript" src="/Scripts/CanvasHelper.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap-slider.min.js"></script>
+    <script type="text/javascript" src="/Scripts/A-Star.js"></script>
+    <script type="text/javascript">
+        var process = $("input.slider").slider();
+
+        Angular(function ($scope) {
+            var canvas = new Canvas('content');
+
+            $scope.Spacing = 2;
+            $scope.position_x = 16;
+            $scope.position_y = 9;
+
+            $scope.CreateMap = function () {
+                canvas.Clear();
+                canvas.size.spacing = $scope.Spacing;
+                canvas.AutoSize($scope.position_x, $scope.position_y);
+                var slider = parseInt(process[0].value);
+
+                $scope.Map = [];
+                $scope.ScoreMap = [];
+                for (var x = 0; x < $scope.position_x; x++) {
+                    $scope.Map[x] = [];
+                    $scope.ScoreMap[x] = [];
+                    for (var y = 0; y < $scope.position_y; y++) {
+
+                        var result;
+                        if (x == 0 && y == 0) {
+                            result = true;
+                            canvas.Text('起点', x, y);
+                        } else if (x == $scope.position_x - 1 && y == $scope.position_y - 1) {
+                            result = true;
+                            canvas.Text('终点', x, y);
+                        } else {
+                            result = parseInt(Math.random() * 100) > slider;  //是否为正常地形
+                        }
+
+                        $scope.Map[x][y] = result;
+
+                        canvas.context.fillStyle = result ? 'rgba(202, 202, 202, 0.5)' : '#666'
+                        canvas.Cube(x, y);
+                    }
+                }
+            }
+
+            //返回指定位置是否允许通过
+            $scope.IsAllow = function (x, y, special) {
+                return $scope.Map.length > x && $scope.Map[x].length > y && $scope.Map[x][y] && !special && (!(x == 0 && y == 0) || !(x == $scope.Map.length - 1 && y == $scope.Map[0].length - 1));
+            }
+
+            $scope.FindWay = function () {
+                if ($scope.IsAllow(0, 0)) {
+                    $scope.ScoreMap[x][y] = 0;
+                    $scope.NextWay(0, 0);
+                }
+
+                //绘制步数到画布上
+                for (var x = 0; x < $scope.ScoreMap.length; x++) {
+                    for (var y = 0; y < $scope.ScoreMap.length; y++) {
+                        if ($scope.IsAllow(x, y, true)) {
+                            canvas.Text($scope.ScoreMap[x][y], x, y);
+                        }
+                    }
+                }
+            }
+
+            $scope.NextWay = function (x, y) {
+                for (temp_x = -1; temp_x <= 1; temp_x++) {
+                    for (temp_y = -1; temp_y <= 1; temp_y++) {
+
+                    }
+                }
+                //A*计算  f(n) = g(n) + h(n)
+
+                //h(n) = h'(n, w1) + distance(w1, w2), h'(w2, goal)
+                //H(n) = D * (abs ( n.x – goal.x ) + abs ( n.y – goal.y ) )
+                //h(n) = D * max(abs(n.x - goal.x), abs(n.y - goal.y))
+            }
+        });
+    </script>
+</body>
+</html>

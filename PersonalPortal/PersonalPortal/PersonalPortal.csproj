@@ -130,7 +130,9 @@
     <Content Include="Images\weather\999.png" />
     <Content Include="Plugins\System.Data.SQLite.DLL" />
     <Content Include="Plugins\XYZZ.Library.dll" />
+    <Content Include="Scripts\A-Star.js" />
     <Content Include="Scripts\AngularJs1.4.6.js" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-slider.min.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap.css.map" />
@@ -140,6 +142,8 @@
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\js\bootstrap-slider.min.js" />
+    <Content Include="Scripts\CanvasHelper.js" />
     <Content Include="Scripts\code-beautify\beautify-css.js" />
     <Content Include="Scripts\code-beautify\beautify-html.js" />
     <Content Include="Scripts\code-beautify\beautify.js" />
@@ -287,8 +291,10 @@
     <Content Include="Scripts\particles\particles.js" />
     <Content Include="Scripts\switch-button\bootstrap-switch.css" />
     <Content Include="Scripts\switch-button\bootstrap-switch.js" />
+    <Content Include="Style\Css\Algorithm\AStar.css" />
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
+    <Content Include="Views\Algorithm\AStar.html" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />
     <Content Include="Views\Portfolio.html" />
