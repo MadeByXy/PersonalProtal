@@ -24,7 +24,7 @@
             </div>
             <div class="item">
                 <span>障碍比例:</span>
-                <input class="slider" data-slider-min="0" data-slider-max="30" data-slider-step="1" data-slider-value="10" />
+                <input class="slider" data-slider-min="0" data-slider-max="40" data-slider-step="1" data-slider-value="10" />
             </div>
             <div class="item">
                 <button ng-click="CreateMap()">生成地图</button>
@@ -47,7 +47,7 @@
     <script type="text/javascript">
         var process = $("input.slider").slider();
 
-        Angular(function ($scope) {
+        Angular(function ($scope, factory) {
             var canvas = new Canvas('content');
 
             $scope.Spacing = 2;
@@ -88,36 +88,38 @@
 
             //返回指定位置是否允许通过
             $scope.IsAllow = function (x, y, special) {
-                return $scope.Map.length > x && $scope.Map[x].length > y && $scope.Map[x][y] && !special && (!(x == 0 && y == 0) || !(x == $scope.Map.length - 1 && y == $scope.Map[0].length - 1));
+                return $scope.Map.length > x
+                    && $scope.Map[x]
+                    && $scope.Map[x].length > y
+                    && $scope.Map[x][y]
+                    && (!special || (!(x == 0 && y == 0) && !(x == $scope.Map.length - 1 && y == $scope.Map[0].length - 1)));
             }
 
             $scope.FindWay = function () {
-                if ($scope.IsAllow(0, 0)) {
-                    $scope.ScoreMap[x][y] = 0;
-                    $scope.NextWay(0, 0);
-                }
+                $scope.ScoreMap[0][0] = 0;
+                $scope.NextWay(0, 0, 1);
+            }
 
-                //绘制步数到画布上
-                for (var x = 0; x < $scope.ScoreMap.length; x++) {
-                    for (var y = 0; y < $scope.ScoreMap.length; y++) {
-                        if ($scope.IsAllow(x, y, true)) {
-                            canvas.Text($scope.ScoreMap[x][y], x, y);
+            $scope.NextWay = function (x, y, index) {
+                for (offset_x = -1; offset_x <= 1; offset_x++) {
+                    for (offset_y = -1; offset_y <= 1; offset_y++) {
+                        var temp_x = x + offset_x, temp_y = y + offset_y;
+
+                        if ($scope.IsAllow(temp_x, temp_y, false)) {
+                            //如果节点为空或者大于当前序号，修改节点值，并进行递归
+                            if (isNaN($scope.ScoreMap[temp_x][temp_y]) || $scope.ScoreMap[temp_x][temp_y] > index) {
+                                $scope.ScoreMap[temp_x][temp_y] = index;
+                                canvas.Text($scope.ScoreMap[temp_x][temp_y], temp_x, temp_y);
+
+                                setTimeout(function (temp_x, temp_y) {
+                                    return function () {
+                                        $scope.NextWay(temp_x, temp_y, index + 1);
+                                    }
+                                }(temp_x, temp_y), 10);
+                            }
                         }
                     }
                 }
-            }
-
-            $scope.NextWay = function (x, y) {
-                for (temp_x = -1; temp_x <= 1; temp_x++) {
-                    for (temp_y = -1; temp_y <= 1; temp_y++) {
-
-                    }
-                }
-                //A*计算  f(n) = g(n) + h(n)
-
-                //h(n) = h'(n, w1) + distance(w1, w2), h'(w2, goal)
-                //H(n) = D * (abs ( n.x – goal.x ) + abs ( n.y – goal.y ) )
-                //h(n) = D * max(abs(n.x - goal.x), abs(n.y - goal.y))
             }
         });
     </script>
