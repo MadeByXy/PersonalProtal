@@ -14,20 +14,20 @@
         <div class="container_head">
             <div class="item">
                 <span>地图大小:</span>
-                <input ng-model="position_x" type="number" />
+                <input ng-model="Data.Setting.MapSize.X" type="number" />
                 <span>x</span>
-                <input ng-model="position_y" type="number" />
+                <input ng-model="Data.Setting.MapSize.Y" type="number" />
             </div>
             <div class="item">
                 <span>节点间隔:</span>
-                <input ng-model="Spacing" type="number" />
+                <input ng-model="Data.Setting.Spacing" type="number" />
             </div>
             <div class="item">
                 <span>障碍比例:</span>
                 <input class="slider" data-slider-min="0" data-slider-max="40" data-slider-step="1" data-slider-value="20" />
             </div>
             <div class="item">
-                <input id="showWayNum" ng-model="showWayNum" type="checkbox" />
+                <input id="showWayNum" ng-model="Data.Setting.ShowWayNum" type="checkbox" />
                 <label for="showWayNum">是否显示步数</label>
             </div>
             <div class="item">
@@ -37,10 +37,14 @@
                 <button ng-click="FindWay()">计算最短路径</button>
             </div>
         </div>
-        <!--效果区-->
+        <!--画布区-->
         <div class="container_content">
+            <!--地图层-->
             <canvas id="content" width="1120" height="630"></canvas>
+            <!--文字层-->
             <canvas id="content_text" width="1120" height="630"></canvas>
+            <!--导线层-->
+            <canvas id="content_line" width="1120" height="630"></canvas>
         </div>
         <!--可视化数据-->
         <div class="container_bottom">
@@ -51,7 +55,7 @@
                         <span>开始时间：</span>
                     </div>
                     <div class="line">
-                        <span ng-bind="startTime_text"></span>
+                        <span ng-bind="Data.Result.DateText.StartTime"></span>
                     </div>
                 </li>
                 <li>
@@ -59,7 +63,7 @@
                         <span>结束时间：</span>
                     </div>
                     <div class="line">
-                        <span ng-bind="endTime_text"></span>
+                        <span ng-bind="Data.Result.DateText.EndTime"></span>
                     </div>
                 </li>
                 <li>
@@ -67,7 +71,7 @@
                         <span>共计用时：</span>
                     </div>
                     <div class="line">
-                        <span ng-bind="useTime_text"></span>
+                        <span ng-bind="Data.Result.DateText.UseTime"></span>
                     </div>
                 </li>
             </ul>
@@ -75,16 +79,24 @@
             <ul class="item">
                 <li>
                     <div class="line">
-                        <span>路程总长：</span>
+                        <span>路程步长：</span>
                     </div>
                     <div class="line">
-                        <span ng-show="LineArray.length > 0" ng-bind="LineArray.length - 1"></span>
+                        <span ng-show="Data.Result.LineArray.length > 0" ng-bind="Data.Result.LineArray.length - 1"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="line">
+                        <span>路程值长：</span>
+                    </div>
+                    <div class="line">
+                        <span ng-show="Data.Result.Weight != null" ng-bind="Data.Result.Weight"></span>
                     </div>
                 </li>
             </ul>
             <p>路程详情：</p>
             <ul class="item">
-                <li ng-cloak class="ng-cloak" ng-repeat="item in LineArray" ng-show="$index != 0">
+                <li ng-cloak class="ng-cloak" ng-repeat="item in Data.Result.LineArray" ng-show="$index != 0">
                     <div class="line">
                         <span>第</span>
                         <span ng-bind="$index"></span>
@@ -106,80 +118,102 @@
     <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap-slider.min.js"></script>
     <script type="text/javascript">
         Angular(function ($scope, factory) {
-            var process = $("input.slider").slider();
-            var canvas = new Canvas('content');
-            var textCanvas = new Canvas('content_text');
+            $scope.Data = {
+                Map: {
+                    CubeMap: [],
+                    ScoreMap: []
+                },
+                Setting: {
+                    Spacing: 2,
+                    MapSize: {
+                        X: 32,
+                        Y: 18
+                    },
+                    ShowWayNum: true,
+                },
+                Canvas: {
+                    CubeCanvas: new Canvas('content'),
+                    TextCanvas: new Canvas('content_text'),
+                    LineCanvas: new Canvas('content_line')
+                },
+                Slider: $("input.slider").slider(),
+                Result: {
+                    LineArray: [],
+                    Weight: null,
+                    Date: {
+                        StartTime: null,
+                        EndTime: null,
+                        UseTime: null
+                    },
+                    DateText: {
+                        StartTime: '',
+                        EndTime: '',
+                        UseTime: ''
+                    }
+                }
+            }
 
-            //默认参数设置区
-            $scope.Spacing = 2;
-            $scope.position_x = 32;
-            $scope.position_y = 18;
-            $scope.showWayNum = true;
-            $scope.LineArray = [];
+            $scope.DataBak = angular.copy($scope.Data);
 
             //重置画布
             $scope.Clear = function () {
-                $scope.LineArray = [];
-                $scope.Map = [];
-                $scope.ScoreMap = [];
-                $scope.startTime_text = '';
-                $scope.endTime_text = '';
-                $scope.useTime_text = '';
+                $.each(['Map', 'Result'], function (index, item) {
+                    $scope.Data[item] = angular.copy($scope.DataBak[item]);
+                })
 
-                canvas.Clear();
-                textCanvas.Clear();
-                canvas.size.spacing = textCanvas.size.spacing = $scope.Spacing;
-                canvas.AutoSize($scope.position_x, $scope.position_y);
-                textCanvas.AutoSize($scope.position_x, $scope.position_y);
+                $.each($scope.Data.Canvas, function (index, item) {
+                    item.Clear();
+                    item.size.spacing = $scope.Data.Setting.Spacing;
+                    item.AutoSize($scope.Data.Setting.MapSize.X, $scope.Data.Setting.MapSize.Y);
+                })
             }
 
             //生成地图
             $scope.CreateMap = function () {
                 $scope.Clear();
 
-                var slider = parseInt(process[0].value);
-                for (var x = 0; x < $scope.position_x; x++) {
-                    $scope.Map[x] = [];
-                    $scope.ScoreMap[x] = [];
-                    for (var y = 0; y < $scope.position_y; y++) {
-
+                var slider = parseInt($scope.Data.Slider[0].value);
+                for (var x = 0; x < $scope.Data.Setting.MapSize.X; x++) {
+                    $scope.Data.Map.CubeMap[x] = [];
+                    $scope.Data.Map.ScoreMap[x] = [];
+                    for (var y = 0; y < $scope.Data.Setting.MapSize.Y; y++) {
                         var result;
                         if (x == 0 && y == 0) {
                             result = true;
-                            textCanvas.Text('起点', x, y);
-                        } else if (x == $scope.position_x - 1 && y == $scope.position_y - 1) {
+                            $scope.Data.Canvas.TextCanvas.Text('起点', x, y);
+                        } else if (x == $scope.Data.Setting.MapSize.X - 1 && y == $scope.Data.Setting.MapSize.Y - 1) {
                             result = true;
-                            textCanvas.Text('终点', x, y);
+                            $scope.Data.Canvas.TextCanvas.Text('终点', x, y);
                         } else {
                             result = parseInt(Math.random() * 100) > slider; //是否为正常地形
                         }
+                        $scope.Data.Map.CubeMap[x][y] = result;
 
-                        $scope.Map[x][y] = result;
-
-                        canvas.context.fillStyle = result ? 'rgba(202, 202, 202, 0.5)' : '#666'
-                        canvas.Cube(x, y);
+                        $scope.Data.Canvas.CubeCanvas.context.fillStyle = result ? 'rgba(202, 202, 202, 0.5)' : '#666'
+                        $scope.Data.Canvas.CubeCanvas.Cube(x, y);
                     }
                 }
             }
 
             //返回指定位置是否允许通过
             $scope.IsAllow = function (x, y, special) {
-                return $scope.Map.length > x &&
-                    $scope.Map[x] &&
-                    $scope.Map[x].length > y &&
-                    $scope.Map[x][y] &&
-                    (!special || (!(x == 0 && y == 0) && !(x == $scope.Map.length - 1 && y == $scope.Map[0].length - 1)));
+                return $scope.Data.Map.CubeMap.length > x &&
+                    $scope.Data.Map.CubeMap[x] &&
+                    $scope.Data.Map.CubeMap[x].length > y &&
+                    $scope.Data.Map.CubeMap[x][y] &&
+                    (!special || (!(x == 0 && y == 0) && !(x == $scope.Data.Map.CubeMap.length - 1 && y == $scope.Data.Map.CubeMap[0].length - 1)));
             }
 
             //开始寻路算法
             $scope.FindWay = function () {
-                $scope.startTime = new Date();
-
-                $scope.ScoreMap[0][0] = 0;
-                $scope.NextWay(0, 0, 1, []);
+                //$scope.startTime = new Date();
+                //$scope.Data.Result.Weight = null;
+                $scope.Data.Map.ScoreMap[0][0] = 0;
+                $scope.Data.Result.Date.StartTime = new Date();
+                $scope.NextWay(0, 0, 1, 0, []);
             }
 
-            $scope.NextWay = function (x, y, index, lineInfo) {
+            $scope.NextWay = function (x, y, index, weigth, lineInfo) {
                 //添加当前位置
                 lineInfo[index - 1] = {
                     x: x,
@@ -189,31 +223,39 @@
                 for (offset_x = -1; offset_x <= 1; offset_x++) {
                     for (offset_y = -1; offset_y <= 1; offset_y++) {
                         var temp_x = x + offset_x,
-                            temp_y = y + offset_y;
+                            temp_y = y + offset_y,
+                            //增加斜向步长以保证更优先选择直线
+                            temp_weight = weigth + Math.min(1.5, Math.abs(offset_x) + Math.abs(offset_y));
 
                         if ($scope.IsAllow(temp_x, temp_y, false)) {
                             //如果节点为空或者大于当前序号，修改节点值，并进行递归
-                            if (isNaN($scope.ScoreMap[temp_x][temp_y]) || $scope.ScoreMap[temp_x][temp_y] > index) {
-                                $scope.ScoreMap[temp_x][temp_y] = index;
+                            if (isNaN($scope.Data.Map.ScoreMap[temp_x][temp_y]) || $scope.Data.Map.ScoreMap[temp_x][temp_y] > temp_weight) {
+                                $scope.Data.Map.ScoreMap[temp_x][temp_y] = temp_weight;
 
-                                if (temp_x == $scope.Map.length - 1 && temp_y == $scope.Map[0].length - 1) {
+                                if (temp_x == $scope.Data.Map.CubeMap.length - 1 && temp_y == $scope.Data.Map.CubeMap[0].length - 1) {
                                     //如果终点，开始绘制最短路线
                                     lineInfo[index] = {
                                         x: temp_x,
                                         y: temp_y
                                     };
-                                    $scope.Line(lineInfo);
+                                    $scope.Line(lineInfo, temp_weight);
                                     return;
                                 } else {
-                                    if ($scope.showWayNum) {
-                                        textCanvas.Text($scope.ScoreMap[temp_x][temp_y], temp_x, temp_y);
+                                    if ($scope.Data.Setting.ShowWayNum) {
+                                        $scope.Data.Canvas.TextCanvas.Text($scope.Data.Map.ScoreMap[temp_x][temp_y], temp_x, temp_y);
                                     }
+
                                     //递归设置下一节点
-                                    setTimeout(function (temp_x, temp_y) {
+                                    setTimeout(function (temp_x, temp_y, temp_weight) {
                                         return function () {
-                                            $scope.NextWay(temp_x, temp_y, index + 1, lineInfo.concat());
+                                            $scope.NextWay(
+                                                temp_x,
+                                                temp_y,
+                                                index + 1,
+                                                temp_weight,
+                                                lineInfo.concat());
                                         }
-                                    }(temp_x, temp_y), 10);
+                                    }(temp_x, temp_y, temp_weight), 1);
                                 }
                             }
                         }
@@ -222,28 +264,44 @@
             }
 
             //绘制结果线段
-            $scope.Line = function (lineInfo) {
+            $scope.Line = function (lineInfo, weight) {
                 $scope.LineArray = lineInfo;
-                textCanvas.LineArray(lineInfo, '#FF4500');
+                if ($scope.Data.Result.Weight != null && $scope.Data.Result.Weight <= weight) {
+                    //如果存在更优解，不进行绘制
+                    return;
+                }
 
-                $scope.endTime = new Date();
-                $scope.useTime = $scope.endTime - $scope.startTime;
+                $scope.Data.Result.Weight = weight;
+                $scope.Data.Canvas.LineCanvas.Clear();
+                $scope.Data.Canvas.LineCanvas.LineArray(lineInfo, '#FF4500');
 
-                $scope.startTime_text = $scope.FormatDate($scope.startTime, 'mm:ss:S');
-                $scope.endTime_text = $scope.FormatDate($scope.endTime, 'mm:ss:S');
-                $scope.useTime_text = $scope.FormatDate(new Date($scope.useTime), 'mm:ss:S');
+                $scope.Data.Result.Date.EndTime = new Date();
+                $scope.Data.Result.Date.UseTime = $scope.Data.Result.Date.EndTime - $scope.Data.Result.Date.StartTime;
+
+                $scope.Data.Result.DateText = {
+                    StartTime: $scope.FormatDate($scope.Data.Result.Date.StartTime, 'mm:ss:S'),
+                    EndTime: $scope.FormatDate($scope.Data.Result.Date.EndTime, 'mm:ss:S'),
+                    UseTime: $scope.FormatDate(new Date($scope.Data.Result.Date.UseTime), 'mm:ss:S')
+                }
+
+                //$scope.endTime = new Date();
+                //$scope.useTime = $scope.endTime - $scope.startTime;
+
+                //$scope.startTime_text = $scope.FormatDate($scope.startTime, 'mm:ss:S');
+                //$scope.endTime_text = $scope.FormatDate($scope.endTime, 'mm:ss:S');
+                //$scope.useTime_text = $scope.FormatDate(new Date($scope.useTime), 'mm:ss:S');
                 $scope.$apply();
             }
 
             $scope.FormatDate = function (date, fmt) {
                 var o = {
-                    "M+": date.getMonth() + 1,                 //月份
-                    "d+": date.getDate(),                    //日
-                    "h+": date.getHours(),                   //小时
-                    "m+": date.getMinutes(),                 //分
-                    "s+": date.getSeconds(),                 //秒
+                    "M+": date.getMonth() + 1,                   //月份
+                    "d+": date.getDate(),                        //日
+                    "h+": date.getHours(),                       //小时
+                    "m+": date.getMinutes(),                     //分
+                    "s+": date.getSeconds(),                     //秒
                     "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-                    "S": date.getMilliseconds()             //毫秒
+                    "S": date.getMilliseconds()                  //毫秒
                 };
                 if (/(y+)/.test(fmt))
                     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));

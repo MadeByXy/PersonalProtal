@@ -40,6 +40,13 @@
         this.context.textAlign = 'center';
         this.context.textBaseline = 'middle';
 
+        //添加文字前删除当前位置已有文字
+        this.context.clearRect(
+            this.x_center(index_x, false),
+            this.y_center(index_y, false),
+            this.size.width,
+            this.size.height);
+
         this.context.fillText(
             text,
             this.x_center(index_x, true),
