@@ -130,7 +130,6 @@
     <Content Include="Images\weather\999.png" />
     <Content Include="Plugins\System.Data.SQLite.DLL" />
     <Content Include="Plugins\XYZZ.Library.dll" />
-    <Content Include="Scripts\A-Star.js" />
     <Content Include="Scripts\AngularJs1.4.6.js" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-slider.min.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
