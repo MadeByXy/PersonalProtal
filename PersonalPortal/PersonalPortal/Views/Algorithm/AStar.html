@@ -23,6 +23,14 @@
                 <input ng-model="Data.Setting.Spacing" type="number" />
             </div>
             <div class="item">
+                <span>使用算法:</span>
+                <select>
+                    <option>Dijkstra</option>
+                    <option>BFS</option>
+                    <option>A*</option>
+                </select>
+            </div>
+            <div class="item">
                 <span>障碍比例:</span>
                 <input class="slider" data-slider-min="0" data-slider-max="40" data-slider-step="1" data-slider-value="20" />
             </div>
@@ -125,9 +133,14 @@
                 },
                 Setting: {
                     Spacing: 2,
+                    MinScale: 4,
                     MapSize: {
                         X: 32,
                         Y: 18
+                    },
+                    SearchSize: {
+                        X: 0,
+                        Y: 0
                     },
                     ShowWayNum: true,
                 },
@@ -168,6 +181,28 @@
                 })
             }
 
+            //根据位置重计算搜索面积
+            $scope.SetSearchSize = function (x, y) {
+                x = $scope.Data.Setting.MapSize.X - x;
+                y = $scope.Data.Setting.MapSize.Y - y;
+                if (x > y) {
+                    $scope.Data.Setting.SearchSize = {
+                        X: $scope.Data.Setting.MinScale,
+                        Y: parseInt(y * $scope.Data.Setting.MinScale / x + 0.5)
+                    }
+                } else if (x < y) {
+                    $scope.Data.Setting.SearchSize = {
+                        X: (x * $scope.Data.Setting.MinScale / y + 0.5),
+                        Y: $scope.Data.Setting.MinScale
+                    }
+                } else {
+                    $scope.Data.Setting.SearchSize = {
+                        X: $scope.Data.Setting.MinScale,
+                        Y: $scope.Data.Setting.MinScale
+                    }
+                }
+            }
+
             //生成地图
             $scope.CreateMap = function () {
                 $scope.Clear();
@@ -193,6 +228,9 @@
                         $scope.Data.Canvas.CubeCanvas.Cube(x, y);
                     }
                 }
+
+                $scope.Data.Map.ScoreMap[0][0] = 0;
+                $scope.DataBak.Map.ScoreMap = angular.copy($scope.Data.Map.ScoreMap);
             }
 
             //返回指定位置是否允许通过
@@ -206,19 +244,27 @@
 
             //开始寻路算法
             $scope.FindWay = function () {
-                //$scope.startTime = new Date();
-                //$scope.Data.Result.Weight = null;
-                $scope.Data.Map.ScoreMap[0][0] = 0;
+                $scope.Data.Canvas.LineCanvas.Clear();
+                $scope.Data.Canvas.TextCanvas.Clear();
+                $scope.Data.Canvas.TextCanvas.Text('起点', 0, 0);
+                $scope.Data.Canvas.TextCanvas.Text(
+                    '终点',
+                    $scope.Data.Setting.MapSize.X - 1,
+                    $scope.Data.Setting.MapSize.Y - 1);
+
+                $scope.Data.Result = angular.copy($scope.DataBak.Result);
+                $scope.Data.Map.ScoreMap = angular.copy($scope.DataBak.Map.ScoreMap);
                 $scope.Data.Result.Date.StartTime = new Date();
+
                 $scope.NextWay(0, 0, 1, 0, []);
             }
 
             $scope.NextWay = function (x, y, index, weigth, lineInfo) {
                 //添加当前位置
-                lineInfo[index - 1] = {
+                lineInfo.push({
                     x: x,
                     y: y
-                };
+                })
 
                 for (offset_x = -1; offset_x <= 1; offset_x++) {
                     for (offset_y = -1; offset_y <= 1; offset_y++) {
@@ -234,10 +280,10 @@
 
                                 if (temp_x == $scope.Data.Map.CubeMap.length - 1 && temp_y == $scope.Data.Map.CubeMap[0].length - 1) {
                                     //如果终点，开始绘制最短路线
-                                    lineInfo[index] = {
+                                    lineInfo.push({
                                         x: temp_x,
                                         y: temp_y
-                                    };
+                                    })
                                     $scope.Line(lineInfo, temp_weight);
                                     return;
                                 } else {
@@ -265,7 +311,7 @@
 
             //绘制结果线段
             $scope.Line = function (lineInfo, weight) {
-                $scope.LineArray = lineInfo;
+                $scope.Data.Result.LineArray = lineInfo;
                 if ($scope.Data.Result.Weight != null && $scope.Data.Result.Weight <= weight) {
                     //如果存在更优解，不进行绘制
                     return;
@@ -284,24 +330,18 @@
                     UseTime: $scope.FormatDate(new Date($scope.Data.Result.Date.UseTime), 'mm:ss:S')
                 }
 
-                //$scope.endTime = new Date();
-                //$scope.useTime = $scope.endTime - $scope.startTime;
-
-                //$scope.startTime_text = $scope.FormatDate($scope.startTime, 'mm:ss:S');
-                //$scope.endTime_text = $scope.FormatDate($scope.endTime, 'mm:ss:S');
-                //$scope.useTime_text = $scope.FormatDate(new Date($scope.useTime), 'mm:ss:S');
                 $scope.$apply();
             }
 
             $scope.FormatDate = function (date, fmt) {
                 var o = {
-                    "M+": date.getMonth() + 1,                   //月份
-                    "d+": date.getDate(),                        //日
-                    "h+": date.getHours(),                       //小时
-                    "m+": date.getMinutes(),                     //分
-                    "s+": date.getSeconds(),                     //秒
+                    "M+": date.getMonth() + 1, //月份
+                    "d+": date.getDate(), //日
+                    "h+": date.getHours(), //小时
+                    "m+": date.getMinutes(), //分
+                    "s+": date.getSeconds(), //秒
                     "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-                    "S": date.getMilliseconds()                  //毫秒
+                    "S": date.getMilliseconds() //毫秒
                 };
                 if (/(y+)/.test(fmt))
                     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -311,9 +351,7 @@
                 return fmt;
             }
 
-            $scope.FormatDateSpan = function (milliseconds) {
-                return $scope.FormatDate(new Date(milliseconds));
-            }
+            $scope.CreateMap();
         });
     </script>
 </body>
