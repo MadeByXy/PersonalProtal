@@ -128,36 +128,65 @@
         Angular(function ($scope, factory) {
             $scope.Data = {
                 Map: {
+                    //地图
                     CubeMap: [],
+                    //步长图
                     ScoreMap: []
                 },
                 Setting: {
+                    //间隔宽度
                     Spacing: 2,
-                    MinScale: 4,
+                    Value: {
+                        //直行步长
+                        Line: 1,
+                        //斜行步长
+                        Diagonal: 1.5
+                    },
+                    //地图面积
                     MapSize: {
                         X: 32,
                         Y: 18
                     },
-                    SearchSize: {
+                    //地图颜色
+                    MapColor: {
+                        Normal: 'rgba(202, 202, 202, 0.5)',
+                        Barrier: '#666'
+                    },
+                    //起点
+                    StartPosition: {
                         X: 0,
                         Y: 0
                     },
-                    ShowWayNum: true,
+                    //终点
+                    EndPosition: {
+                        X: 0,
+                        Y: 0
+                    },
+                    //是否显示步数
+                    ShowWayNum: true
                 },
                 Canvas: {
+                    //地图画布
                     CubeCanvas: new Canvas('content'),
+                    //文字画布
                     TextCanvas: new Canvas('content_text'),
+                    //导线画布
                     LineCanvas: new Canvas('content_line')
                 },
+                //障碍比例条
                 Slider: $("input.slider").slider(),
                 Result: {
+                    //导线信息
                     LineArray: [],
+                    //总价值
                     Weight: null,
+                    //用时
                     Date: {
                         StartTime: null,
                         EndTime: null,
                         UseTime: null
                     },
+                    //用时(文字)
                     DateText: {
                         StartTime: '',
                         EndTime: '',
@@ -166,9 +195,10 @@
                 }
             }
 
+            //原始数据备份，用于还原初始值
             $scope.DataBak = angular.copy($scope.Data);
 
-            //重置画布
+            //初始化画布
             $scope.Clear = function () {
                 $.each(['Map', 'Result'], function (index, item) {
                     $scope.Data[item] = angular.copy($scope.DataBak[item]);
@@ -179,26 +209,24 @@
                     item.size.spacing = $scope.Data.Setting.Spacing;
                     item.AutoSize($scope.Data.Setting.MapSize.X, $scope.Data.Setting.MapSize.Y);
                 })
-            }
 
-            //根据位置重计算搜索面积
-            $scope.SetSearchSize = function (x, y) {
-                x = $scope.Data.Setting.MapSize.X - x;
-                y = $scope.Data.Setting.MapSize.Y - y;
-                if (x > y) {
-                    $scope.Data.Setting.SearchSize = {
-                        X: $scope.Data.Setting.MinScale,
-                        Y: parseInt(y * $scope.Data.Setting.MinScale / x + 0.5)
-                    }
-                } else if (x < y) {
-                    $scope.Data.Setting.SearchSize = {
-                        X: (x * $scope.Data.Setting.MinScale / y + 0.5),
-                        Y: $scope.Data.Setting.MinScale
-                    }
-                } else {
-                    $scope.Data.Setting.SearchSize = {
-                        X: $scope.Data.Setting.MinScale,
-                        Y: $scope.Data.Setting.MinScale
+                $scope.Data.Setting.EndPosition.X = $scope.Data.Setting.MapSize.X - 1;
+                $scope.Data.Setting.EndPosition.Y = $scope.Data.Setting.MapSize.Y - 1;
+                
+                //添加右键事件
+                $scope.Data.Canvas.LineCanvas.object.oncontextmenu = function (e) {
+                    //拦截右键菜单
+                    return false;
+                }
+
+                $scope.Data.Canvas.LineCanvas.object.onmousedown = function (e) {
+                    if (e.button == 2) {
+                        var box = this.getBoundingClientRect();
+                        var x = $scope.Data.Canvas.LineCanvas.Coordinates.To.X(e.clientX - box.left),
+                            y = $scope.Data.Canvas.LineCanvas.Coordinates.To.Y(e.clientY - box.top);
+
+                        //未完成
+                        console.log(x, y);
                     }
                 }
             }
@@ -213,24 +241,26 @@
                     $scope.Data.Map.ScoreMap[x] = [];
                     for (var y = 0; y < $scope.Data.Setting.MapSize.Y; y++) {
                         var result;
-                        if (x == 0 && y == 0) {
+                        if ($scope.IsStart(x, y) || $scope.IsEnd(x, y)) {
+                            //起点终点为正常地形
                             result = true;
-                            $scope.Data.Canvas.TextCanvas.Text('起点', x, y);
-                        } else if (x == $scope.Data.Setting.MapSize.X - 1 && y == $scope.Data.Setting.MapSize.Y - 1) {
-                            result = true;
-                            $scope.Data.Canvas.TextCanvas.Text('终点', x, y);
                         } else {
                             result = parseInt(Math.random() * 100) > slider; //是否为正常地形
                         }
                         $scope.Data.Map.CubeMap[x][y] = result;
 
-                        $scope.Data.Canvas.CubeCanvas.context.fillStyle = result ? 'rgba(202, 202, 202, 0.5)' : '#666'
+                        $scope.Data.Canvas.CubeCanvas.context.fillStyle = result ?
+                            $scope.Data.Setting.MapColor.Normal :
+                            $scope.Data.Setting.MapColor.Barrier;
+
                         $scope.Data.Canvas.CubeCanvas.Cube(x, y);
                     }
                 }
 
                 $scope.Data.Map.ScoreMap[0][0] = 0;
                 $scope.DataBak.Map.ScoreMap = angular.copy($scope.Data.Map.ScoreMap);
+
+                $scope.SetPoint();
             }
 
             //返回指定位置是否允许通过
@@ -239,24 +269,54 @@
                     $scope.Data.Map.CubeMap[x] &&
                     $scope.Data.Map.CubeMap[x].length > y &&
                     $scope.Data.Map.CubeMap[x][y] &&
-                    (!special || (!(x == 0 && y == 0) && !(x == $scope.Data.Map.CubeMap.length - 1 && y == $scope.Data.Map.CubeMap[0].length - 1)));
+                    (!special || (!$scope.IsStart(x, y) && !$scope.IsEnd(x, y)));
+            }
+
+            //返回位置是否为起点
+            $scope.IsStart = function (x, y) {
+                return x == $scope.Data.Setting.StartPosition.X && y == $scope.Data.Setting.StartPosition.Y;
+            }
+
+            //返回位置是否为终点
+            $scope.IsEnd = function (x, y) {
+                return x == $scope.Data.Setting.EndPosition.X && y == $scope.Data.Setting.EndPosition.Y;
+            }
+
+            //设置起止点文字
+            $scope.SetPoint = function () {
+                $scope.Data.Canvas.LineCanvas.Clear();
+                $scope.Data.Canvas.TextCanvas.Clear();
+                $scope.Data.Canvas.TextCanvas.Text(
+                    '起点',
+                    $scope.Data.Setting.StartPosition.X,
+                    $scope.Data.Setting.StartPosition.Y);
+                $scope.Data.Canvas.TextCanvas.Text(
+                    '终点',
+                    $scope.Data.Setting.EndPosition.X,
+                    $scope.Data.Setting.EndPosition.Y);
             }
 
             //开始寻路算法
             $scope.FindWay = function () {
-                $scope.Data.Canvas.LineCanvas.Clear();
-                $scope.Data.Canvas.TextCanvas.Clear();
-                $scope.Data.Canvas.TextCanvas.Text('起点', 0, 0);
-                $scope.Data.Canvas.TextCanvas.Text(
-                    '终点',
-                    $scope.Data.Setting.MapSize.X - 1,
-                    $scope.Data.Setting.MapSize.Y - 1);
+                $scope.SetPoint();
 
                 $scope.Data.Result = angular.copy($scope.DataBak.Result);
                 $scope.Data.Map.ScoreMap = angular.copy($scope.DataBak.Map.ScoreMap);
                 $scope.Data.Result.Date.StartTime = new Date();
 
                 $scope.NextWay(0, 0, 1, 0, []);
+            }
+
+            //计算坐标启发值
+            $scope.GetH = function (x, y) {
+                h_diagonal = Math.min(
+                    Math.abs(x - $scope.Data.Setting.EndPosition.X),
+                    Math.abs(y - $scope.Data.Setting.EndPosition.Y));
+
+                h_straight = Math.abs(x - $scope.Data.Setting.EndPosition.X) + Math.abs(y - $scope.Data.Setting.EndPosition.Y);
+
+                return $scope.Data.Setting.Value.Diagonal * h_diagonal +
+                    $scope.Data.Setting.Value.Line * (h_straight - 2 * h_diagonal);
             }
 
             $scope.NextWay = function (x, y, index, weigth, lineInfo) {
@@ -268,17 +328,19 @@
 
                 for (offset_x = -1; offset_x <= 1; offset_x++) {
                     for (offset_y = -1; offset_y <= 1; offset_y++) {
-                        var temp_x = x + offset_x,
+                        var value = (Math.abs(offset_x) == 1 && Math.abs(offset_y) == 1) ?
+                            $scope.Data.Setting.Value.Diagonal :
+                            $scope.Data.Setting.Value.Line,
+                            temp_x = x + offset_x,
                             temp_y = y + offset_y,
-                            //增加斜向步长以保证更优先选择直线
-                            temp_weight = weigth + Math.min(1.5, Math.abs(offset_x) + Math.abs(offset_y));
+                            temp_weight = weigth + value;
 
                         if ($scope.IsAllow(temp_x, temp_y, false)) {
                             //如果节点为空或者大于当前序号，修改节点值，并进行递归
                             if (isNaN($scope.Data.Map.ScoreMap[temp_x][temp_y]) || $scope.Data.Map.ScoreMap[temp_x][temp_y] > temp_weight) {
                                 $scope.Data.Map.ScoreMap[temp_x][temp_y] = temp_weight;
 
-                                if (temp_x == $scope.Data.Map.CubeMap.length - 1 && temp_y == $scope.Data.Map.CubeMap[0].length - 1) {
+                                if ($scope.IsEnd(temp_x, temp_y)) {
                                     //如果终点，开始绘制最短路线
                                     lineInfo.push({
                                         x: temp_x,

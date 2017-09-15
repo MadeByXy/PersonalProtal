@@ -8,15 +8,29 @@
         height: 100,
         spacing: 2
     }
+    size = this.size;
 
-    //x节点序号计算横坐标
-    this.x_center = function (index_x, isText) {
-        return index_x * (this.size.width + this.size.spacing) + this.size.spacing + (isText == true ? this.size.width / 2 : 0);
-    }
-
-    //y节点序号计算纵坐标
-    this.y_center = function (index_y, isText) {
-        return index_y * (this.size.height + this.size.spacing) + this.size.spacing + (isText == true ? this.size.height / 2 : 0);
+    this.Coordinates = {
+        From: {
+            //x节点序号计算横坐标
+            X: function (index_x, isText) {
+                return index_x * (size.width + size.spacing) + size.spacing + (isText == true ? size.width / 2 : 0);
+            },
+            //y节点序号计算纵坐标
+            Y: function (index_y, isText) {
+                return index_y * (size.height + size.spacing) + size.spacing + (isText == true ? size.height / 2 : 0);
+            }
+        },
+        To: {
+            //横坐标计算x节点
+            X: function (position_x) {
+                return parseInt((position_x - size.spacing) / (size.width + size.spacing));
+            },
+            //纵坐标计算y节点
+            Y: function (position_y) {
+                return parseInt((position_y - size.spacing) / (size.height + size.spacing));
+            }
+        }
     }
 
     //重计算单位长宽
@@ -28,8 +42,8 @@
     //绘制矩形
     this.Cube = function (index_x, index_y) {
         this.context.fillRect(
-            this.x_center(index_x),
-            this.y_center(index_y),
+            this.Coordinates.From.X(index_x),
+            this.Coordinates.From.Y(index_y),
             this.size.width,
             this.size.height);
     }
@@ -42,15 +56,15 @@
 
         //添加文字前删除当前位置已有文字
         this.context.clearRect(
-            this.x_center(index_x, false),
-            this.y_center(index_y, false),
+            this.Coordinates.From.X(index_x, false),
+            this.Coordinates.From.Y(index_y, false),
             this.size.width,
             this.size.height);
 
         this.context.fillText(
             text,
-            this.x_center(index_x, true),
-            this.y_center(index_y, true));
+            this.Coordinates.From.X(index_x, true),
+            this.Coordinates.From.Y(index_y, true));
     }
 
     //绘制线段
@@ -58,12 +72,12 @@
         this.context.beginPath();
 
         this.context.moveTo(
-            this.x_center(move_x, true),
-            this.y_center(move_y, true));
+            this.Coordinates.From.X(move_x, true),
+            this.Coordinates.From.Y(move_y, true));
 
         this.context.lineTo(
             this.x_cneter(line_x, true),
-            this.y_center(line_y, true));
+            this.Coordinates.From.Y(line_y, true));
         this.context.stroke();
         this.context.closePath();
     }
@@ -72,7 +86,7 @@
     this.LineArray = function (indexArray, style) {
         this.context.beginPath();
         for (var i = 0; i < indexArray.length; i++) {
-            this.context.lineTo(this.x_center(indexArray[i].x, true), this.y_center(indexArray[i].y, true))
+            this.context.lineTo(this.Coordinates.From.X(indexArray[i].x, true), this.Coordinates.From.Y(indexArray[i].y, true))
         }
 
         this.context.strokeStyle = style || 'black';
