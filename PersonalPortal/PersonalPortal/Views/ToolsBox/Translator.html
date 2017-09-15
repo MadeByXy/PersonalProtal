@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>在线翻译</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <style>
+        body {
+            width: 70%;
+            margin: 0px auto;
+            padding: 30px 0;
+        }
+
+        textarea.inputArea {
+            width: 100% !important;
+            min-height: 40px !important;
+            height: 250px;
+        }
+
+        .input-group-btn {
+            display: initial !important;
+        }
+
+        .btn-success {
+            border-radius: 4px !important;
+            margin-left: 10px !important;
+            width: 150px;
+        }
+
+        .btn-select a {
+            border-radius: 4px 0 0 4px !important;
+            width: 150px;
+            height: 34px;
+        }
+
+        .btn-select button {
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 0 4px 4px 0 !important;
+            height: 34px;
+        }
+
+        .dropdown-menu {
+            margin-top: 16px;
+        }
+
+        .exchange {
+            -webkit-appearance: listbox;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            height: 33px;
+            border-radius: 17px;
+            width: 33px;
+            padding: 0 4px;
+            margin: 0 10px;
+        }
+
+            .exchange span {
+                transform: rotate(-90deg);
+            }
+
+            .exchange:hover {
+                border: 1px solid #f7b61f;
+                background-color: #f7b61f;
+            }
+
+                .exchange:hover span {
+                    color: white;
+                }
+    </style>
+</head>
+<body>
+    <div ng-app="app" ng-controller="controller">
+        <textarea class="inputArea highlight well form-control" ng-model="Data.InputText" placeholder="待翻译的文字..."></textarea>
+        <div class="input-group">
+            <div class="input-group-btn btn-select">
+                <a class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" value="{{Data.From}}" ng-bind="Data.TranslatorList[Data.From]"></a>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="(value, name) in Data.TranslatorList track by $index" ng-click="SetValue('From', value)">
+                        <a href="#" value="{{value}}" ng-bind="name"></a>
+                    </li>
+                </ul>
+            </div>
+            <button class="exchange" ng-click="Exchange()">
+                <span class="glyphicon glyphicon-sort"></span>
+            </button>
+            <div class="input-group-btn btn-select">
+                <a class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" value="{{Data.To}}" ng-bind="Data.TranslatorList[Data.To]"></a>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="(value, name) in Data.TranslatorList track by $index" ng-click="SetValue('To', value)">
+                        <a href="#" value="{{value}}" ng-bind="name"></a>
+                    </li>
+                </ul>
+            </div>
+            <span class="input-group-btn">
+                <button class="btn btn-success" type="button" ng-click="Translate();">翻译</button>
+            </span>
+        </div>
+        <div class="navbar-form" style="padding:0;">
+            <p class="navbar-nav">翻译结果：</p>
+            <textarea class="inputArea highlight well form-control" placeholder="翻译结果..." readonly="readonly" ng-bind="Data.ResultText"></textarea>
+        </div>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript">
+        Angular(function ($scope, factory) {
+            $scope.Data = {
+                From: 'zh-CHS',
+                To: 'en',
+                InputText: '',
+                ResultText: '',
+                TranslatorList: {
+                    'zh-CHS': '简体中文',
+                    'en': '英语',
+                    'zh-CHT': '繁体中文',
+                    'ja': '日语'
+                }
+            }
+
+            $scope.SetValue = function (name, value) {
+                $scope.Data[name] = value;
+            }
+
+            //交换内容
+            $scope.Exchange = function () {
+                var temp = $scope.Data.From;
+                $scope.Data.From = $scope.Data.To;
+                $scope.Data.To = temp;
+            }
+
+            //翻译
+            $scope.Translate = function () {
+                var url = 'http://cn.bing.com/ttaTranslate?from=' +
+                    $scope.Data.From + '&to=' + $scope.Data.To + '&text=' + $scope.Data.InputText;
+
+                factory.Query('/Controller/Index/DelegateQuery?url=' + encodeURIComponent(url), true, false).then(function (data) {
+                    eval(data.Result);
+                });
+            }
+
+            //翻译接口回调方法
+            RichTranslator = {
+                handleTranslation: function (text) {
+                    $scope.SetValue('ResultText', text);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

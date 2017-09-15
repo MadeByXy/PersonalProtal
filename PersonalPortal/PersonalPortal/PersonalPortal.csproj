@@ -302,6 +302,7 @@
     <Content Include="Views\ToolsBox\CodeBeautify.html" />
     <Content Include="Views\ToolsBox\Json.html" />
     <Content Include="Views\ToolsBox\Regexp.html" />
+    <Content Include="Views\ToolsBox\Translator.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
