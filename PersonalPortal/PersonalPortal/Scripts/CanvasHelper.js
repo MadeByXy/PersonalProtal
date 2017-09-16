@@ -41,6 +41,9 @@
 
     //绘制矩形
     this.Cube = function (index_x, index_y) {
+        //添加文字前删除当前位置已有矩形
+        this.ClearItem(index_x, index_y);
+
         this.context.fillRect(
             this.Coordinates.From.X(index_x),
             this.Coordinates.From.Y(index_y),
@@ -55,17 +58,15 @@
         this.context.textBaseline = 'middle';
 
         //添加文字前删除当前位置已有文字
-        this.context.clearRect(
-            this.Coordinates.From.X(index_x, false),
-            this.Coordinates.From.Y(index_y, false),
-            this.size.width,
-            this.size.height);
+        this.ClearItem(index_x, index_y);
 
         this.context.fillText(
             text,
             this.Coordinates.From.X(index_x, true),
             this.Coordinates.From.Y(index_y, true));
     }
+
+
 
     //绘制线段
     this.Line = function (move_x, move_y, line_x, line_y) {
@@ -92,6 +93,15 @@
         this.context.strokeStyle = style || 'black';
         this.context.stroke();
         this.context.closePath();
+    }
+
+    //清理一个单元格
+    this.ClearItem = function (index_x, index_y) {
+        this.context.clearRect(
+            this.Coordinates.From.X(index_x, false) - this.size.spacing,
+            this.Coordinates.From.Y(index_y, false) - this.size.spacing,
+            this.size.width + 2 * this.size.spacing,
+            this.size.height + 2 * this.size.spacing);
     }
 
     //清理画布
