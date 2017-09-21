@@ -77,7 +77,7 @@
             this.Coordinates.From.Y(move_y, true));
 
         this.context.lineTo(
-            this.x_cneter(line_x, true),
+            this.Coordinates.From.X(line_x, true),
             this.Coordinates.From.Y(line_y, true));
         this.context.stroke();
         this.context.closePath();
@@ -93,6 +93,17 @@
         this.context.strokeStyle = style || 'black';
         this.context.stroke();
         this.context.closePath();
+    }
+
+    //绘制实心多边形
+    this.LinePolygon = function (indexArray) {
+        this.context.beginPath();
+        for (var i = 0; i < indexArray.length; i++) {
+            this.context.lineTo(this.Coordinates.From.X(indexArray[i].x, true), this.Coordinates.From.Y(indexArray[i].y, true))
+        }
+
+        this.context.closePath();
+        this.context.fill();
     }
 
     //清理一个单元格

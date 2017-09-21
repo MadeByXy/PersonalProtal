@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>多叉树模拟</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap-slider.min.css" />
+    <link rel="stylesheet" href="/Style/Css/Algorithm/AStar.css" />
+</head>
+<body>
+    <div class="main" ng-app="app" ng-controller="controller">
+        <!--参数区-->
+        <div class="container_head">
+            <div class="item">
+                <span>节点高度:</span>
+                <input class="slider_treeHeight" data-slider-min="1" data-slider-max="10" data-slider-step="1" data-slider-value="4" />
+            </div>
+            <div class="item">
+                <span>分叉数量:</span>
+                <input class="slider_branches" data-slider-min="1" data-slider-max="10" data-slider-step="1" data-slider-value="4" />
+            </div>
+            <div class="item">
+                <input id="balance" ng-model="Data.Setting.IsBalance" type="checkbox" />
+                <label for="balance">是否生成不平衡树</label>
+            </div>
+            <div class="item">
+                <button ng-click="CreateTree()">生成树</button>
+            </div>
+        </div>
+        <!--画布区-->
+        <div class="container_content">
+            <!--地图层-->
+            <canvas id="content" width="1120" height="630"></canvas>
+        </div>
+        <!--可视化数据-->
+        <div class="container_bottom"></div>
+        <div class="container_foot"></div>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript" src="/Scripts/CanvasHelper.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap-slider.min.js"></script>
+    <script type="text/javascript">
+        Angular(function ($scope, factory) {
+            $scope.Data = {
+                Setting: {
+                    Map: {
+                        //画布宽度
+                        Width: 1120,
+                        //画布高度
+                        Height: 630,
+                        //预留边距
+                        Padding: 10
+                    },
+                    //是否为平衡树
+                    IsBalance: true,
+                    //树高
+                    TreeHeight: 0,
+                    //每个节点高度
+                    Height: 0,
+                    //每次分叉数量
+                    Branches: 0
+                },
+                Canvas: {
+                    //地图画布
+                    TreeCanvas: new Canvas('content')
+                },
+                //比例条
+                Slider: {
+                    TreeHeight: $("input.slider_treeHeight").slider(),
+                    Branches: $("input.slider_branches").slider()
+                }
+            }
+
+            $scope.CreateTree = function () {
+                $scope.Data.Canvas.TreeCanvas.Clear();
+                $scope.Data.Setting.TreeHeight = parseInt($scope.Data.Slider.TreeHeight[0].value);
+                $scope.Data.Setting.Branches = parseInt($scope.Data.Slider.Branches[0].value);
+                $scope.Data.Setting.Height = ($scope.Data.Setting.Map.Height - $scope.Data.Setting.Map.Padding * 2) / ($scope.Data.Setting.TreeHeight + 1);
+                setTimeout(function () {
+                    $scope.CreateNode({
+                        X: $scope.Data.Setting.Map.Width / 2,
+                        Y: $scope.Data.Setting.Map.Height - $scope.Data.Setting.Map.Padding
+                    }, 0, 1);
+                }, 1);
+            }
+
+            $scope.CreateNode = function (fatherNode, level, index) {
+                if (level > $scope.Data.Setting.TreeHeight) {
+                    return;
+                }
+
+                var count = Math.max(level * ($scope.Data.Setting.Branches - 1), 1);
+                if ($scope.Data.Setting.IsBalance) {
+                    //如果为不平衡树，随机节点数
+                    count = parseInt(Math.random() * count) + 1;
+                }
+                for (var i = 1; i <= count; i++) {
+                    //通过弧度计算目标节点偏差值
+                    var angle = (i / (count + 1) - 0.5) * Math.PI;
+                    var node = {
+                        X: fatherNode.X + ($scope.Data.Setting.Height * Math.sin(angle)),
+                        Y: fatherNode.Y - ($scope.Data.Setting.Height * Math.cos(angle))
+                    }
+
+                    //绘制线段
+                    $scope.Data.Canvas.TreeCanvas.context.beginPath();
+
+                    $scope.Data.Canvas.TreeCanvas.context.moveTo(fatherNode.X, fatherNode.Y);
+                    $scope.Data.Canvas.TreeCanvas.context.lineTo(node.X, node.Y);
+
+                    $scope.Data.Canvas.TreeCanvas.context.stroke();
+                    $scope.Data.Canvas.TreeCanvas.context.closePath();
+
+                    setTimeout(function (node, level, index) {
+                        return function () {
+                            $scope.CreateNode(node, level, index);
+                        }
+                    }(node, level + 1, i), 1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

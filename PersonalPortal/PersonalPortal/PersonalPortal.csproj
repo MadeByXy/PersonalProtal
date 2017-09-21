@@ -297,6 +297,7 @@
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
     <Content Include="Views\Algorithm\AStar.html" />
+    <Content Include="Views\Algorithm\Tree.html" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />
     <Content Include="Views\Portfolio.html" />
