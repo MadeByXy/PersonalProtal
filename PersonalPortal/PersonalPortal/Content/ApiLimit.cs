@@ -16,7 +16,7 @@ namespace PersonalPortal.Content
     public class HttpPostAttribute : Attribute { }
 
     /// <summary>
-    /// 指示接口支持 POST GET 方法
+    /// 指示接口支持 GET HTTP 方法
     /// </summary>
     public class HttpGetAttribute : Attribute { }
 }
