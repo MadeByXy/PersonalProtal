@@ -142,6 +142,9 @@
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\js\bootstrap-slider.min.js" />
+    <Content Include="Scripts\bootstrap-contextmenu\css\prettify.css" />
+    <Content Include="Scripts\bootstrap-contextmenu\js\bootstrap-contextmenu.js" />
+    <Content Include="Scripts\bootstrap-contextmenu\js\prettify.js" />
     <Content Include="Scripts\CanvasHelper.js" />
     <Content Include="Scripts\code-beautify\beautify-css.js" />
     <Content Include="Scripts\code-beautify\beautify-html.js" />

@@ -5,44 +5,35 @@
     <title>AStar算法</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
-    <link href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap-slider.min.css" rel="stylesheet" />
-    <link href="/Style/Css/Algorithm/AStar.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap-slider.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-contextmenu/css/prettify.css" />
+    <link rel="stylesheet" href="/Style/Css/Algorithm/AStar.css" />
 </head>
 <body>
     <div class="main" ng-app="app" ng-controller="controller">
         <!--参数区-->
         <div class="container_head">
             <div class="item">
-                <span>地图大小:</span>
-                <input ng-model="Data.Setting.MapSize.X" type="number" />
-                <span>x</span>
-                <input ng-model="Data.Setting.MapSize.Y" type="number" />
+                <span>地图比例:</span>
+                <input class="slider_map" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="2" />
             </div>
             <div class="item">
                 <span>节点间隔:</span>
-                <input ng-model="Data.Setting.Spacing" type="number" />
-            </div>
-            <div class="item">
-                <span>使用算法:</span>
-                <select>
-                    <option>Dijkstra</option>
-                    <option>BFS</option>
-                    <option>A*</option>
-                </select>
+                <input class="slider_spacing" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="2" />
             </div>
             <div class="item">
                 <span>障碍比例:</span>
-                <input class="slider" data-slider-min="0" data-slider-max="40" data-slider-step="1" data-slider-value="20" />
+                <input class="slider_barrier" data-slider-min="0" data-slider-max="40" data-slider-step="1" data-slider-value="20" />
             </div>
             <div class="item">
                 <input id="showWayNum" ng-model="Data.Setting.ShowWayNum" type="checkbox" />
                 <label for="showWayNum">是否显示步数</label>
             </div>
             <div class="item">
-                <button ng-click="CreateMap()">生成地图</button>
+                <button ng-click="FindWay()">计算最短路径</button>
             </div>
             <div class="item">
-                <button ng-click="FindWay()">计算最短路径</button>
+                <button ng-click="CreateMap()">生成地图</button>
             </div>
         </div>
         <!--画布区-->
@@ -120,11 +111,25 @@
                 </li>
             </ul>
         </div>
+        <div class="container_foot"></div>
+        <div id="context-menu">
+            <ul class="dropdown-menu" role="menu">
+                <li ng-click="SetMapNode(value, item.IsEnable)" ng-repeat="(value, item) in Data.Menu.MenuList" ng-class="{false: 'Readonly'}[item.IsEnable]">
+                    <a tabindex="-1">
+                        <span>设置为</span>
+                        <span ng-bind="item.Text"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script type="text/javascript" src="/Scripts/CanvasHelper.js"></script>
     <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap-slider.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-contextmenu/js/bootstrap-contextmenu.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-contextmenu/js/prettify.js"></script>
     <script type="text/javascript">
+
         Angular(function ($scope, factory) {
             $scope.Data = {
                 Map: {
@@ -146,6 +151,10 @@
                     MapSize: {
                         X: 32,
                         Y: 18
+                    },
+                    OriginalSize: {
+                        X: 16,
+                        Y: 9
                     },
                     //地图颜色
                     MapColor: {
@@ -174,7 +183,35 @@
                     LineCanvas: new Canvas('content_line')
                 },
                 //障碍比例条
-                Slider: $("input.slider").slider(),
+                Slider: {
+                    Barrier: $("input.slider_barrier").slider(),
+                    Map: $("input.slider_map").slider(),
+                    Spacing: $("input.slider_spacing").slider()
+                },
+                //菜单信息
+                Menu: {
+                    //选中位置
+                    Select: {
+                        X: 0,
+                        Y: 0
+                    },
+                    MenuList: {
+                        Barrier: {
+                            Text: '障碍',
+                            IsEnable: true
+                        }, Empty: {
+                            Text: '空白',
+                            IsEnable: true
+                        }, Start: {
+                            Text: '起点',
+                            IsEnable: true
+                        }, End: {
+                            Text: '终点',
+                            IsEnable: true
+                        }
+                    }
+                },
+                //结果信息
                 Result: {
                     //导线信息
                     LineArray: [],
@@ -198,11 +235,49 @@
             //原始数据备份，用于还原初始值
             $scope.DataBak = angular.copy($scope.Data);
 
+            //右键事件
+            $('#content_line').contextmenu({
+                target: '#context-menu',
+                before: function (e) {
+                    var box = $scope.Data.Canvas.LineCanvas.object.getBoundingClientRect();
+                    var x = $scope.Data.Canvas.LineCanvas.Coordinates.To.X(e.clientX - box.left),
+                        y = $scope.Data.Canvas.LineCanvas.Coordinates.To.Y(e.clientY - box.top);
+
+                    $scope.Data.Menu.Select = {
+                        X: x,
+                        Y: y
+                    }
+
+                    //初始化
+                    $scope.Data.Menu.MenuList = angular.copy($scope.DataBak.Menu.MenuList);
+
+                    if ($scope.IsStart(x, y) || $scope.IsEnd(x, y)) {
+                        //起点终点不可修改为其他
+                        $.each($scope.Data.Menu.MenuList, function (index, item) {
+                            item.IsEnable = false;
+                        })
+                    }
+                    $scope.$apply();
+
+                    e.preventDefault();
+                    if (e.target.tagName == 'SPAN') {
+                        e.preventDefault();
+                        this.closemenu();
+                        return false;
+                    }
+                    return true;
+                }
+            });
+
             //初始化画布
             $scope.Clear = function () {
                 $.each(['Map', 'Result'], function (index, item) {
                     $scope.Data[item] = angular.copy($scope.DataBak[item]);
                 })
+                //设置画布节点数量及间隔宽度
+                $scope.Data.Setting.Spacing = parseInt($scope.Data.Slider.Spacing[0].value);
+                $scope.Data.Setting.MapSize.X = parseInt($scope.Data.Setting.OriginalSize.X * $scope.Data.Slider.Map[0].value);
+                $scope.Data.Setting.MapSize.Y = parseInt($scope.Data.Setting.OriginalSize.Y * $scope.Data.Slider.Map[0].value);
 
                 $.each($scope.Data.Canvas, function (index, item) {
                     item.Clear();
@@ -212,22 +287,46 @@
 
                 $scope.Data.Setting.EndPosition.X = $scope.Data.Setting.MapSize.X - 1;
                 $scope.Data.Setting.EndPosition.Y = $scope.Data.Setting.MapSize.Y - 1;
-                
-                //添加右键事件
-                $scope.Data.Canvas.LineCanvas.object.oncontextmenu = function (e) {
-                    //拦截右键菜单
-                    return false;
-                }
+            }
 
-                $scope.Data.Canvas.LineCanvas.object.onmousedown = function (e) {
-                    if (e.button == 2) {
-                        var box = this.getBoundingClientRect();
-                        var x = $scope.Data.Canvas.LineCanvas.Coordinates.To.X(e.clientX - box.left),
-                            y = $scope.Data.Canvas.LineCanvas.Coordinates.To.Y(e.clientY - box.top);
+            //修改节点位置
+            $scope.SetMapNode = function (value, enable) {
+                if (enable) {
+                    var x = parseInt($scope.Data.Menu.Select.X), y = parseInt($scope.Data.Menu.Select.Y);
+                    switch (value) {
+                        case 'Start':
+                            $scope.Data.Map.CubeMap[x, y] = true;
+                            $scope.Data.Canvas.CubeCanvas.context.fillStyle = $scope.Data.Setting.MapColor.Normal;
+                            $scope.Data.Canvas.CubeCanvas.Cube(x, y);
 
-                        //未完成
-                        console.log(x, y);
+                            $scope.Data.Setting.StartPosition = {
+                                X: x,
+                                Y: y
+                            };
+                            break;
+                        case 'End':
+                            $scope.Data.Map.CubeMap[x][y] = true;
+                            $scope.Data.Canvas.CubeCanvas.context.fillStyle = $scope.Data.Setting.MapColor.Normal;
+                            $scope.Data.Canvas.CubeCanvas.Cube(x, y);
+
+                            $scope.Data.Setting.EndPosition = {
+                                X: x,
+                                Y: y
+                            };
+                            break;
+                        case 'Barrier':
+                            $scope.Data.Map.CubeMap[x][y] = false;
+                            $scope.Data.Canvas.CubeCanvas.context.fillStyle = $scope.Data.Setting.MapColor.Barrier;
+                            $scope.Data.Canvas.CubeCanvas.Cube(x, y);
+                            break;
+                        case 'Empty':
+                            $scope.Data.Map.CubeMap[x][y] = true;
+                            $scope.Data.Canvas.CubeCanvas.context.fillStyle = $scope.Data.Setting.MapColor.Normal;
+                            $scope.Data.Canvas.CubeCanvas.Cube(x, y);
+                            break;
+                        default: return;
                     }
+                    $scope.SetPoint();
                 }
             }
 
@@ -235,7 +334,7 @@
             $scope.CreateMap = function () {
                 $scope.Clear();
 
-                var slider = parseInt($scope.Data.Slider[0].value);
+                var slider = parseInt($scope.Data.Slider.Barrier[0].value);
                 for (var x = 0; x < $scope.Data.Setting.MapSize.X; x++) {
                     $scope.Data.Map.CubeMap[x] = [];
                     $scope.Data.Map.ScoreMap[x] = [];
@@ -245,7 +344,7 @@
                             //起点终点为正常地形
                             result = true;
                         } else {
-                            result = parseInt(Math.random() * 100) > slider; //是否为正常地形
+                            result = parseInt(Math.random() * 100) < 100 - slider; //是否为正常地形
                         }
                         $scope.Data.Map.CubeMap[x][y] = result;
 

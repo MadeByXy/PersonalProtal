@@ -1,4 +1,8 @@
-﻿body {
+﻿html {
+    height: 750px;
+}
+
+body {
     width: 1280px;
     margin: 30px auto;
 }
@@ -7,11 +11,29 @@
     display: none !important;
 }
 
+.slider {
+    margin-left: 5px;
+    width: 180px !important;
+}
+
 .tooltip-inner {
     height: auto !important;
 }
 
-.container_head, .container_bottom {
+.dropdown-menu li {
+    cursor: pointer;
+}
+
+.dropdown-menu .Readonly {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+    .dropdown-menu .Readonly span {
+        color: #ccc;
+    }
+
+.container_head, .container_bottom, .container_foot {
     background-color: rgba(202, 202, 202, 0.5);
 }
 
@@ -116,3 +138,10 @@
         margin-top: 0px;
         margin-left: -1px;
     }
+
+.container_foot {
+    height: 30px;
+    clear: both;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0px -5px 2px 0px #999;
+}
