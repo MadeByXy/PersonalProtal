@@ -1,6 +1,7 @@
 ﻿using Neo.IronLua;
 using System;
 using System.IO;
+using XYZZ.Library;
 
 namespace PersonalPortal.Content
 {
@@ -23,6 +24,20 @@ namespace PersonalPortal.Content
                     throw new FileNotFoundException("未找到指定的Lua文件");
                 }
             }
+        }
+
+        /// <summary>
+        /// 格式化字符串
+        /// </summary>
+        /// <param name="text">待格式化字符串</param>
+        /// <param name="parameters">格式化信息</param>
+        public static string Format(this string text, params Parameter[] parameters)
+        {
+            foreach (Parameter parameter in parameters)
+            {
+                text = text.Replace(string.Format("{{{0}}}", parameter.Name), parameter.Value.ToString());
+            }
+            return text;
         }
     }
 }

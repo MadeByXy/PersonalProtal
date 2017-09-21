@@ -10,7 +10,13 @@ namespace PersonalPortal.Controllers
         [HttpGet]
         public PersonalDataModel GetPersonalData(int personId)
         {
-            DataTable data = DataBase.ExecuteSql<DataTable>("SELECT pd.*, int(datediff('m',birth,now)/12) AS age, int(datediff('m',entryTime,now)/12) AS JobExperience FROM PersonalData pd WHERE personId={0}", personId);
+            DataTable data = DataBase.ExecuteSql<DataTable>(
+                @"select pd.*,
+                         int(datediff('m', birth, now) / 12) as age,
+                         int(datediff('m', entryTime, now) / 12) as jobExperience
+                    from personalData pd
+                   where personId = :personId",
+                new Parameter { Name = "personId", Value = personId });
             if (data.Rows.Count == 0)
             {
                 return new PersonalDataModel();
@@ -19,11 +25,22 @@ namespace PersonalPortal.Controllers
             {
                 var result = DataConversion.ToEntity<PersonalDataModel>(data)[0];
                 result.ContactList = DataConversion.ToEntity<PersonalDataModel.ContactItem>(DataBase.ExecuteSql<DataTable>(
-                    "SELECT * FROM PersonalContact WHERE personId={0}", personId));
+                    "select * from personalContact where personId = :personId"
+                    , new Parameter { Name = "personId", Value = personId }));
+
                 result.SkillList = DataConversion.ToEntity<PersonalDataModel.SkillItem>(DataBase.ExecuteSql<DataTable>(
-                    "SELECT skillName, format$(skillLevel,'0%') AS skillLevel FROM PersonalSkill WHERE personId={0}", personId));
+                    "select skillName, format$(skilllevel,'0%') as skillLevel from personalSkill where personId = :personId"
+                    , new Parameter { Name = "personId", Value = personId }));
+
                 result.JobList = DataConversion.ToEntity<PersonalDataModel.JobItem>(DataBase.ExecuteSql<DataTable>(
-                    "SELECT companyName, jobTitle, format(startDate,'yyyy年MM月') as startTime, iif(isNull(endDate),'至今',format(endDate,'yyyy年MM月'))as endTime, description FROM PersonalJob WHERE personId={0}", personId));
+                    @"select companyName,
+                             jobTitle,
+                             format(startDate, 'yyyy年mm月') as startTime,
+                             iif(isnull(endDate), '至今', format(endDate, 'yyyy年mm月')) as endTime,
+                             description
+                        from personalJob
+                       where personId = :personId",
+                    new Parameter { Name = "personId", Value = personId }));
                 return result;
             }
         }

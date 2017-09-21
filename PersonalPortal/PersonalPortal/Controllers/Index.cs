@@ -17,11 +17,21 @@ namespace PersonalPortal.Controllers
         public ShortCutModel GetShortCut(string userIp, int size)
         {
             if (size == 0) { size = 8; }
-            DataTable data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp='{0}' limit 0, {1}", userIp, size);
+            DataTable data = DataBase.ExecuteSql<DataTable>(
+                "select * from shortCut where shortCutIp= :userIp limit 0, :size"
+                , new Parameter { Name = "userIp", Value = userIp }
+                , new Parameter { Name = "size", Value = size });
             if (data.Rows.Count == 0)
             {
-                for (int i = 0; i < 10; i++) { DataBase.ExecuteSql("insert into shortCut (shortCutIp) values ('{0}')", userIp); }
-                data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp='{0}' limit 0, {1}", userIp, size);
+                for (int i = 0; i < 10; i++)
+                {
+                    DataBase.ExecuteSql("insert into shortCut (shortCutIp) values (:userIp)"
+                        , new Parameter { Name = "userIp", Value = userIp });
+                }
+
+                data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp= :userIp limit 0, :size"
+                    , new Parameter { Name = "userIp", Value = userIp }
+                    , new Parameter { Name = "size", Value = size });
             }
             ShortCutModel model = new ShortCutModel();
             model.ShortCutList = DataConversion.ToEntity<ShortCutItem>(data);
@@ -35,8 +45,12 @@ namespace PersonalPortal.Controllers
         [HttpPost]
         public string SetShortCut(ShortCutView data, string userIp)
         {
-            return DataBase.ExecuteSql<bool>("update shortCut set shortCutName='{0}', shortCutUrl='{1}' where ID={2} and shortCutIp='{3}'"
-                 , data.ShortCutName, data.ShortCutUrl, data.Id, userIp) ? "true" : "false";
+            return DataBase.ExecuteSql<bool>(
+                "update shortCut set shortCutName = :shortCutName, shortCutUrl = '{1}' where id = :id and shortCutIp = :userIp"
+                , new Parameter { Name = "shortCutName", Value = data.ShortCutName }
+                , new Parameter { Name = "shortCutUrl", Value = data.ShortCutUrl }
+                , new Parameter { Name = "shortCutName", Value = data.Id }
+                , new Parameter { Name = "userIp", Value = userIp }) ? "true" : "false";
         }
 
         /// <summary>
@@ -46,11 +60,15 @@ namespace PersonalPortal.Controllers
         [HttpPost]
         public string GetBackGround(string userIp)
         {
-            if (!DataBase.ExecuteSql<bool>("select 1 from BackGround where backGroundIp = '{0}'", userIp))
+            if (!DataBase.ExecuteSql<bool>("select 1 from BackGround where backGroundIp = :userIp"
+                , new Parameter { Name = "userIp", Value = userIp }))
             {
-                DataBase.ExecuteSql("insert into BackGround (backGroundIp, backgroundStatus) values ('{0}', 1)", userIp);
+                DataBase.ExecuteSql("insert into BackGround (backGroundIp, backgroundStatus) values (:userIp, 1)"
+                      , new Parameter { Name = "userIp", Value = userIp });
             }
-            return DataBase.ExecuteSql<string>("select backgroundStatus from BackGround where backGroundIp = '{0}'", userIp) == "1" ? "true" : "false";
+            return DataBase.ExecuteSql<string>(
+                "select backgroundStatus from BackGround where backGroundIp = :userIp"
+                , new Parameter { Name = "userIp", Value = userIp }) == "1" ? "true" : "false";
         }
 
         /// <summary>
@@ -60,7 +78,10 @@ namespace PersonalPortal.Controllers
         [HttpPost]
         public string SetBackGround(string userIp, bool on)
         {
-            DataBase.ExecuteSql("update BackGround set backgroundStatus = {1} where backGroundIp = '{0}'", userIp, on ? "1" : "0");
+            DataBase.ExecuteSql(
+                "update BackGround set backgroundStatus = :on where backGroundIp = :userIp"
+                , new Parameter { Name = "userIp", Value = userIp }
+                , new Parameter { Name = "on", Value = on ? "1" : "0" });
             return "true";
         }
 
