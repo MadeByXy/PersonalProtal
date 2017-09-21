@@ -21,6 +21,7 @@ namespace PersonalPortal.Controllers
                 "select * from shortCut where shortCutIp= :userIp limit 0, :size"
                 , new Parameter { Name = "userIp", Value = userIp }
                 , new Parameter { Name = "size", Value = size });
+
             if (data.Rows.Count == 0)
             {
                 for (int i = 0; i < 10; i++)
@@ -29,13 +30,13 @@ namespace PersonalPortal.Controllers
                         , new Parameter { Name = "userIp", Value = userIp });
                 }
 
-                data = DataBase.ExecuteSql<DataTable>("select * from shortCut where shortCutIp= :userIp limit 0, :size"
-                    , new Parameter { Name = "userIp", Value = userIp }
-                    , new Parameter { Name = "size", Value = size });
+                return GetShortCut(userIp, size);
             }
-            ShortCutModel model = new ShortCutModel();
-            model.ShortCutList = DataConversion.ToEntity<ShortCutItem>(data);
-            return model;
+
+            return new ShortCutModel()
+            {
+                ShortCutList = DataConversion.ToEntity<ShortCutItem>(data)
+            };
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace PersonalPortal.Controllers
                 , new Parameter { Name = "shortCutName", Value = data.ShortCutName }
                 , new Parameter { Name = "shortCutUrl", Value = data.ShortCutUrl }
                 , new Parameter { Name = "shortCutName", Value = data.Id }
-                , new Parameter { Name = "userIp", Value = userIp }) ? "true" : "false";
+                , new Parameter { Name = "userIp", Value = userIp }).ToString().ToLower();
         }
 
         /// <summary>
@@ -66,9 +67,9 @@ namespace PersonalPortal.Controllers
                 DataBase.ExecuteSql("insert into BackGround (backGroundIp, backgroundStatus) values (:userIp, 1)"
                       , new Parameter { Name = "userIp", Value = userIp });
             }
-            return DataBase.ExecuteSql<string>(
+            return (DataBase.ExecuteSql<string>(
                 "select backgroundStatus from BackGround where backGroundIp = :userIp"
-                , new Parameter { Name = "userIp", Value = userIp }) == "1" ? "true" : "false";
+                , new Parameter { Name = "userIp", Value = userIp }) == "1").ToString().ToLower();
         }
 
         /// <summary>

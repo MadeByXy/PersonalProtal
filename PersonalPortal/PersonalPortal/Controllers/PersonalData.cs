@@ -36,7 +36,7 @@ namespace PersonalPortal.Controllers
                     @"select companyName,
                              jobTitle,
                              format(startDate, 'yyyy年mm月') as startTime,
-                             iif(isnull(endDate), '至今', format(endDate, 'yyyy年mm月')) as endTime,
+                             iif(isNull(endDate), '至今', format(endDate, 'yyyy年mm月')) as endTime,
                              description
                         from personalJob
                        where personId = :personId",
