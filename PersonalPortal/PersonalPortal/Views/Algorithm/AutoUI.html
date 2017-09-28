@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AutoUI</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap-slider.min.css" />
+    <link rel="stylesheet" href="/Style/Css/Algorithm/AutoUI.css" />
+</head>
+<body>
+    <div class="main" ng-app="app" ng-controller="controller">
+        <!--参数区-->
+        <div class="container_head">
+            <div class="item">
+                <span>图片高度:</span>
+                <input class="slider_Height" data-slider-min="10" data-slider-max="600" data-slider-step="5" data-slider-value="300" />
+            </div>
+            <div class="item">
+                <span>图片宽度:</span>
+                <input class="slider_Width" data-slider-min="10" data-slider-max="800" data-slider-step="5" data-slider-value="300" />
+            </div>
+            <div class="item">
+                <input id="balance" ng-model="Data.Setting.IsBorder" type="checkbox" />
+                <label for="balance">是否绘制边框</label>
+            </div>
+            <div class="item">
+                <div class="input-group-btn">
+                    <a class="btn btn-default" ng-click="Clear()">清理画布</a>
+                </div>
+            </div>
+            <div class="item">
+                <div class="input-group-btn">
+                    <a class="btn btn-default" ng-click="Create()">
+                        <span>生成</span>
+                        <span ng-bind="Data.ApplyList[Data.Setting.Fun]"></span>
+                    </a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>&zwnj;
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="(value, text) in Data.ApplyList">
+                            <a href="#" ng-click="SetSetting('Fun', value)" ng-bind="text"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--画布区-->
+        <div class="container_content">
+            <!--地图层-->
+            <canvas id="content" width="1120" height="630"></canvas>
+        </div>
+        <!--可视化数据-->
+        <div class="container_bottom">
+            <p>自动化脚本：</p>
+            <ul class="item">
+                <li ng-cloak class="ng-cloak" ng-show="Data.Setting.Fun == 'BezierCurve'">
+                    <div class="line">
+                        <label>曲度系数：</label>
+                        <p class="comments">0为标准圆</p>
+                        <p class="comments">0.08为超椭圆</p>
+                        <p class="comments">-0.73为圆角矩形</p>
+                        <p class="comments">绝对值越大越接近菱形</p>
+                    </div>
+                    <div class="line">
+                        <input ng-model="Data.Setting.Weight" type="number" />
+                    </div>
+                </li>
+                <li ng-cloak class="ng-cloak" ng-show="Data.Setting.Fun == 'BezierCurve'">
+                    <div class="line">
+                        <label for="autoWeight">自动曲度系数：</label>
+                        <input ng-model="Data.Setting.Auto.Weight.On" id="autoWeight" type="checkbox" />
+                    </div>
+                    <div class="line">
+                        <span>起始：</span>
+                        <input ng-model="Data.Setting.Auto.Weight.Start" type="number" />
+                    </div>
+                    <div class="line">
+                        <span>间隔：</span>
+                        <input ng-model="Data.Setting.Auto.Weight.Step" type="number" />
+                    </div>
+                </li>
+                <li>
+                    <div class="line">
+                        <label for="autoWidth">自动宽度：</label>
+                        <input ng-model="Data.Setting.Auto.Width.On" id="autoWidth" type="checkbox" />
+                    </div>
+                    <div class="line">
+                        <span>起始：</span>
+                        <input ng-model="Data.Setting.Auto.Width.Start" type="number" />
+                    </div>
+                    <div class="line">
+                        <span>间隔：</span>
+                        <input ng-model="Data.Setting.Auto.Width.Step" type="number" />
+                    </div>
+                </li>
+                <li>
+                    <div class="line">
+                        <label for="autoHeight">自动高度：</label>
+                        <input ng-model="Data.Setting.Auto.Height.On" id="autoHeight" type="checkbox" />
+                    </div>
+                    <div class="line">
+                        <span>起始：</span>
+                        <input ng-model="Data.Setting.Auto.Height.Start" type="number" />
+                    </div>
+                    <div class="line">
+                        <span>间隔：</span>
+                        <input ng-model="Data.Setting.Auto.Height.Step" type="number" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="container_foot"></div>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript" src="/Scripts/Canvas/CanvasHelper.js"></script>
+    <script type="text/javascript" src="/Scripts/Canvas/AutoUI.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap-3.3.7-dist/js/bootstrap-slider.min.js"></script>
+    <script type="text/javascript">
+        Angular(function ($scope, factory) {
+            $scope.Data = {
+                Setting: {
+                    Fun: 'Square',
+                    IsBorder: false,
+                    Auto: {
+                        Width: {
+                            On: false,
+                            Start: 0,
+                            Step: 10
+                        },
+                        Height: {
+                            On: false,
+                            Start: 0,
+                            Step: 10
+                        },
+                        Weight: {
+                            On: false,
+                            Start: -2,
+                            Step: 0.1
+                        }
+                    },
+                    Weight: 0
+                },
+                Canvas: new Canvas('content'),
+                //比例条
+                Slider: {
+                    Height: $("input.slider_Height").slider(),
+                    Width: $("input.slider_Width").slider()
+                },
+                ApplyList: {
+                    Square: '矩形',
+                    Round: '圆形',
+                    Triangle: '三角形',
+                    SuperEllipse: '超椭圆',
+                    RoundedRectangle: '圆角矩形',
+                    BezierCurve: '对称贝塞尔线'
+                }
+            }
+
+            $scope.SetSetting = function (text, value) {
+                $scope.Data.Setting[text] = value;
+            }
+
+            $scope.Clear = function () {
+                $scope.Data.Canvas.Clear();
+            }
+
+            AutoUI.Canvas = $scope.Data.Canvas;
+
+            $scope.AutoWidth = function () {
+                if ($scope.Data.Setting.Auto.Width.On) {
+                    AutoUI.IsBorder = false;
+                    if ($scope.Data.Setting.Auto.Width.Step <= 0) {
+                        alert('间隔值必须大于0');
+                        return false;
+                    }
+                    for (var width = $scope.Data.Setting.Auto.Width.Start;
+                        width < parseInt($scope.Data.Slider.Width[0].value) ;
+                        width += $scope.Data.Setting.Auto.Width.Step) {
+
+                        AutoUI.Size = {
+                            Width: width,
+                            Height: parseInt($scope.Data.Slider.Height[0].value)
+                        }
+                        AutoUI[$scope.Data.Setting.Fun]($scope.Data.Setting.Weight);
+                    }
+                    return true;
+                }
+                return true;
+            }
+
+            $scope.AutoHeight = function () {
+                if ($scope.Data.Setting.Auto.Height.On) {
+                    AutoUI.IsBorder = false;
+                    if ($scope.Data.Setting.Auto.Height.Step <= 0) {
+                        alert('间隔值必须大于0');
+                        return false;
+                    }
+                    for (var height = $scope.Data.Setting.Auto.Height.Start;
+                        height < parseInt($scope.Data.Slider.Height[0].value) ;
+                        height += $scope.Data.Setting.Auto.Height.Step) {
+
+                        AutoUI.Size = {
+                            Width: parseInt($scope.Data.Slider.Width[0].value),
+                            Height: height
+                        }
+                        AutoUI[$scope.Data.Setting.Fun]($scope.Data.Setting.Weight);
+                    }
+                    return true;
+                }
+                return true;
+            }
+
+            $scope.AutoWeight = function () {
+                if ($scope.Data.Setting.Auto.Weight.On && $scope.Data.Setting.Fun == 'BezierCurve') {
+                    AutoUI.IsBorder = false;
+
+                    if ($scope.Data.Setting.Auto.Weight.Step <= 0) {
+                        alert('间隔值必须大于0');
+                        return false;
+                    }
+
+                    for (var weight = $scope.Data.Setting.Auto.Weight.Start;
+                        weight < $scope.Data.Setting.Weight ;
+                        weight += $scope.Data.Setting.Auto.Weight.Step) {
+
+                        AutoUI.Size = {
+                            Width: parseInt($scope.Data.Slider.Width[0].value),
+                            Height: parseInt($scope.Data.Slider.Height[0].value)
+                        }
+                        AutoUI[$scope.Data.Setting.Fun](weight);
+                    }
+                    return true;
+                }
+                return true;
+            }
+
+            //生成图形
+            $scope.Create = function () {
+                if (!$scope.AutoWidth() || !$scope.AutoHeight() || !$scope.AutoWeight()) {
+                    return;
+                }
+
+                AutoUI.IsBorder = $scope.Data.Setting.IsBorder;
+                AutoUI.Size = {
+                    Width: parseInt($scope.Data.Slider.Width[0].value),
+                    Height: parseInt($scope.Data.Slider.Height[0].value)
+                }
+                AutoUI[$scope.Data.Setting.Fun]($scope.Data.Setting.Weight);
+            }
+        });
+    </script>
+</body>
+</html>

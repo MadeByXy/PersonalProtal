@@ -145,7 +145,8 @@
     <Content Include="Scripts\bootstrap-contextmenu\css\prettify.css" />
     <Content Include="Scripts\bootstrap-contextmenu\js\bootstrap-contextmenu.js" />
     <Content Include="Scripts\bootstrap-contextmenu\js\prettify.js" />
-    <Content Include="Scripts\CanvasHelper.js" />
+    <Content Include="Scripts\Canvas\AutoUI.js" />
+    <Content Include="Scripts\Canvas\CanvasHelper.js" />
     <Content Include="Scripts\code-beautify\beautify-css.js" />
     <Content Include="Scripts\code-beautify\beautify-html.js" />
     <Content Include="Scripts\code-beautify\beautify.js" />
@@ -296,12 +297,14 @@
     <Content Include="Style\Css\Algorithm\AStar.css" />
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
+    <Content Include="Style\Css\Algorithm\AutoUI.css" />
     <Content Include="Views\Algorithm\AStar.html" />
     <Content Include="Views\Algorithm\Tree.html" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />
     <Content Include="Views\Portfolio.html" />
     <Content Include="Views\Resume.html" />
+    <Content Include="Views\Algorithm\AutoUI.html" />
     <Content Include="Views\ToolsBox\Encryption.html" />
     <Content Include="Views\ToolsBox\CodeBeautify.html" />
     <Content Include="Views\ToolsBox\Json.html" />
