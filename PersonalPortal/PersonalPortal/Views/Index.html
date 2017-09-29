@@ -23,7 +23,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li role="presentation" ng-repeat="item in x.Navigation">
-                                    <a href="{{item.LinkUrl}}" target="Frame">{{item.LinkName}}</a>
+                                    <a href="{{item.LinkUrl}}" target="{{item.Target||'Frame'}}">{{item.LinkName}}</a>
                                 </li>
                             </ul>
                         </li>
@@ -135,10 +135,17 @@
                 "Navigation": [{
                     "LinkName": "A*算法",
                     "LinkUrl": "/Views/Algorithm/AStar.html",
+                    "Target": "blank",
                     "Navigation": []
                 }, {
                     "LinkName": "多叉树模拟",
                     "LinkUrl": "/Views/Algorithm/Tree.html",
+                    "Target": "blank",
+                    "Navigation": []
+                }, {
+                    "LinkName": "AutoUI",
+                    "LinkUrl": "/Views/Algorithm/AutoUI.html",
+                    "Target": "blank",
                     "Navigation": []
                 }]
             }, {
