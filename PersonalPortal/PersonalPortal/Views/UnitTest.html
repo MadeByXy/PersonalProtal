@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>单元测试页</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <style type="text/css">
+        body {
+            width: 80%;
+            margin: 10px auto;
+            background: url('/Images/bg.png') 0 0 repeat #dedede;
+        }
+
+        .separated {
+            margin-top: 5px !important;
+        }
+
+        .group-item {
+            background: #f7f7f9;
+            margin: 10px 0;
+            border-radius: 10px;
+            padding: 10px 30px;
+            box-shadow: 0px 5px 1px rgba(204, 204, 204, 0.6);
+        }
+
+            .group-item .folding {
+            }
+
+            .group-item .item-line {
+                box-shadow: 0px 0px 3px #ccc inset;
+                padding: 5px;
+                border-radius: 2px;
+                margin: 5px 0;
+                background-color: white;
+            }
+
+                .group-item .item-line .name {
+                    width: 110px;
+                    display: inline-block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                }
+
+                .group-item .item-line .inline {
+                    display: inline-table !important;
+                }
+
+                .group-item .item-line .input-select {
+                    border-radius: 4px;
+                    height: 30px;
+                    width: 120px;
+                    font-size: 13px;
+                    margin-right: 5px;
+                }
+
+        .item-table {
+            width: 100%;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+        }
+
+            .item-table td, .item-table th {
+                border: 1px solid #ddd;
+                padding: 3px 5px;
+            }
+
+                .item-table td:nth-child(2) {
+                    padding: 0 !important;
+                }
+
+            .item-table th {
+                text-align: center;
+            }
+
+            .item-table td input {
+                border: none;
+                box-shadow: 0px 0px 6px 1px #ddd inset;
+                width: 100%;
+                height: 26px;
+                margin: 0;
+                padding: 3px;
+            }
+
+        .notification {
+            position: fixed;
+            bottom: 15%;
+            margin: 0px auto;
+            padding: 10px 20px;
+            background-color: rgba(85, 85, 85, 0.7);
+            z-index: 100;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 18px;
+            box-shadow: 0px 1px 2px 1px #999;
+            color: white;
+            left: calc(50% - 100px);
+            width: 200px;
+            cursor: default;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+            .notification p {
+                margin: 0;
+            }
+    </style>
+</head>
+<body>
+    <div class="main" ng-app="app" ng-controller="controller">
+        <div class="group-item">
+            <div class="item-line">
+                <span class="name">命名空间选择：</span>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="separated">命名空间</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">测试</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="item-line">
+                <span class="name">方法选择：</span>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="separated">命名空间</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">测试</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="item-line folding">
+                <span class="name">参数设置(1)：</span>
+                <table class="item-table">
+                    <tr><th>参数名称</th><th>参数值</th><th>参数类型</th><th>参数说明</th></tr>
+                    <tr><td>参数名称</td><td><input type="text" /></td><td>参数类型</td><td>参数说明</td></tr>
+                </table>
+            </div>
+            <div class="item-line">
+                <span class="name">Excel操作：</span>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                        <span class="separated">导出模板</span>
+                    </button>
+                </div>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                        <span class="separated">导入参数</span>
+                    </button>
+                </div>
+            </div>
+            <div class="item-line">
+                <span class="name">操作：</span>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                        <span class="separated">开始测试</span>
+                    </button>
+                </div>
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                        <span class="separated">自动化测试</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="group-item">
+            <div class="item-line">结果展示区</div>
+        </div>
+        <div class="notification">
+            <p>正在加载数据，请稍候...</p>
+        </div>
+    </div>
+    <script src="/Scripts/AngularInstance.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        Angular(function ($scope, factory) {
+
+        });
+    </script>
+</body>
+</html>

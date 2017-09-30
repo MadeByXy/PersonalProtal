@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,14 +20,14 @@ namespace PersonalPortal.Content
         /// </summary>
         /// <param name="data">实体类数据</param>
         /// <returns></returns>
-        public static JObject ToJson(object data)
+        public static JToken ToJson(object data)
         {
             if (data.GetType() == typeof(string)) { return ToJson(data.ToString()); }
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 serializer.WriteObject(memoryStream, data);
-                return JObject.Parse(Encoding.UTF8.GetString(memoryStream.ToArray()));
+                return JToken.Parse(Encoding.UTF8.GetString(memoryStream.ToArray()));
             }
         }
 

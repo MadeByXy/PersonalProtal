@@ -148,7 +148,7 @@
             //翻译接口回调方法
             RichTranslator = {
                 handleTranslation: function (text) {
-                    $scope.SetValue('ResultText', text);
+                    $scope.SetValue('ResultText', unescape(text.replace(/\\/g, "%")));
                 }
             }
         });

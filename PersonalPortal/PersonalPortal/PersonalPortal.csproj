@@ -16,7 +16,7 @@
     <RootNamespace>PersonalPortal</RootNamespace>
     <AssemblyName>PersonalPortal</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -310,6 +310,7 @@
     <Content Include="Views\ToolsBox\Json.html" />
     <Content Include="Views\ToolsBox\Regexp.html" />
     <Content Include="Views\ToolsBox\Translator.html" />
+    <Content Include="Views\UnitTest.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -333,6 +334,7 @@
     <Compile Include="Controllers\Project.cs" />
     <Compile Include="Controllers\Sort.cs" />
     <Compile Include="Controllers\Spider.cs" />
+    <Compile Include="Controllers\UnitTest.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
@@ -341,6 +343,7 @@
     <Compile Include="Models\ResultModels\ProjectModel.cs" />
     <Compile Include="Models\ResultModels\ShortCutModel.cs" />
     <Compile Include="Models\ResultModels\SpiderModel.cs" />
+    <Compile Include="Models\ResultModels\UnitTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -357,14 +360,13 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>20811</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:20811/</IISUrl>
+          <IISUrl>http://localhost:6001</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>
-          </IISAppRootUrl>
+          <IISAppRootUrl>http://localhost:6001</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
