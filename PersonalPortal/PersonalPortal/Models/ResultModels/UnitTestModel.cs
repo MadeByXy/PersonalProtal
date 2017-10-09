@@ -48,6 +48,10 @@ namespace PersonalPortal.Models.ResultModels
         public class Method : Comment
         {
             /// <summary>
+            /// 方法全名
+            /// </summary>
+            public string FullName { get; set; }
+            /// <summary>
             /// 结果类型
             /// </summary>
             public string ReturnType { get; set; }
@@ -70,6 +74,37 @@ namespace PersonalPortal.Models.ResultModels
             /// 参数类型
             /// </summary>
             public string ParameterType { get; set; }
+        }
+
+        /// <summary>
+        /// 测试结果列表
+        /// </summary>
+        public class Test
+        {
+            /// <summary>
+            /// 用时（毫秒）
+            /// </summary>
+            public long UseTime { get; set; }
+            /// <summary>
+            /// 是否正确执行完成
+            /// </summary>
+            public bool IsOver { get; set; }
+            /// <summary>
+            /// 返回结果
+            /// </summary>
+            public string Result { get; set; }
+            /// <summary>
+            /// 建议信息
+            /// </summary>
+            public List<string> Info { get; set; } = new List<string>();
+            /// <summary>
+            /// 警告信息
+            /// </summary>
+            public List<string> Warning { get; set; } = new List<string>();
+            /// <summary>
+            /// 错误信息
+            /// </summary>
+            public List<string> Error { get; set; } = new List<string>();
         }
     }
 }

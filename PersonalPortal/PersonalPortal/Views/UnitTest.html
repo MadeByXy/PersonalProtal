@@ -10,8 +10,44 @@
             background: url('/Images/bg.png') 0 0 repeat #dedede;
         }
 
+        .ng-cloak {
+            display: none !important;
+        }
+
         .separated {
             margin-top: 5px !important;
+            display: inline-block;
+            width: 80px;
+            height: 18px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .caret {
+            margin-bottom: 10px;
+        }
+
+        .widening button {
+            width: 300px !important;
+        }
+
+        .widening ul {
+            min-width: 300px !important;
+        }
+
+        .widening .separated {
+            width: 250px !important;
+        }
+
+        .dropdown-menu {
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        *:disabled {
+            cursor: not-allowed !important;
+            color: #ccc !important;
         }
 
         .group-item {
@@ -21,9 +57,6 @@
             padding: 10px 30px;
             box-shadow: 0px 5px 1px rgba(204, 204, 204, 0.6);
         }
-
-            .group-item .folding {
-            }
 
             .group-item .item-line {
                 box-shadow: 0px 0px 3px #ccc inset;
@@ -42,6 +75,21 @@
                     vertical-align: middle;
                 }
 
+                .group-item .item-line .control {
+                    float: right;
+                }
+
+                    .group-item .item-line .control button {
+                        border-radius: 2px;
+                        height: 20px;
+                        width: 50px;
+                        padding: 0;
+                        margin-left: 10px;
+                        border: 1px solid #ccc;
+                    }
+
+
+
                 .group-item .item-line .inline {
                     display: inline-table !important;
                 }
@@ -52,6 +100,7 @@
                     width: 120px;
                     font-size: 13px;
                     margin-right: 5px;
+                    padding: 0;
                 }
 
         .item-table {
@@ -65,9 +114,9 @@
                 padding: 3px 5px;
             }
 
-                .item-table td:nth-child(2) {
-                    padding: 0 !important;
-                }
+            .item-table .special {
+                padding: 0 !important;
+            }
 
             .item-table th {
                 text-align: center;
@@ -94,8 +143,8 @@
             border-radius: 18px;
             box-shadow: 0px 1px 2px 1px #999;
             color: white;
-            left: calc(50% - 100px);
-            width: 200px;
+            left: calc(50% - 120px);
+            width: 240px;
             cursor: default;
             -moz-user-select: none;
             user-select: none;
@@ -104,84 +153,313 @@
             .notification p {
                 margin: 0;
             }
+
+        .folding, .folding * {
+            transition: height ease-out 0.5s;
+            height: 0;
+        }
+
+        .auto {
+            width: auto !important;
+        }
     </style>
 </head>
 <body>
     <div class="main" ng-app="app" ng-controller="controller">
         <div class="group-item">
             <div class="item-line">
-                <span class="name">命名空间选择：</span>
-                <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="separated">命名空间</span>
+                <span class="name">程序集选择：</span>
+                <div class="input-group-btn inline widening">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            title="{{GetItemByName(Assemblies, SelectAssemblie).Comments}}">
+                        <span class="separated" ng-bind="SelectAssemblie"></span>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li>
-                            <a href="#">测试</a>
+                        <li ng-repeat="item in Assemblies" title="{{item.Comments}}">
+                            <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetAssemblie(item.Name)"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="item-line">
+                <span class="name">命名空间选择：</span>
+                <div class="input-group-btn inline widening">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            title="{{GetItemByName(GetItemByName(Assemblies, SelectAssemblie).NameSpaces, SelectNameSpace).Comments}}">
+                        <span class="separated" ng-bind="SelectNameSpace"></span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="item in GetItemByName(Assemblies, SelectAssemblie).NameSpaces" title="{{item.Comments}}">
+                            <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetNameSpace(item.Name)"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="item-line">
+                <span class="name">类选择：</span>
+                <div class="input-group-btn inline widening">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            title="{{GetItemByName(Class, SelectClass).Comments}}">
+                        <span class="separated" ng-bind="SelectClass"></span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="item in Class" title="{{item.Comments}}">
+                            <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetClass(item.Name)"></a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="item-line">
                 <span class="name">方法选择：</span>
-                <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="separated">命名空间</span>
+                <div class="control">
+                    <button class="btn-default" ng-click="SetValue('IsFolding', !IsFolding)">
+                        <span class="glyphicon glyphicon-resize-full" aria-hidden="true" ng-show="IsFolding"></span>
+                        <span class="glyphicon glyphicon-resize-small" aria-hidden="true" ng-show="!IsFolding"></span>
+                    </button>
+                </div>
+                <div class="input-group-btn inline widening">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            title="{{Methods[SelectMethodIndex].Comments}}">
+                        <span class="separated" ng-bind="Methods[SelectMethodIndex].Name"></span>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li>
-                            <a href="#">测试</a>
+                        <li ng-repeat="item in Methods" title="{{item.Comments}}">
+                            <a href="javascript:void(0)" ng-bind="item.FullName" ng-click="SetMethod($index)"></a>
                         </li>
                     </ul>
                 </div>
+                <div ng-cloak class="ng-cloak" ng-repeat="par in Parameters" ng-init="parIndex = $index" ng-show="!IsFolding">
+                    <br />
+                    <span class="name auto">
+                        <span>方法参数设置(</span>
+                        <span ng-bind="parIndex + 1"></span>
+                        <span>)：</span>
+                    </span>
+                    <span class="name auto" ng-show="IsFolding && parIndex == 0">
+                        <span>方法参数设置...</span>
+                    </span>
+                    <div class="control" ng-show="!IsFolding || parIndex == 0">
+                        <button class="btn-default" ng-click="AddParameters(parIndex)">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn-default" ng-click="DeleteParameters(parIndex)" ng-disabled="Parameters.length <= 1">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <table class="item-table">
+                        <tr>
+                            <th>参数名称</th>
+                            <th>参数值</th>
+                            <th>参数类型</th>
+                            <th>参数说明</th>
+                        </tr>
+                        <tr ng-repeat="item in Methods[SelectMethodIndex].Parameters">
+                            <td ng-bind="item.Name"></td>
+                            <td class="special"><input type="text" ng-model="Parameters[parIndex][item.Name]" /></td>
+                            <td ng-bind="item.ParameterType"></td>
+                            <td ng-bind="item.Comments"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div class="item-line folding">
-                <span class="name">参数设置(1)：</span>
+            <div class="item-line">
+                <span class="name">返回结果说明：</span>
                 <table class="item-table">
-                    <tr><th>参数名称</th><th>参数值</th><th>参数类型</th><th>参数说明</th></tr>
-                    <tr><td>参数名称</td><td><input type="text" /></td><td>参数类型</td><td>参数说明</td></tr>
+                    <tr>
+                        <th>返回值类型</th>
+                        <th>返回值说明</th>
+                    </tr>
+                    <tr>
+                        <td ng-bind="Methods[SelectMethodIndex].ReturnType"></td>
+                        <td ng-bind="Methods[SelectMethodIndex].ReturnComments"></td>
+                    </tr>
                 </table>
             </div>
             <div class="item-line">
                 <span class="name">Excel操作：</span>
                 <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
                         <span class="separated">导出参数模板</span>
                     </button>
                 </div>
                 <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
                         <span class="separated">导入参数</span>
                     </button>
                 </div>
             </div>
             <div class="item-line">
                 <span class="name">操作：</span>
-                <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select">
-                        <span class="separated">开始测试</span>
+                <div class="input-group-btn inline" title="根据指定的参数进行方法测试">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                        <span class="separated" ng-click="">开始测试</span>
                     </button>
                 </div>
-                <div class="input-group-btn inline">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select">
+                <div class="input-group-btn inline" title="根据指定设定进行自动化测试">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
                         <span class="separated">自动化测试</span>
+                    </button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>&zwnj;
                     </button>
                 </div>
             </div>
         </div>
         <div class="group-item">
-            <div class="item-line">结果展示区</div>
+            <div class="item-line" ng-repeat="result in Results">结果展示区</div>
         </div>
-        <div class="notification">
-            <p>正在加载数据，请稍候...</p>
+        <div ng-cloak class="notification ng-cloak" ng-show="Notice.IsOn">
+            <p ng-bind="NoticeText"></p>
         </div>
     </div>
     <script src="/Scripts/AngularInstance.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         Angular(function ($scope, factory) {
+            $scope.IsFolding = false;
+            $scope.IsNull = factory.IsNull;
 
+            //设置程序集
+            $scope.SetAssemblie = function (assemblie) {
+                $scope.SelectAssemblie = assemblie;
+                $scope.SetNameSpace($scope.GetItemByName($scope.Assemblies, assemblie).NameSpaces[0].Name);
+            }
+
+            //设置命名空间
+            $scope.SetNameSpace = function (nameSpace) {
+                $scope.SelectNameSpace = nameSpace;
+                $scope.LoadClass();
+            }
+
+            //设置类
+            $scope.SetClass = function (className) {
+                $scope.SelectClass = className;
+                $scope.LoadMethod();
+            }
+
+            //设置方法
+            //因为方法存在重名的情况，所以使用序号
+            $scope.SetMethod = function (index) {
+                $scope.SelectMethodIndex = index;
+                $scope.Results = [{}];
+                $scope.Parameters = [{}];
+            }
+
+            $scope.AddParameters = function (index) {
+                var array = [];
+                for (var i = 0; i < $scope.Parameters.length; i++) {
+                    array.push(angular.copy($scope.Parameters[i]));
+                    if (i == index) {
+                        array.push({});
+                    }
+                }
+                $scope.Parameters = array;
+            }
+
+            $scope.DeleteParameters = function (index) {
+                var array = [];
+                for (var i = 0; i < $scope.Parameters.length; i++) {
+                    if (i != index) {
+                        array.push(angular.copy($scope.Parameters[i]));
+                    }
+                }
+                $scope.Parameters = array;
+            }
+
+            //通过名称获取指定项
+            $scope.GetItemByName = function (array, name) {
+                array = array || [];
+                for (var i = 0; i < array.length; i++) {
+                    if (array[i].Name == name) {
+                        return array[i];
+                    }
+                }
+            }
+
+            $scope.SetValue = function (name, value) {
+                $scope[name] = value;
+            }
+
+            $scope.Notice = {
+                Open: function (text) {
+                    $scope.NoticeText = text;
+                    //延迟加载以屏蔽闪烁的加载项
+                    $scope.Notice.QueueOrdinal = setTimeout(function () {
+                        $scope.Notice.IsOn = true;
+                        $scope.$apply();
+                    }, 100);
+                },
+                Close: function () {
+                    if ($scope.Notice.QueueOrdinal) {
+                        clearTimeout($scope.Notice.QueueOrdinal);
+                        $scope.Notice.QueueOrdinal = null;
+                    }
+                    $scope.Notice.IsOn = false;
+                },
+                Prompted: function (text, time) {
+                    $scope.Notice.Open(text);
+
+                    setTimeout(function () {
+                        $scope.Notice.Close();
+                        $scope.$apply();
+                    }, time || 2000)
+                },
+                IsOn: false,
+                QueueOrdinal: null
+            }
+
+            $scope.LoadNameSpace = function () {
+                $scope.Notice.Open('正在加载程序集列表，请稍候...');
+                factory.Query('/Controller/UnitTest/GetNameSpace', true, false).then(function (data) {
+                    $scope.Assemblies = data;
+                    $scope.Notice.Close();
+
+                    $scope.SetAssemblie($scope.Assemblies[0].Name);
+                })
+            }
+
+            $scope.LoadClass = function () {
+                $scope.Notice.Open('正在加载类列表，请稍候...');
+                factory.Query('/Controller/UnitTest/GetClass?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace, true, false).then(function (data) {
+                    $scope.Class = data;
+                    $scope.Notice.Close();
+
+                    if ($scope.Class.length == 0) {
+                        $scope.SetClass('');
+                    } else {
+                        $scope.SetClass($scope.Class[0].Name);
+                    }
+                })
+            }
+
+            $scope.LoadMethod = function () {
+                $scope.Notice.Open('正在加载方法列表，请稍候...');
+                factory.Query('/Controller/UnitTest/GetMethod?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.SelectClass, true, false).then(function (data) {
+                    $scope.Methods = data;
+                    $scope.Notice.Close();
+
+                    $scope.SetMethod(0);
+                })
+            }
+
+            $scope.Test = function () {
+                $scope.Notice.Open('正在进行测试，请稍候...');
+                factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.SelectClass, true, false).then(function (data) {
+                    $scope.Methods = data;
+                    $scope.Notice.Close();
+
+                    $scope.SetMethod(0);
+                })
+            }
+
+            $scope.LoadNameSpace();
         });
     </script>
 </body>
