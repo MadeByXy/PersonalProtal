@@ -19,7 +19,7 @@ namespace PersonalPortal.Controllers
         public List<UnitTestModel.NameSpace> GetNameSpace()
         {
             var result = new List<UnitTestModel.NameSpace>();
-            foreach (Assembly assembly in BuildManager.GetReferencedAssemblies())
+            foreach (Assembly assembly in GetAssemblies())
             {
                 try
                 {
@@ -64,7 +64,7 @@ namespace PersonalPortal.Controllers
         public List<UnitTestModel.Method> GetClass(string AssemblyName, string NameSpaceName)
         {
             var result = new List<UnitTestModel.Method>();
-            foreach (Assembly assembly in BuildManager.GetReferencedAssemblies())
+            foreach (Assembly assembly in GetAssemblies())
             {
                 if (assembly.GetName().Name != AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
@@ -76,9 +76,14 @@ namespace PersonalPortal.Controllers
                         result.Add(new UnitTestModel.Method()
                         {
                             Name = type.Name,
-                            //GetGenericArguments报错
-                            FullName = string.Format("{0}({1})", type.Name, string.Join(", ", info.GetGenericArguments()?.Select(x => x.Name).ToArray())),
-                            Comments = "暂未完成类注释"
+                            FullName = string.Format("{0}({1})", type.Name, string.Join(", ", info.GetParameters()?.Select(x => x.ParameterType.FullName).ToArray())),
+                            Comments = "暂未完成类注释",
+                            Parameters = info.GetParameters()?.Select(x => new UnitTestModel.Parameter()
+                            {
+                                Comments = "暂未完成类参数注释",
+                                Name = x.Name,
+                                ParameterType = x.ParameterType.Name
+                            }).ToList()
                         });
                     }
                 }
@@ -97,7 +102,7 @@ namespace PersonalPortal.Controllers
         public List<UnitTestModel.Method> GetMethod(string AssemblyName, string NameSpaceName, string ClassName)
         {
             var result = new List<UnitTestModel.Method>();
-            foreach (Assembly assembly in BuildManager.GetReferencedAssemblies())
+            foreach (Assembly assembly in GetAssemblies())
             {
                 if (assembly.GetName().Name != AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
@@ -143,7 +148,7 @@ namespace PersonalPortal.Controllers
         public List<UnitTestModel.Test> Test(string AssemblyName, string NameSpaceName, string ClassName, string MethodFullName, JArray ClassParameters, JArray MethodParameters)
         {
             var result = new List<UnitTestModel.Test>();
-            foreach (Assembly assembly in BuildManager.GetReferencedAssemblies())
+            foreach (Assembly assembly in GetAssemblies())
             {
                 if (assembly.GetName().Name != AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
@@ -165,6 +170,20 @@ namespace PersonalPortal.Controllers
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// 获取所有程序集
+        /// </summary>
+        /// <returns></returns>
+        private List<Assembly> GetAssemblies()
+        {
+            List<Assembly> assemblies = new List<Assembly>();
+            foreach (Assembly assembly in BuildManager.GetReferencedAssemblies())
+            {
+                assemblies.Add(assembly);
+            }
+            return assemblies.OrderBy(x => x.GetName().Name).ToList();
         }
     }
 }

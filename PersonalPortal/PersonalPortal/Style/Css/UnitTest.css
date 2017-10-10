@@ -1,0 +1,187 @@
+﻿body {
+}
+
+body {
+    width: 80%;
+    margin: 10px auto;
+    background: url('/Images/bg.png') 0 0 repeat #dedede;
+}
+
+.ng-cloak {
+    display: none !important;
+}
+
+.separated {
+    margin-top: 5px !important;
+    display: inline-block;
+    width: 80px;
+    height: 18px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.caret {
+    margin-bottom: 10px;
+}
+
+.widening button {
+    width: 300px !important;
+}
+
+.widening ul {
+    min-width: 300px !important;
+}
+
+.widening .separated {
+    width: 250px !important;
+}
+
+.dropdown-menu {
+    height: 200px;
+    overflow-y: auto;
+}
+
+*:disabled {
+    cursor: not-allowed !important;
+    color: #ccc !important;
+}
+
+.group-item {
+    background: #f7f7f9;
+    margin: 10px 0;
+    border-radius: 10px;
+    padding: 10px 30px;
+    box-shadow: 0px 5px 1px rgba(204, 204, 204, 0.6);
+}
+
+    .group-item .item-line {
+        box-shadow: 0px 0px 3px #ccc inset;
+        padding: 5px;
+        border-radius: 2px;
+        margin: 5px 0;
+        background-color: white;
+    }
+
+        .group-item .item-line .name {
+            width: 110px;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+
+        .group-item .item-line .control {
+            float: right;
+        }
+
+            .group-item .item-line .control button {
+                border-radius: 2px;
+                height: 20px;
+                width: 50px;
+                padding: 0;
+                margin-left: 10px;
+                border: 1px solid #ccc;
+            }
+
+
+
+        .group-item .item-line .inline {
+            display: inline-table !important;
+        }
+
+        .group-item .item-line .input-select {
+            border-radius: 4px;
+            height: 30px;
+            width: 120px;
+            font-size: 13px;
+            margin-right: 5px;
+            padding: 0;
+        }
+
+.item-table {
+    width: 100%;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+}
+
+    .item-table td, .item-table th {
+        border: 1px solid #ddd;
+        padding: 3px 5px;
+    }
+
+    .item-table .special {
+        padding: 0 !important;
+    }
+
+    .item-table th {
+        text-align: center;
+    }
+
+    .item-table td input {
+        border: none;
+        box-shadow: 0px 0px 6px 1px #ddd inset;
+        width: 100%;
+        height: 26px;
+        margin: 0;
+        padding: 3px;
+    }
+
+.notification {
+    position: fixed;
+    bottom: 15%;
+    margin: 0px auto;
+    padding: 10px 20px;
+    background-color: rgba(85, 85, 85, 0.7);
+    z-index: 100;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 18px;
+    box-shadow: 0px 1px 2px 1px #999;
+    color: white;
+    left: calc(50% - 120px);
+    width: 240px;
+    cursor: default;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+    .notification p {
+        margin: 0;
+    }
+
+.folding, .folding * {
+    transition: height ease-out 0.5s;
+    height: 0;
+}
+
+.auto {
+    width: auto !important;
+}
+
+.btn-left {
+    margin-right: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-right: none !important;
+}
+
+.btn-right {
+    margin-left: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    width: auto !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+    .btn-right * {
+        margin: 0;
+    }
+
+.control-group {
+    border-top: 1px solid #ddd;
+    margin-top: 15px;
+    padding-top: 5px;
+}

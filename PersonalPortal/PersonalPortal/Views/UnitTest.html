@@ -3,166 +3,7 @@
 <head>
     <title>单元测试页</title>
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
-    <style type="text/css">
-        body {
-            width: 80%;
-            margin: 10px auto;
-            background: url('/Images/bg.png') 0 0 repeat #dedede;
-        }
-
-        .ng-cloak {
-            display: none !important;
-        }
-
-        .separated {
-            margin-top: 5px !important;
-            display: inline-block;
-            width: 80px;
-            height: 18px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .caret {
-            margin-bottom: 10px;
-        }
-
-        .widening button {
-            width: 300px !important;
-        }
-
-        .widening ul {
-            min-width: 300px !important;
-        }
-
-        .widening .separated {
-            width: 250px !important;
-        }
-
-        .dropdown-menu {
-            height: 200px;
-            overflow-y: auto;
-        }
-
-        *:disabled {
-            cursor: not-allowed !important;
-            color: #ccc !important;
-        }
-
-        .group-item {
-            background: #f7f7f9;
-            margin: 10px 0;
-            border-radius: 10px;
-            padding: 10px 30px;
-            box-shadow: 0px 5px 1px rgba(204, 204, 204, 0.6);
-        }
-
-            .group-item .item-line {
-                box-shadow: 0px 0px 3px #ccc inset;
-                padding: 5px;
-                border-radius: 2px;
-                margin: 5px 0;
-                background-color: white;
-            }
-
-                .group-item .item-line .name {
-                    width: 110px;
-                    display: inline-block;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    vertical-align: middle;
-                }
-
-                .group-item .item-line .control {
-                    float: right;
-                }
-
-                    .group-item .item-line .control button {
-                        border-radius: 2px;
-                        height: 20px;
-                        width: 50px;
-                        padding: 0;
-                        margin-left: 10px;
-                        border: 1px solid #ccc;
-                    }
-
-
-
-                .group-item .item-line .inline {
-                    display: inline-table !important;
-                }
-
-                .group-item .item-line .input-select {
-                    border-radius: 4px;
-                    height: 30px;
-                    width: 120px;
-                    font-size: 13px;
-                    margin-right: 5px;
-                    padding: 0;
-                }
-
-        .item-table {
-            width: 100%;
-            border: 1px solid #ddd;
-            margin-top: 5px;
-        }
-
-            .item-table td, .item-table th {
-                border: 1px solid #ddd;
-                padding: 3px 5px;
-            }
-
-            .item-table .special {
-                padding: 0 !important;
-            }
-
-            .item-table th {
-                text-align: center;
-            }
-
-            .item-table td input {
-                border: none;
-                box-shadow: 0px 0px 6px 1px #ddd inset;
-                width: 100%;
-                height: 26px;
-                margin: 0;
-                padding: 3px;
-            }
-
-        .notification {
-            position: fixed;
-            bottom: 15%;
-            margin: 0px auto;
-            padding: 10px 20px;
-            background-color: rgba(85, 85, 85, 0.7);
-            z-index: 100;
-            text-align: center;
-            vertical-align: middle;
-            border-radius: 18px;
-            box-shadow: 0px 1px 2px 1px #999;
-            color: white;
-            left: calc(50% - 120px);
-            width: 240px;
-            cursor: default;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-            .notification p {
-                margin: 0;
-            }
-
-        .folding, .folding * {
-            transition: height ease-out 0.5s;
-            height: 0;
-        }
-
-        .auto {
-            width: auto !important;
-        }
-    </style>
+    <link rel="stylesheet" href="/Style/Css/UnitTest.css" />
 </head>
 <body>
     <div class="main" ng-app="app" ng-controller="controller">
@@ -204,21 +45,40 @@
                 <div class="input-group-btn inline widening">
                     <button type="button" class="btn btn-default dropdown-toggle input-select"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                            title="{{GetItemByName(Class, SelectClass).Comments}}">
-                        <span class="separated" ng-bind="SelectClass"></span>
+                            title="{{Class[SelectClassIndex].Comments}}">
+                        <span class="separated" ng-bind="Class[SelectClassIndex].Name"></span>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
                         <li ng-repeat="item in Class" title="{{item.Comments}}">
-                            <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetClass(item.Name)"></a>
+                            <a href="javascript:void(0)" ng-bind="item.FullName" ng-click="SetClass($index)"></a>
                         </li>
                     </ul>
+                </div>
+                <div ng-cloak class="ng-cloak control-group" ng-show="Class[SelectClassIndex].Parameters.length > 0">
+                    <span class="name auto">
+                        <span>实例化参数设置：</span>
+                    </span>
+                    <table class="item-table">
+                        <tr>
+                            <th>参数名称</th>
+                            <th>参数值</th>
+                            <th>参数类型</th>
+                            <th>参数说明</th>
+                        </tr>
+                        <tr ng-repeat="item in Class[SelectClassIndex].Parameters">
+                            <td ng-bind="item.Name"></td>
+                            <td class="special"><input type="text" ng-model="ClassParameters[item.Name]" /></td>
+                            <td ng-bind="item.ParameterType"></td>
+                            <td ng-bind="item.Comments"></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="item-line">
                 <span class="name">方法选择：</span>
                 <div class="control">
-                    <button class="btn-default" ng-click="SetValue('IsFolding', !IsFolding)">
+                    <button ng-cloak class="btn-default ng-cloak" ng-click="SetValue('IsFolding', !IsFolding)" ng-show="Methods[SelectMethodIndex].Parameters.length > 0">
                         <span class="glyphicon glyphicon-resize-full" aria-hidden="true" ng-show="IsFolding"></span>
                         <span class="glyphicon glyphicon-resize-small" aria-hidden="true" ng-show="!IsFolding"></span>
                     </button>
@@ -236,8 +96,7 @@
                         </li>
                     </ul>
                 </div>
-                <div ng-cloak class="ng-cloak" ng-repeat="par in Parameters" ng-init="parIndex = $index" ng-show="!IsFolding">
-                    <br />
+                <div ng-cloak class="ng-cloak control-group" ng-repeat="par in Parameters" ng-init="parIndex = $index" ng-show="!IsFolding && Methods[SelectMethodIndex].Parameters.length > 0">
                     <span class="name auto">
                         <span>方法参数设置(</span>
                         <span ng-bind="parIndex + 1"></span>
@@ -246,7 +105,7 @@
                     <span class="name auto" ng-show="IsFolding && parIndex == 0">
                         <span>方法参数设置...</span>
                     </span>
-                    <div class="control" ng-show="!IsFolding || parIndex == 0">
+                    <div class="control">
                         <button class="btn-default" ng-click="AddParameters(parIndex)">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
@@ -303,12 +162,16 @@
                         <span class="separated" ng-click="">开始测试</span>
                     </button>
                 </div>
-                <div class="input-group-btn inline" title="根据指定设定进行自动化测试">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                <div class="input-group-btn inline">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select btn-left"
+                            title="根据指定设定进行自动化测试"
+                            ng-disabled="IsNull(Methods[SelectMethodIndex])">
                         <span class="separated">自动化测试</span>
                     </button>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="caret"></span>&zwnj;
+                    <button type="button" class="btn btn-default dropdown-toggle input-select btn-right"
+                            title="进行自动化测试的设置"
+                            ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -339,8 +202,9 @@
             }
 
             //设置类
-            $scope.SetClass = function (className) {
-                $scope.SelectClass = className;
+            //因为类存在多个实例方法的情况，所以使用序号
+            $scope.SetClass = function (index) {
+                $scope.SelectClassIndex = index;
                 $scope.LoadMethod();
             }
 
@@ -349,6 +213,7 @@
             $scope.SetMethod = function (index) {
                 $scope.SelectMethodIndex = index;
                 $scope.Results = [{}];
+                $scope.ClassParameters = {};
                 $scope.Parameters = [{}];
             }
 
@@ -431,17 +296,18 @@
                     $scope.Class = data;
                     $scope.Notice.Close();
 
-                    if ($scope.Class.length == 0) {
-                        $scope.SetClass('');
-                    } else {
-                        $scope.SetClass($scope.Class[0].Name);
-                    }
+                    $scope.SetClass(0);
+                    //if ($scope.Class.length == 0) {
+                    //    $scope.SetClass('');
+                    //} else {
+                    //    $scope.SetClass($scope.Class[0].Name);
+                    //}
                 })
             }
 
             $scope.LoadMethod = function () {
                 $scope.Notice.Open('正在加载方法列表，请稍候...');
-                factory.Query('/Controller/UnitTest/GetMethod?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.SelectClass, true, false).then(function (data) {
+                factory.Query('/Controller/UnitTest/GetMethod?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name, true, false).then(function (data) {
                     $scope.Methods = data;
                     $scope.Notice.Close();
 
@@ -451,7 +317,7 @@
 
             $scope.Test = function () {
                 $scope.Notice.Open('正在进行测试，请稍候...');
-                factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.SelectClass, true, false).then(function (data) {
+                factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name, true, false).then(function (data) {
                     $scope.Methods = data;
                     $scope.Notice.Close();
 
