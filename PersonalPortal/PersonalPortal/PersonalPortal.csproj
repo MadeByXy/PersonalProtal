@@ -338,6 +338,7 @@
     <Compile Include="Controllers\UnitTest.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
+    <Compile Include="Models\ApplyModels\UnitTestModel.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />

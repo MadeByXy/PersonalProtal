@@ -33,7 +33,7 @@ namespace PersonalPortal
                     fileStream = ErrorFile.Open(FileMode.Open);
                     new StreamReader(fileStream, Encoding.UTF8).ReadToEnd();
                 }
-                string originalText = string.Format(text, args) + "\r\n";
+                string originalText = string.Format(text, args ?? new object[0]) + "\r\n";
                 byte[] bytes = Encoding.UTF8.GetBytes(originalText);
                 fileStream.Write(bytes, 0, bytes.Length);
                 fileStream.Flush();

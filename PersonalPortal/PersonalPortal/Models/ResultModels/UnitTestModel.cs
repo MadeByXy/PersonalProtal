@@ -84,11 +84,11 @@ namespace PersonalPortal.Models.ResultModels
             /// <summary>
             /// 用时（毫秒）
             /// </summary>
-            public long UseTime { get; set; }
+            public double UseTime { get; set; }
             /// <summary>
             /// 是否正确执行完成
             /// </summary>
-            public bool IsOver { get; set; }
+            public bool IsFinish { get; set; }
             /// <summary>
             /// 返回结果
             /// </summary>

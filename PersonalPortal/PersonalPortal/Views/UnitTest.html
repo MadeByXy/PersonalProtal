@@ -96,7 +96,7 @@
                         </li>
                     </ul>
                 </div>
-                <div ng-cloak class="ng-cloak control-group" ng-repeat="par in Parameters" ng-init="parIndex = $index" ng-show="!IsFolding && Methods[SelectMethodIndex].Parameters.length > 0">
+                <div ng-cloak class="ng-cloak control-group" ng-repeat="par in Parameters track by $index" ng-init="parIndex = $index" ng-show="!IsFolding && Methods[SelectMethodIndex].Parameters.length > 0">
                     <span class="name auto">
                         <span>方法参数设置(</span>
                         <span ng-bind="parIndex + 1"></span>
@@ -120,7 +120,7 @@
                             <th>参数类型</th>
                             <th>参数说明</th>
                         </tr>
-                        <tr ng-repeat="item in Methods[SelectMethodIndex].Parameters">
+                        <tr ng-repeat="item in Methods[SelectMethodIndex].Parameters track by $index">
                             <td ng-bind="item.Name"></td>
                             <td class="special"><input type="text" ng-model="Parameters[parIndex][item.Name]" /></td>
                             <td ng-bind="item.ParameterType"></td>
@@ -158,7 +158,9 @@
             <div class="item-line">
                 <span class="name">操作：</span>
                 <div class="input-group-btn inline" title="根据指定的参数进行方法测试">
-                    <button type="button" class="btn btn-default dropdown-toggle input-select" ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                    <button type="button" class="btn btn-default dropdown-toggle input-select"
+                            ng-disabled="IsNull(Methods[SelectMethodIndex])"
+                            ng-click="Test()">
                         <span class="separated" ng-click="">开始测试</span>
                     </button>
                 </div>
@@ -177,7 +179,25 @@
             </div>
         </div>
         <div class="group-item">
-            <div class="item-line" ng-repeat="result in Results">结果展示区</div>
+            <span class="name">结果说明：</span>
+            <div ng-cloak class="item-line ng-cloak" ng-repeat="result in Results">
+                <table class="item-table">
+                    <tr>
+                        <th>序号</th>
+                        <th>执行用时(毫秒)</th>
+                        <th>是否执行成功</th>
+                        <th>返回值</th>
+                        <th>错误信息</th>
+                    </tr>
+                    <tr>
+                        <td ng-bind="$index + 1"></td>
+                        <td ng-bind="result.UseTime"></td>
+                        <td ng-bind="result.IsFinish"></td>
+                        <td ng-bind="result.Result"></td>
+                        <td ng-bind="result.Error[0]"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div ng-cloak class="notification ng-cloak" ng-show="Notice.IsOn">
             <p ng-bind="NoticeText"></p>
@@ -292,37 +312,42 @@
 
             $scope.LoadClass = function () {
                 $scope.Notice.Open('正在加载类列表，请稍候...');
-                factory.Query('/Controller/UnitTest/GetClass?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace, true, false).then(function (data) {
-                    $scope.Class = data;
-                    $scope.Notice.Close();
+                factory.Query('/Controller/UnitTest/GetClass?AssemblyName=' + $scope.SelectAssemblie +
+                    '&NameSpaceName=' + $scope.SelectNameSpace, true, false).then(function (data) {
+                        $scope.Class = data;
+                        $scope.Notice.Close();
 
-                    $scope.SetClass(0);
-                    //if ($scope.Class.length == 0) {
-                    //    $scope.SetClass('');
-                    //} else {
-                    //    $scope.SetClass($scope.Class[0].Name);
-                    //}
-                })
+                        $scope.SetClass(0);
+                    })
             }
 
             $scope.LoadMethod = function () {
                 $scope.Notice.Open('正在加载方法列表，请稍候...');
-                factory.Query('/Controller/UnitTest/GetMethod?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name, true, false).then(function (data) {
-                    $scope.Methods = data;
-                    $scope.Notice.Close();
+                factory.Query('/Controller/UnitTest/GetMethod?AssemblyName=' + $scope.SelectAssemblie +
+                    '&NameSpaceName=' + $scope.SelectNameSpace +
+                    '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name, true, false).then(function (data) {
+                        $scope.Methods = data;
+                        $scope.Notice.Close();
 
-                    $scope.SetMethod(0);
-                })
+                        $scope.SetMethod(0);
+                    })
             }
 
             $scope.Test = function () {
                 $scope.Notice.Open('正在进行测试，请稍候...');
-                factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie + '&NameSpaceName=' + $scope.SelectNameSpace + '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name, true, false).then(function (data) {
-                    $scope.Methods = data;
-                    $scope.Notice.Close();
+                factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie +
+                    '&NameSpaceName=' + $scope.SelectNameSpace +
+                    '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name +
+                    '&ClassFullName=' + $scope.Class[$scope.SelectClassIndex].FullName +
+                    '&MethodFullName=' + $scope.Methods[$scope.SelectMethodIndex].FullName +
+                    '&ClassParameters=' + JSON.stringify($scope.ClassParameters) +
+                    '&MethodParameters=' + JSON.stringify($scope.Parameters), true, false).then(function (data) {
+                        $scope.Notice.Close();
 
-                    $scope.SetMethod(0);
-                })
+                        //绑定结果参数
+                        $scope.Results = data;
+                        console.log(data);
+                    })
             }
 
             $scope.LoadNameSpace();

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web.Compilation;
 
 namespace PersonalPortal.Controllers
@@ -57,19 +58,17 @@ namespace PersonalPortal.Controllers
         /// <summary>
         /// 获取命名空间下所有类（读取注释未完成）
         /// </summary>
-        /// <param name="AssemblyName">程序集名称</param>
-        /// <param name="NameSpaceName">命名空间</param>
         [HttpGet]
         [HttpPost]
-        public List<UnitTestModel.Method> GetClass(string AssemblyName, string NameSpaceName)
+        public List<UnitTestModel.Method> GetClass(Models.ApplyModels.UnitTestModel.TestModel data)
         {
             var result = new List<UnitTestModel.Method>();
             foreach (Assembly assembly in GetAssemblies())
             {
-                if (assembly.GetName().Name != AssemblyName) { continue; }
+                if (assembly.GetName().Name != data.AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.Namespace != NameSpaceName) { continue; }
+                    if (type.Namespace != data.NameSpaceName) { continue; }
 
                     foreach (ConstructorInfo info in type.GetConstructors())
                     {
@@ -94,20 +93,17 @@ namespace PersonalPortal.Controllers
         /// <summary>
         /// 获取类下所有方法（读取注释未完成）
         /// </summary>
-        /// <param name="AssemblyName">程序集名称</param>
-        /// <param name="NameSpaceName">命名空间</param>
-        /// <param name="ClassName">类名称</param>
         [HttpGet]
         [HttpPost]
-        public List<UnitTestModel.Method> GetMethod(string AssemblyName, string NameSpaceName, string ClassName)
+        public List<UnitTestModel.Method> GetMethod(Models.ApplyModels.UnitTestModel.TestModel data)
         {
             var result = new List<UnitTestModel.Method>();
             foreach (Assembly assembly in GetAssemblies())
             {
-                if (assembly.GetName().Name != AssemblyName) { continue; }
+                if (assembly.GetName().Name != data.AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.Namespace != NameSpaceName || type.Name != ClassName) { continue; }
+                    if (type.Namespace != data.NameSpaceName || type.Name != data.ClassName) { continue; }
                     foreach (MethodInfo method in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         try
@@ -138,33 +134,82 @@ namespace PersonalPortal.Controllers
         /// <summary>
         /// 方法单元测试（未完成）
         /// </summary>
-        /// <param name="AssemblyName">程序集名称</param>
-        /// <param name="NameSpaceName">命名空间</param>
-        /// <param name="ClassName">类名称</param>
-        /// <param name="MethodFullName">方法全名称</param>
-        /// <param name="MethodParameters">参数列表</param>
         [HttpGet]
         [HttpPost]
-        public List<UnitTestModel.Test> Test(string AssemblyName, string NameSpaceName, string ClassName, string MethodFullName, JArray ClassParameters, JArray MethodParameters)
+        public List<UnitTestModel.Test> Test(Models.ApplyModels.UnitTestModel.TestModel data)
         {
             var result = new List<UnitTestModel.Test>();
             foreach (Assembly assembly in GetAssemblies())
             {
-                if (assembly.GetName().Name != AssemblyName) { continue; }
+                if (assembly.GetName().Name != data.AssemblyName) { continue; }
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.Namespace != NameSpaceName || type.Name != ClassName) { continue; }
+                    if (type.Namespace != data.NameSpaceName || type.Name != data.ClassName) { continue; }
                     foreach (MethodInfo method in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                     {
-                        if (method.ToString() != MethodFullName) { continue; }
-                        foreach (JToken parameter in MethodParameters)
+                        if (method.ToString() != data.MethodFullName) { continue; }
+
+                        object instance = null;
+                        string[] typeNames = Regex.Match(data.ClassFullName, @"\(([^\)]*)\)").Groups[1].Value.Split(',');
+                        List<object> classParamsList = new List<object>();
+                        foreach (ConstructorInfo info in type.GetConstructors())
                         {
+                            //遍历实例方法以确定实例
+                            ParameterInfo[] pars = info.GetParameters();
+                            for (int i = 0; i < pars.Length; i++)
+                            {
+                                try
+                                {
+                                    if (pars[i].ParameterType.FullName != typeNames[i].Trim())
+                                    {
+                                        throw null;
+                                    }
+                                    else
+                                    {
+                                        classParamsList.Add(DataConversion.ToEntity(pars[i], data.ClassParameters));
+                                    }
+                                }
+                                catch { goto Continue; }
+                            }
+
+                            instance = Activator.CreateInstance(type, classParamsList.ToArray());
+                            break;
+
+                            Continue:
+                            {
+                                classParamsList.Clear();
+                                continue;
+                            }
+                        }
+
+                        foreach (JToken parameter in data.MethodParameters)
+                        {
+                            UnitTestModel.Test test = new UnitTestModel.Test();
+                            DateTime startTime = DateTime.Now;
+
                             try
                             {
-                                method.Invoke(method.IsStatic ? Activator.CreateInstance(type) : null,
-                                    parameter.Where(x => method.GetParameters().Select(p => p.Name).Contains(x.ToString())).Select(x => x.ToString() as object).ToArray());
+                                List<object> paramsList = new List<object>();
+
+                                //构造参数
+                                foreach (ParameterInfo parameterInfo in method.GetParameters())
+                                {
+                                    paramsList.Add(DataConversion.ToEntity(parameterInfo, parameter as JObject));
+                                }
+
+                                test.Result = method.Invoke(
+                                    instance,
+                                    paramsList.ToArray()).ToString();
+                                test.IsFinish = true;
                             }
-                            catch { }
+                            catch (Exception e)
+                            {
+                                test.IsFinish = false;
+                                test.Error.Add((e.InnerException ?? e).Message);
+                            }
+                            test.UseTime = (DateTime.Now - startTime).TotalMilliseconds;
+
+                            result.Add(test);
                         }
                     }
                 }
