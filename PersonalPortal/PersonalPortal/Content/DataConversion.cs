@@ -23,6 +23,7 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static JToken ToJson(object data)
         {
+            if (data == null) { return null; }
             if (data.GetType() == typeof(string)) { return ToJson(data.ToString()); }
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
             using (MemoryStream memoryStream = new MemoryStream())

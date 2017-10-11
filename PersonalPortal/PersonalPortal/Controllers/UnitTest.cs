@@ -3,10 +3,13 @@ using PersonalPortal.Content;
 using PersonalPortal.Models.ResultModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Compilation;
+using System.Xml;
 
 namespace PersonalPortal.Controllers
 {
@@ -33,14 +36,15 @@ namespace PersonalPortal.Controllers
                         }
                     }
 
+                    XmlDocument comments = GetDocument(assembly);
                     result.Add(new UnitTestModel.NameSpace()
                     {
                         Name = assembly.GetName().Name,
-                        Comments = "暂未完成程序集注释",
+                        Comments = comments["assembly"]?["name"]?.Value,
                         NameSpaces = assembly.GetTypes().Select(type => new UnitTestModel.NameSpace()
                         {
                             Name = type.Namespace,
-                            Comments = "暂未完成命名空间注释"
+                            Comments = comments["members"]?[string.Format("member name=\"T: {0}\"", type.FullName)]?.Value,// "暂未完成命名空间注释"
                         }).Where(x => !string.IsNullOrEmpty(x.Name)).Distinct(new UnitTestModel.NameSpace()).ToList()
                     });
 
@@ -132,7 +136,7 @@ namespace PersonalPortal.Controllers
         }
 
         /// <summary>
-        /// 方法单元测试（未完成）
+        /// 方法单元测试
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -197,17 +201,17 @@ namespace PersonalPortal.Controllers
                                     paramsList.Add(DataConversion.ToEntity(parameterInfo, parameter as JObject));
                                 }
 
-                                test.Result = method.Invoke(
+                                test.Result = DataConversion.ToJson(method.Invoke(
                                     instance,
-                                    paramsList.ToArray()).ToString();
+                                    paramsList.ToArray())).ToString();
                                 test.IsFinish = true;
                             }
                             catch (Exception e)
                             {
                                 test.IsFinish = false;
-                                test.Error.Add((e.InnerException ?? e).Message);
+                                test.Error.Add((e.InnerException ?? e).ToString());
                             }
-                            test.UseTime = (DateTime.Now - startTime).TotalMilliseconds;
+                            test.UseTime = (DateTime.Now - startTime).TotalMilliseconds.ToString(".##");
 
                             result.Add(test);
                         }
@@ -215,6 +219,22 @@ namespace PersonalPortal.Controllers
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// 获取程序集下注释
+        /// </summary>
+        /// <param name="assembly">程序集</param>
+        /// <returns></returns>
+        private XmlDocument GetDocument(Assembly assembly)
+        {
+            XmlDocument doc = new XmlDocument();
+            string filePath = string.Format(@"{0}\bin\{1}.xml", AppDomain.CurrentDomain.BaseDirectory, assembly.GetName().Name);
+            if (File.Exists(filePath))
+            {
+                doc.Load(filePath);
+            }
+            return doc;
         }
 
         /// <summary>

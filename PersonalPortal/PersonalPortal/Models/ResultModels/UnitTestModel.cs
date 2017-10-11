@@ -84,7 +84,7 @@ namespace PersonalPortal.Models.ResultModels
             /// <summary>
             /// 用时（毫秒）
             /// </summary>
-            public double UseTime { get; set; }
+            public string UseTime { get; set; }
             /// <summary>
             /// 是否正确执行完成
             /// </summary>

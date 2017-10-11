@@ -7,6 +7,7 @@
 </head>
 <body>
     <div class="main" ng-app="app" ng-controller="controller">
+        <!--参数入口-->
         <div class="group-item">
             <div class="item-line">
                 <span class="name">程序集选择：</span>
@@ -68,7 +69,7 @@
                         </tr>
                         <tr ng-repeat="item in Class[SelectClassIndex].Parameters">
                             <td ng-bind="item.Name"></td>
-                            <td class="special"><input type="text" ng-model="ClassParameters[item.Name]" /></td>
+                            <td class="special"><input type="text" class="btn-default" ng-model="ClassParameters[item.Name]" /></td>
                             <td ng-bind="item.ParameterType"></td>
                             <td ng-bind="item.Comments"></td>
                         </tr>
@@ -122,7 +123,7 @@
                         </tr>
                         <tr ng-repeat="item in Methods[SelectMethodIndex].Parameters track by $index">
                             <td ng-bind="item.Name"></td>
-                            <td class="special"><input type="text" ng-model="Parameters[parIndex][item.Name]" /></td>
+                            <td class="special"><input type="text" class="btn-default" ng-model="Parameters[parIndex][item.Name]" /></td>
                             <td ng-bind="item.ParameterType"></td>
                             <td ng-bind="item.Comments"></td>
                         </tr>
@@ -159,7 +160,7 @@
                 <span class="name">操作：</span>
                 <div class="input-group-btn inline" title="根据指定的参数进行方法测试">
                     <button type="button" class="btn btn-default dropdown-toggle input-select"
-                            ng-disabled="IsNull(Methods[SelectMethodIndex])"
+                            ng-disabled="IsNull(Methods[SelectMethodIndex]) || IsRunning"
                             ng-click="Test()">
                         <span class="separated" ng-click="">开始测试</span>
                     </button>
@@ -167,46 +168,87 @@
                 <div class="input-group-btn inline">
                     <button type="button" class="btn btn-default dropdown-toggle input-select btn-left"
                             title="根据指定设定进行自动化测试"
-                            ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                            ng-disabled="IsNull(Methods[SelectMethodIndex]) || IsRunning">
                         <span class="separated">自动化测试</span>
                     </button>
                     <button type="button" class="btn btn-default dropdown-toggle input-select btn-right"
                             title="进行自动化测试的设置"
-                            ng-disabled="IsNull(Methods[SelectMethodIndex])">
+                            ng-disabled="IsNull(Methods[SelectMethodIndex]) || IsRunning"
+                            data-toggle="modal" data-target="#AutoTestSetting">
                         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
         </div>
-        <div class="group-item">
-            <span class="name">结果说明：</span>
+        <!--结果列表-->
+        <div ng-cloak class="group-item ng-cloak" ng-show="Results.length > 0">
+            <span class="name">结果详情：</span>
             <div ng-cloak class="item-line ng-cloak" ng-repeat="result in Results">
-                <table class="item-table">
+                <span class="name">第<span ng-bind="$index + 1"></span>次执行结果：</span>
+                <table class="item-table table-data">
                     <tr>
-                        <th>序号</th>
-                        <th>执行用时(毫秒)</th>
                         <th>是否执行成功</th>
-                        <th>返回值</th>
-                        <th>错误信息</th>
+                        <td ng-bind="result.IsFinish"></td>
                     </tr>
                     <tr>
-                        <td ng-bind="$index + 1"></td>
+                        <th>执行用时(毫秒)</th>
                         <td ng-bind="result.UseTime"></td>
-                        <td ng-bind="result.IsFinish"></td>
+                    </tr>
+                    <tr ng-show="Methods[SelectMethodIndex].ReturnType != 'Void'">
+                        <th>返回值</th>
                         <td ng-bind="result.Result"></td>
-                        <td ng-bind="result.Error[0]"></td>
+                    </tr>
+                    <tr ng-repeat="error in result.Error">
+                        <th>错误信息</th>
+                        <td ng-bind="error"></td>
+                    </tr>
+                    <tr ng-repeat="info in result.Info">
+                        <th>优化建议</th>
+                        <td ng-bind="info"></td>
                     </tr>
                 </table>
             </div>
         </div>
+        <!--提示窗体-->
         <div ng-cloak class="notification ng-cloak" ng-show="Notice.IsOn">
             <p ng-bind="NoticeText"></p>
+        </div>
+        <!--自动化测试模态框-->
+        <div class="modal fade" id="AutoTestSetting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">自动化测试设置</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="title">自动化测试说明：</p>
+                        <ul class="content">
+                            <li>"自动化测试"是通过一系列预设的参数进行自动测试的功能</li>
+                            <li>通过自动化测试能有效验证方法对于特殊值/边界值的处理是否正常</li>
+                            <li>还可以通过压力测试验证方法在并发时的表现并快速定位性能瓶颈</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="item-line">
+                            <span class="title">并发数：</span>
+                            <input class="switch btn-default" ng-model="AutoSetting.Concurrent" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="/Scripts/AngularInstance.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         Angular(function ($scope, factory) {
             $scope.IsFolding = false;
+
+            //自动化测试设置
+            $scope.AutoSetting = {
+                //并发量
+                Concurrent: 1
+            };
             $scope.IsNull = factory.IsNull;
 
             //设置程序集
@@ -232,7 +274,7 @@
             //因为方法存在重名的情况，所以使用序号
             $scope.SetMethod = function (index) {
                 $scope.SelectMethodIndex = index;
-                $scope.Results = [{}];
+                $scope.Results = [];
                 $scope.ClassParameters = {};
                 $scope.Parameters = [{}];
             }
@@ -335,6 +377,7 @@
 
             $scope.Test = function () {
                 $scope.Notice.Open('正在进行测试，请稍候...');
+                $scope.IsRunning = true;
                 factory.Query('/Controller/UnitTest/Test?AssemblyName=' + $scope.SelectAssemblie +
                     '&NameSpaceName=' + $scope.SelectNameSpace +
                     '&ClassName=' + $scope.Class[$scope.SelectClassIndex].Name +
@@ -343,10 +386,10 @@
                     '&ClassParameters=' + JSON.stringify($scope.ClassParameters) +
                     '&MethodParameters=' + JSON.stringify($scope.Parameters), true, false).then(function (data) {
                         $scope.Notice.Close();
+                        $scope.IsRunning = false;
 
                         //绑定结果参数
                         $scope.Results = data;
-                        console.log(data);
                     })
             }
 
