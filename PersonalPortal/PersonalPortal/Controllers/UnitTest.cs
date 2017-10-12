@@ -32,7 +32,7 @@ namespace PersonalPortal.Controllers
                 try
                 {
                     foreach (string key in DataBase.ExecuteSql<DataTable>(
-                        "select blockValue from blockList where blockType = 'NameSpace'").Select("1 = 1").Select(
+                        "select blockValue from blockList where blockType = 'Assembly'").Select("1 = 1").Select(
                         row => row["blockValue"].ToString()))
                     {
                         //屏蔽列表
@@ -177,7 +177,6 @@ namespace PersonalPortal.Controllers
                         catch (ReflectionTypeLoadException) { }
                     }
                 }
-
             }
             return result;
         }
@@ -276,7 +275,8 @@ namespace PersonalPortal.Controllers
         private XmlDocument GetDocument(Assembly assembly)
         {
             XmlDocument doc = new XmlDocument();
-            string filePath = string.Format(@"{0}\bin\{1}.xml", AppDomain.CurrentDomain.BaseDirectory, assembly.GetName().Name);
+            string local = assembly.CodeBase.Replace("file:///", "").Replace("/", "\\");
+            string filePath = local.Replace(new FileInfo(local).Extension, ".xml");
             if (File.Exists(filePath))
             {
                 doc.Load(filePath);

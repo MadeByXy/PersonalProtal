@@ -50,8 +50,11 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static XmlElement GetByAttribute(this XmlElement xmlElement, string attributeName, string attributeValue)
         {
-            foreach(XmlElement xml in xmlElement.ChildNodes)
+            foreach(var item in xmlElement.ChildNodes)
             {
+                if (!(item is XmlElement)) { continue; }
+
+                var xml = item as XmlElement;
                 if (xml.HasAttribute(attributeName) && xml.GetAttribute(attributeName) == attributeValue)
                 {
                     return xml;
