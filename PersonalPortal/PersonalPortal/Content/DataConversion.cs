@@ -25,6 +25,12 @@ namespace PersonalPortal.Content
         {
             if (data == null) { return null; }
             if (data.GetType() == typeof(string)) { return ToJson(data.ToString()); }
+            if (data.GetType() == typeof(DataTable))
+            {
+                data.GetType().GetProperty("TableName").SetValue(
+                    data,
+                    string.IsNullOrEmpty((data as DataTable).TableName) ? "Data" : (data as DataTable).TableName);
+            }
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -247,7 +253,7 @@ namespace PersonalPortal.Content
                         }
                     }
                     return DefaultValue(type);
-       
+
             }
         }
     }

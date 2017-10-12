@@ -21,7 +21,7 @@
     height: 18px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;.dropdown-menu
+    text-overflow: ellipsis;
 }
 
 .caret {
@@ -43,7 +43,23 @@
 .dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
+    padding-top: 0;
 }
+
+    .dropdown-menu .search {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        border-bottom: 1px solid #eee;
+    }
+
+        .dropdown-menu .search input {
+            width: 100%;
+            border-radius: 4px;
+            margin: 2px 0;
+            border: 1px solid #ccc;
+            font-size: 13px;
+        }
 
 *:disabled {
     cursor: not-allowed !important;

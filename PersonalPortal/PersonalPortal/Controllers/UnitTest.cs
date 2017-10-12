@@ -147,7 +147,7 @@ namespace PersonalPortal.Controllers
                 if (assembly.GetName().Name != data.AssemblyName) { continue; }
 
                 XmlDocument comments = GetDocument(assembly);
-                foreach (Type type in assembly.GetTypes())
+                foreach (Type type in assembly.GetTypes().OrderBy(x => x.Name))
                 {
                     if (type.Namespace != data.NameSpaceName || type.Name != data.ClassName) { continue; }
 

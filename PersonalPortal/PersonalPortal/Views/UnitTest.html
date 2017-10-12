@@ -19,7 +19,10 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in Assemblies" title="{{item.Comments}}">
+                        <li class="search">
+                            <a href="javascript:void(0)"><input placeholder="搜索" ng-model="AssemblySearch" /></a>
+                        </li>
+                        <li ng-repeat="item in Assemblies track by item.Name" title="{{item.Comments}}" ng-show="Like(item.Name, AssemblySearch)">
                             <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetAssemblie(item.Name)"></a>
                         </li>
                     </ul>
@@ -35,7 +38,10 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in GetItemByName(Assemblies, SelectAssemblie).NameSpaces" title="{{item.Comments}}">
+                        <li class="search">
+                            <a href="javascript:void(0)"><input placeholder="搜索" ng-model="NameSpaceSearch" /></a>
+                        </li>
+                        <li ng-repeat="item in GetItemByName(Assemblies, SelectAssemblie).NameSpaces" title="{{item.Comments}}" ng-show="Like(item.Name, NameSpaceSearch)">
                             <a href="javascript:void(0)" ng-bind="item.Name" ng-click="SetNameSpace(item.Name)"></a>
                         </li>
                     </ul>
@@ -51,7 +57,10 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in Class" title="{{item.Comments}}">
+                        <li class="search">
+                            <a href="javascript:void(0)"><input placeholder="搜索" ng-model="ClassSearch" /></a>
+                        </li>
+                        <li ng-repeat="item in Class" title="{{item.Comments}}" ng-show="Like(item.FullName, ClassSearch)">
                             <a href="javascript:void(0)" ng-bind="item.FullName" ng-click="SetClass($index)"></a>
                         </li>
                     </ul>
@@ -92,7 +101,10 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="item in Methods" title="{{item.Comments}}">
+                        <li class="search">
+                            <a href="javascript:void(0)"><input placeholder="搜索" ng-model="MethodSearch" /></a>
+                        </li>
+                        <li ng-repeat="item in Methods" title="{{item.Comments}}" ng-show="Like(item.FullName, MethodSearch)">
                             <a href="javascript:void(0)" ng-bind="item.FullName" ng-click="SetMethod($index)"></a>
                         </li>
                     </ul>
@@ -254,12 +266,14 @@
             //设置程序集
             $scope.SetAssemblie = function (assemblie) {
                 $scope.SelectAssemblie = assemblie;
+                $scope.AssemblySearch = "";
                 $scope.SetNameSpace($scope.GetItemByName($scope.Assemblies, assemblie).NameSpaces[0].Name);
             }
 
             //设置命名空间
             $scope.SetNameSpace = function (nameSpace) {
                 $scope.SelectNameSpace = nameSpace;
+                $scope.NameSpaceSearch = "";
                 $scope.LoadClass();
             }
 
@@ -267,6 +281,7 @@
             //因为类存在多个实例方法的情况，所以使用序号
             $scope.SetClass = function (index) {
                 $scope.SelectClassIndex = index;
+                $scope.ClassSearch = "";
                 $scope.LoadMethod();
             }
 
@@ -274,9 +289,15 @@
             //因为方法存在重名的情况，所以使用序号
             $scope.SetMethod = function (index) {
                 $scope.SelectMethodIndex = index;
+                $scope.MethodSearch = "";
                 $scope.Results = [];
                 $scope.ClassParameters = {};
                 $scope.Parameters = [{}];
+            }
+
+            //搜索项
+            $scope.Like = function (text, search) {
+                return $scope.IsNull(search) || text.toLowerCase().indexOf(search.toLowerCase()) != -1;
             }
 
             $scope.AddParameters = function (index) {
