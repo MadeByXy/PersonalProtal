@@ -26,9 +26,13 @@ namespace PersonalPortal
         }
 
         /// <summary>
-        /// 获取HTML
+        /// 从指定Url获取HTML
         /// </summary>
-        /// <returns></returns>
+        /// <param name="url">Url地址</param>
+        /// <param name="parameters">请求参数</param>
+        /// <param name="method">请求方式</param>
+        /// <param name="submitMethod">参数提交方式</param>
+        /// <returns>页面返回值</returns>
         public static string GetHtml(string url, Dictionary<string, string> parameters, HttpMethod method = HttpMethod.GET, SubmitMethod submitMethod = SubmitMethod.FORM)
         {
             HttpWebRequest request;

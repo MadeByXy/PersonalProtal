@@ -21,7 +21,7 @@
     height: 18px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis;.dropdown-menu
 }
 
 .caret {
@@ -41,7 +41,7 @@
 }
 
 .dropdown-menu {
-    height: 200px;
+    max-height: 200px;
     overflow-y: auto;
 }
 

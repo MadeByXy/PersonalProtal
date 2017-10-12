@@ -1,6 +1,7 @@
 ﻿using Neo.IronLua;
 using System;
 using System.IO;
+using System.Xml;
 using XYZZ.Library;
 
 namespace PersonalPortal.Content
@@ -38,6 +39,25 @@ namespace PersonalPortal.Content
                 text = text.Replace(string.Format("{{{0}}}", parameter.Name), parameter.Value.ToString());
             }
             return text;
+        }
+
+        /// <summary>
+        /// 通过特性值查找指定节点
+        /// </summary>
+        /// <param name="xmlElement">XML节点</param>
+        /// <param name="attributeName">特性名称</param>
+        /// <param name="attributeValue">特性值</param>
+        /// <returns></returns>
+        public static XmlElement GetByAttribute(this XmlElement xmlElement, string attributeName, string attributeValue)
+        {
+            foreach(XmlElement xml in xmlElement.ChildNodes)
+            {
+                if (xml.HasAttribute(attributeName) && xml.GetAttribute(attributeName) == attributeValue)
+                {
+                    return xml;
+                }
+            }
+            return null;
         }
     }
 }

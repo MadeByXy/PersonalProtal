@@ -4,10 +4,17 @@ using System.Text;
 
 namespace PersonalPortal
 {
+    /// <summary>
+    /// 日志记录工具
+    /// </summary>
     public class LogControl
     {
         private FileInfo ErrorFile;
 
+        /// <summary>
+        /// <see cref="LogControl"/>的实例
+        /// </summary>
+        /// <param name="controllerName">日志名称</param>
         public LogControl(string controllerName)
         {
             string dicPath = AppDomain.CurrentDomain.BaseDirectory + @"\ErrorLog\";
@@ -17,6 +24,11 @@ namespace PersonalPortal
             ErrorFile = new FileInfo(dicPath + controllerName + ".txt");
         }
 
+        /// <summary>
+        /// 记录日志
+        /// </summary>
+        /// <param name="text">日志内容</param>
+        /// <param name="args">日志内容(格式化参数)</param>
         public void WriteLog(string text, params object[] args)
         {
             lock (ErrorFile)

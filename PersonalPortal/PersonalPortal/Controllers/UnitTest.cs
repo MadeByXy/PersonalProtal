@@ -3,20 +3,24 @@ using PersonalPortal.Content;
 using PersonalPortal.Models.ResultModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Compilation;
 using System.Xml;
+using XYZZ.Library;
 
 namespace PersonalPortal.Controllers
 {
+    /// <summary>
+    /// 单元测试Api
+    /// </summary>
     public class UnitTest : ApiController
     {
         /// <summary>
-        /// 获取所有命名空间（读取注释未完成）
+        /// 获取所有命名空间
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -27,24 +31,25 @@ namespace PersonalPortal.Controllers
             {
                 try
                 {
-                    foreach (string key in new string[] { "Microsoft", "System", "mscorlib", "Newtonsoft" })
+                    foreach (string key in DataBase.ExecuteSql<DataTable>(
+                        "select blockValue from blockList where blockType = 'NameSpace'").Select("1 = 1").Select(
+                        row => row["blockValue"].ToString()))
                     {
-                        //屏蔽列表，后续可单独建张表
+                        //屏蔽列表
                         if (assembly.FullName.Contains(key))
                         {
                             goto Continue;
                         }
                     }
 
-                    XmlDocument comments = GetDocument(assembly);
                     result.Add(new UnitTestModel.NameSpace()
                     {
                         Name = assembly.GetName().Name,
-                        Comments = comments["assembly"]?["name"]?.Value,
+                        Comments = assembly.GetName().Name,
                         NameSpaces = assembly.GetTypes().Select(type => new UnitTestModel.NameSpace()
                         {
                             Name = type.Namespace,
-                            Comments = comments["members"]?[string.Format("member name=\"T: {0}\"", type.FullName)]?.Value,// "暂未完成命名空间注释"
+                            Comments = type.Namespace,
                         }).Where(x => !string.IsNullOrEmpty(x.Name)).Distinct(new UnitTestModel.NameSpace()).ToList()
                     });
 
@@ -60,7 +65,7 @@ namespace PersonalPortal.Controllers
         }
 
         /// <summary>
-        /// 获取命名空间下所有类（读取注释未完成）
+        /// 获取命名空间下所有类
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -70,24 +75,59 @@ namespace PersonalPortal.Controllers
             foreach (Assembly assembly in GetAssemblies())
             {
                 if (assembly.GetName().Name != data.AssemblyName) { continue; }
+
+                XmlDocument comments = GetDocument(assembly);
                 foreach (Type type in assembly.GetTypes())
                 {
                     if (type.Namespace != data.NameSpaceName) { continue; }
 
-                    foreach (ConstructorInfo info in type.GetConstructors())
+                    foreach (string key in DataBase.ExecuteSql<DataTable>(
+                        "select blockValue from blockList where blockType = 'Class'").Select("1 = 1").Select(
+                        row => row["blockValue"].ToString()))
                     {
+                        //屏蔽列表
+                        if (type.FullName.Contains(key))
+                        {
+                            goto Continue;
+                        }
+                    }
+
+                    var members = comments["doc"]?["members"];
+                    if (type.GetConstructors().Length > 0)
+                    {
+                        foreach (ConstructorInfo info in type.GetConstructors())
+                        {
+                            var fullName = string.Format("{0}({1})", type.Name, string.Join(", ", info.GetParameters()?.Select(x => x.ParameterType.FullName).ToArray()));
+                            var instanceName = string.Format("{0}.#ctor({1})", type.FullName, string.Join(", ", info.GetParameters()?.Select(x => x.ParameterType.FullName).ToArray()));
+                            result.Add(new UnitTestModel.Method()
+                            {
+                                Name = type.Name,
+                                FullName = fullName,
+                                Comments = members?.GetByAttribute("name", string.Format("T:{0}", type.FullName))?["summary"]?.InnerText.Trim() ?? fullName,
+                                Parameters = info.GetParameters()?.Select(par => new UnitTestModel.Parameter()
+                                {
+                                    Comments = members?.GetByAttribute("name", string.Format("M:{0}", instanceName))?.GetByAttribute("name", par.Name).InnerText.Trim(),
+                                    Name = par.Name,
+                                    ParameterType = par.ParameterType.Name
+                                }).ToList()
+                            });
+                        }
+                    }
+                    else
+                    {
+                        //静态类没有实例化方法
                         result.Add(new UnitTestModel.Method()
                         {
                             Name = type.Name,
-                            FullName = string.Format("{0}({1})", type.Name, string.Join(", ", info.GetParameters()?.Select(x => x.ParameterType.FullName).ToArray())),
-                            Comments = "暂未完成类注释",
-                            Parameters = info.GetParameters()?.Select(x => new UnitTestModel.Parameter()
-                            {
-                                Comments = "暂未完成类参数注释",
-                                Name = x.Name,
-                                ParameterType = x.ParameterType.Name
-                            }).ToList()
+                            FullName = type.Name,
+                            Comments = members?.GetByAttribute("name", string.Format("T:{0}", type.FullName))?["summary"]?.InnerText.Trim() ?? type.Name
                         });
+                    }
+
+                    //跳转
+                    Continue:
+                    {
+                        continue;
                     }
                 }
             }
@@ -95,7 +135,7 @@ namespace PersonalPortal.Controllers
         }
 
         /// <summary>
-        /// 获取类下所有方法（读取注释未完成）
+        /// 获取类下所有方法
         /// </summary>
         [HttpGet]
         [HttpPost]
@@ -105,25 +145,32 @@ namespace PersonalPortal.Controllers
             foreach (Assembly assembly in GetAssemblies())
             {
                 if (assembly.GetName().Name != data.AssemblyName) { continue; }
+
+                XmlDocument comments = GetDocument(assembly);
                 foreach (Type type in assembly.GetTypes())
                 {
                     if (type.Namespace != data.NameSpaceName || type.Name != data.ClassName) { continue; }
+
+                    var members = comments["doc"]?["members"];
                     foreach (MethodInfo method in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         try
                         {
+                            var commentName = string.Format("M:{0}", GetCommentName(method));
                             result.Add(new UnitTestModel.Method()
                             {
-                                Comments = "暂未完成方法注释",
+                                Comments = members?.GetByAttribute("name", commentName)?["summary"]?.InnerText.Trim(),
                                 Name = method.Name,
                                 FullName = method.ToString(),
-                                ReturnComments = "暂未完成方法返回值注释",
+                                ReturnComments = method.ReturnType == typeof(void) ?
+                                    "该方法无返回值" :
+                                    members?.GetByAttribute("name", commentName)?["returns"]?.InnerText.Trim(),
                                 ReturnType = method.ReturnType.Name,
-                                Parameters = method.GetParameters().Select(parameter => new UnitTestModel.Parameter
+                                Parameters = method.GetParameters().Select(par => new UnitTestModel.Parameter
                                 {
-                                    Name = parameter.Name,
-                                    Comments = "暂未完成方法参数注释",
-                                    ParameterType = parameter.ParameterType.Name
+                                    Name = par.Name,
+                                    Comments = members?.GetByAttribute("name", commentName)?.GetByAttribute("name", par.Name)?.InnerText.Trim(),
+                                    ParameterType = par.ParameterType.Name
                                 }).ToList()
                             });
                         }
@@ -158,7 +205,7 @@ namespace PersonalPortal.Controllers
                         List<object> classParamsList = new List<object>();
                         foreach (ConstructorInfo info in type.GetConstructors())
                         {
-                            //遍历实例方法以确定实例
+                            //遍历实例化方法以确定实例
                             ParameterInfo[] pars = info.GetParameters();
                             for (int i = 0; i < pars.Length; i++)
                             {
@@ -235,6 +282,51 @@ namespace PersonalPortal.Controllers
                 doc.Load(filePath);
             }
             return doc;
+        }
+
+        /// <summary>
+        /// 获取方法注释名称
+        /// </summary>
+        /// <param name="method">方法</param>
+        /// <returns></returns>
+        private string GetCommentName(MethodInfo method)
+        {
+            Match regex = Regex.Match(method.ToString(), @"\[([^\[]*)\]\(");
+
+            string name = string.Format("{0}.{1}{2}({3})",
+                method.ReflectedType.FullName,
+                method.Name,
+                regex.Success ? string.Format("``{0}", regex.Groups[1].Value.Split(',').Length) : "",
+                string.Join(",", method.GetParameters().Select(par =>
+                    new Func<string>(() =>
+                    {
+                        if (par.ParameterType.IsGenericType)
+                        {
+                            //泛型要进行转换才能获取到注释
+                            if (string.IsNullOrEmpty(regex.Groups[1].Value))
+                            {
+                                //字典
+                                return Regex.Replace(par.ParameterType.ToString(), "`[0-9]*", "").Replace("[", "{").Replace("]", "}");
+                            }
+                            else
+                            {
+                                string parName = par.ParameterType.Name;
+                                string[] array = regex.Groups[1].Value.Split(',');
+                                for (int i = 0; i < array.Length; i++)
+                                {
+                                    parName = parName.Replace(array[i], string.Format("``{0}", i));
+                                }
+                                return parName;
+                            }
+                        }
+                        if (par.ParameterType.IsEnum)
+                        {
+                            return par.ParameterType.ToString().Replace("+", ".");
+                        }
+                        return par.ParameterType.ToString();
+                    }).Invoke()
+                ).ToArray()));
+            return name;
         }
 
         /// <summary>
