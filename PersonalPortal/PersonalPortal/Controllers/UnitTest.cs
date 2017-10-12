@@ -319,13 +319,15 @@ namespace PersonalPortal.Controllers
                                 return parName;
                             }
                         }
-                        if (par.ParameterType.IsEnum)
-                        {
-                            return par.ParameterType.ToString().Replace("+", ".");
-                        }
-                        return par.ParameterType.ToString();
+                        return par.ParameterType.ToString().Replace("+", ".").Replace("&", "@");
                     }).Invoke()
                 ).ToArray()));
+
+            if (method.IsStatic)
+            {
+                //静态方法在无参时不加括号
+                name = name.Replace("()", "");
+            }
             return name;
         }
 
