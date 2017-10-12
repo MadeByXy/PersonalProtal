@@ -6,7 +6,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -25,18 +24,7 @@ namespace PersonalPortal.Content
         {
             if (data == null) { return null; }
             if (data.GetType() == typeof(string)) { return ToJson(data.ToString()); }
-            if (data.GetType() == typeof(DataTable))
-            {
-                data.GetType().GetProperty("TableName").SetValue(
-                    data,
-                    string.IsNullOrEmpty((data as DataTable).TableName) ? "Data" : (data as DataTable).TableName);
-            }
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(data.GetType());
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                serializer.WriteObject(memoryStream, data);
-                return JToken.Parse(Encoding.UTF8.GetString(memoryStream.ToArray()));
-            }
+            return JToken.Parse(JsonConvert.SerializeObject(data));
         }
 
         /// <summary>
