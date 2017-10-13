@@ -405,7 +405,8 @@
                     '&ClassFullName=' + $scope.Class[$scope.SelectClassIndex].FullName +
                     '&MethodFullName=' + $scope.Methods[$scope.SelectMethodIndex].FullName +
                     '&ClassParameters=' + JSON.stringify($scope.ClassParameters) +
-                    '&MethodParameters=' + JSON.stringify($scope.Parameters), true, false).then(function (data) {
+                    '&MethodParameters=' + JSON.stringify($scope.Parameters)+
+                    '&Concurrent=' + $scope.AutoSetting.Concurrent, true, false).then(function (data) {
                         $scope.Notice.Close();
                         $scope.IsRunning = false;
 

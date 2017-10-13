@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Compilation;
 using System.Xml;
 using XYZZ.Library;
@@ -236,7 +238,7 @@ namespace PersonalPortal.Controllers
                         {
                             UnitTestModel.Test test = new UnitTestModel.Test();
                             DateTime startTime = DateTime.Now;
-
+                            var cancelTokenSource = new CancellationTokenSource();
                             try
                             {
                                 List<object> paramsList = new List<object>();
@@ -247,14 +249,30 @@ namespace PersonalPortal.Controllers
                                     paramsList.Add(DataConversion.ToEntity(parameterInfo, parameter as JObject));
                                 }
 
-                                test.Result = DataConversion.ToJson(method.Invoke(
-                                    instance,
-                                    paramsList.ToArray())).ToString();
+                                List<Task> taskList = new List<Task>();
+                                for (int i = 0; i < Math.Max(data.Concurrent, 1); i++)
+                                {
+                                    taskList.Add(Task.Run(() =>
+                                    {
+                                        test.Result = DataConversion.ToJson(method.Invoke(
+                                            instance,
+                                            paramsList.ToArray())).ToString();
+                                    }, cancelTokenSource.Token).ContinueWith((t) =>
+                                    {
+                                        if (t.Exception != null)
+                                        {
+                                            throw t.Exception;
+                                        }
+                                    }));
+                                }
+
+                                Task.WaitAll(taskList.ToArray());
                                 test.IsFinish = true;
                             }
                             catch (Exception e)
                             {
                                 test.IsFinish = false;
+                                cancelTokenSource.Cancel();
                                 test.Error.Add((e.InnerException ?? e).ToString());
                             }
                             test.UseTime = (DateTime.Now - startTime).TotalMilliseconds.ToString(".##");

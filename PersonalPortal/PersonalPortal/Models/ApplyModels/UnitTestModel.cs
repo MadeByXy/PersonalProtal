@@ -37,6 +37,10 @@ namespace PersonalPortal.Models.ApplyModels
             /// 方法参数集
             /// </summary>
             public JArray MethodParameters { get; set; }
+            /// <summary>
+            /// 并发数量
+            /// </summary>
+            public int Concurrent { get; set; }
         }
     }
 }
