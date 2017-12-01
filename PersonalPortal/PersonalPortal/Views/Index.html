@@ -89,7 +89,22 @@
             setInterval('iframeResize()', 10);
         });
 
-        $.get('Controller/Index/GetBackGround', function (data) {
+        //加载switch按钮
+        (function () {
+            var name = 'switch_background';
+            data = getCookie(name);
+            if (data == null) {
+                $.ajax({
+                    url: 'Controller/Index/GetBackGround',
+                    type: 'GET',
+                    async: false,
+                    success: function (res) {
+                        data = res;
+                        setCookie(name, data);
+                    }
+                })
+            }
+
             if (data.Result == "true") {
                 $('input[type="checkbox"]').bootstrapSwitch({ 'state': data.Result });
             } else {
@@ -104,8 +119,9 @@
                     $('.particles-js-canvas-el').hide();
                 }
                 $.get('Controller/Index/SetBackGround?on=' + state);
+                setCookie(name, { Result: state });
             });
-        });
+        })();
 
         function transfer(text) {
             return text;
