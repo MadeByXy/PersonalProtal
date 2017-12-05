@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>在线接口测试</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
+    <link rel="stylesheet" href="/Style/Css/ApiTest.css" />
+</head>
+<body>
+    <div class="container ng-cloak" ng-app="app" ng-controller="controller" ng-cloak>
+        <div></div>
+        <div class="input-group input-group-lg">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="SetValue('Data.IsLocal', !Data.IsLocal)">
+                    <span class="glyphicon glyphicon-cloud" ng-if="Data.IsLocal == false"></span>
+                    <span class="glyphicon glyphicon-link" ng-if="Data.IsLocal == true"></span>
+                </button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="border-right: none;">
+                    <span ng-bind="Data.QueryType"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="item in List.QueryTypeList">
+                        <a href="javascript:void(0)" class="method" ng-bind="item" ng-click="SetValue('Data.QueryType', item)"></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /btn-group -->
+            <input type="text" class="form-control" placeholder="Api地址" ng-model="Data.Url">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="button" ng-click="Sutmit()">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+            </span>
+        </div>
+        <!-- /input-group -->
+        <h3>Request</h3>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li ng-repeat="item in List.FillList" ng-class="{true: 'active'}[Select.Request == $index]" ng-click="SetValue('Select.Request', $index)">
+                    <a href="javascript:void(0)" ng-bind="item"></a>
+                </li>
+                <li role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" aria-expanded="false">
+                        <span>Content-Type</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="item in List.ContentTypeList" ng-click="SetValue('Data.Header', 'Content-Type: ' + item)">
+                            <a href="javascript:void(0)" class="content_type" ng-bind="item"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <textarea class="form-control request_text" ng-show="Select.Request == 0" ng-model="Data.Body" placeholder="key1=value1&key2=value2"></textarea>
+            <textarea class="form-control request_text" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1; key2: value2;"></textarea>
+        </div>
+        <h3>Response</h3>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li ng-repeat="item in List.FillList" ng-class="{true: 'active'}[Select.Response == $index]" ng-click="SetValue('Select.Response', $index)">
+                    <a href="javascript:void(0)" ng-bind="item"></a>
+                </li>
+                <li role="presentation" class="pull-right" ng-if="!IsNull(Result.StatusCode)">
+                    <a href="javascript:void(0)" class="{{Result.StatusClass}}" title="状态码" ng-bind="Result.StatusCode"></a>
+                </li>
+            </ul>
+            <pre class="prettyprint response_text prettyprinted" ng-bind="Result.Body" ng-show="Select.Response == 0"></pre>
+            <pre class="prettyprint response_text prettyprinted" ng-bind="Result.Header" ng-show="Select.Response == 1"></pre>
+        </div>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript">
+        Angular(function ($scope, factory) {
+            $scope.IsNull = factory.IsNull;
+
+            $scope.Data = {
+                //是否使用本地模式
+                IsLocal: true,
+                //默认请求方式
+                QueryType: 'GET',
+                //访问地址
+                Url: 'http://localhost:6001/Controller/Index/GetBackGround',
+                //Body数据
+                Body: '',
+                //Header数据
+                Header: ''
+            }
+
+            $scope.Result = {
+                //Body数据
+                Body: '',
+                //Header数据
+                Header: '',
+                //状态码
+                StatusCode: '',
+                //状态样式
+                StatusClass: ''
+            }
+
+            $scope.Select = {
+                Request: 0,
+                Response: 0
+            }
+
+            $scope.List = {
+                //请求方式列表
+                QueryTypeList: [
+                    'GET',
+                    'POST',
+                    'PUT',
+                    'PATCH',
+                    'DELETE'
+                ],
+                FillList: [
+                    'Body',
+                    'Header'
+                ],
+                //响应模式列表
+                ContentTypeList: [
+                    'application/xml',
+                    'application/json',
+                    'multipart/form-data',
+                    'application/x-www-form-urlencoded'
+                ]
+            }
+
+            //设置值
+            $scope.SetValue = function (key, value) {
+                switch (typeof (value)) {
+                    case 'string':
+                        value = '"' + value + '"';
+                        break;
+                    default: break;
+                }
+                eval('$scope.' + key + ' = ' + value);
+            }
+
+            //开始调用Api
+            $scope.Sutmit = function () {
+                var header = new Object();
+                header['Content-Type'] = 'application/xml';
+
+                $.ajax({
+                    url: $scope.Data.Url,
+                    type: $scope.Data.QueryType,
+                    data: $scope.Data.Body,
+                    headers: header,
+                            complete: function (response) {
+                        $scope.Result.StatusCode = response.status + ' ' + response.statusText;
+                                $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
+                                $scope.Result.Body = response.responseText;
+                                $scope.Result.Header = response.getAllResponseHeaders();
+                                console.log(response, response.getAllResponseHeaders());
+                                $scope.$apply();
+                            }
+                })
+            }
+
+            $scope.GetStatusClass = function (statusCode) {
+                switch (statusCode) {
+                    case 200:
+                        return 'text-success';
+                    default:
+                        return 'text-danger';
+                }
+            }
+        })
+    </script>
+</body>
+</html>
