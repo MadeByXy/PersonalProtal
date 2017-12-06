@@ -303,7 +303,7 @@
     <Content Include="Style\Css\UnitTest.css" />
     <Content Include="Views\Algorithm\AStar.html" />
     <Content Include="Views\Algorithm\Tree.html" />
-    <Content Include="Views\ApiTest.html" />
+    <Content Include="Views\ToolsBox\ApiTest.html" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />
     <Content Include="Views\Portfolio.html" />
@@ -340,6 +340,7 @@
     <Compile Include="Controllers\Spider.cs" />
     <Compile Include="Controllers\UnitTest.cs" />
     <Compile Include="Models\ApplyModels\DynamicProgrammingView.cs" />
+    <Compile Include="Models\ApplyModels\QueryModel.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
     <Compile Include="Models\ApplyModels\UnitTestModel.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />

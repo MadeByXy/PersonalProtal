@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using PersonalPortal.Models.ApplyModels;
 
 namespace PersonalPortal
 {
@@ -86,6 +87,32 @@ namespace PersonalPortal
             request.KeepAlive = true;
             request.ProtocolVersion = HttpVersion.Version11;
             request.Date = DateTime.Now;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet)))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// 从指定Url获取HTML
+        /// </summary>
+        /// <param name="query">请求参数</param>
+        /// <returns></returns>
+        public static string GetHtml(QueryModel query)
+        {
+            query.QueryType = query.QueryType.ToUpper();
+
+            HttpWebRequest request;
+            if (!string.IsNullOrEmpty(query.Body) && query.QueryType == "GET")
+            {
+                query.Url += "?" + query.Body;
+            }
+            request = WebRequest.Create(query.Url) as HttpWebRequest;
+            request.Headers.Clear();
+
+            //POST的区别, 请求头的区分
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet)))

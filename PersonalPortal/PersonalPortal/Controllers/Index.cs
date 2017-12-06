@@ -90,11 +90,11 @@ namespace PersonalPortal.Controllers
         /// 委托请求以解决js的跨域问题
         /// </summary>
         [HttpGet]
-        public string DelegateQuery(string url)
+        public string DelegateQuery(QueryModel query)
         {
             try
             {
-                return Network.GetHtml(url, null);
+                return Network.GetHtml(query);
             }
             catch (Exception e) { return e.ToString(); }
 

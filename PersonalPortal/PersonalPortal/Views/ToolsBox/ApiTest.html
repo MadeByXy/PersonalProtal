@@ -30,7 +30,7 @@
             <!-- /btn-group -->
             <input type="text" class="form-control" placeholder="Api地址" ng-model="Data.Url">
             <span class="input-group-btn">
-                <button class="btn btn-primary" type="button" ng-click="Sutmit()">
+                <button class="btn btn-primary" type="button" ng-click="Sutmit()" ng-disabled="Data.Loading">
                     <span class="glyphicon glyphicon-arrow-right"></span>
                 </button>
             </span>
@@ -55,7 +55,8 @@
                 </li>
             </ul>
             <textarea class="form-control request_text" ng-show="Select.Request == 0" ng-model="Data.Body" placeholder="key1=value1&key2=value2"></textarea>
-            <textarea class="form-control request_text" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1; key2: value2;"></textarea>
+            <textarea class="form-control request_text" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1
+key2: value2"></textarea>
         </div>
         <h3>Response</h3>
         <div>
@@ -82,11 +83,12 @@
                 //默认请求方式
                 QueryType: 'GET',
                 //访问地址
-                Url: 'http://localhost:6001/Controller/Index/GetBackGround',
+                Url: '',
                 //Body数据
                 Body: '',
                 //Header数据
-                Header: ''
+                Header: '',
+                Loading: false
             }
 
             $scope.Result = {
@@ -140,23 +142,89 @@
 
             //开始调用Api
             $scope.Sutmit = function () {
-                var header = new Object();
-                header['Content-Type'] = 'application/xml';
+                $scope.Save();
+                if ($scope.Data.IsLocal) {
+                    $scope.Sutmit_Local();
+                } else {
+                    $scope.Sutmit_Online();
+                }
+            }
+
+            //请求本地接口
+            $scope.Sutmit_Local = function () {
+                $scope.Data.Loading = true;
+                var headers = new Object();
+                $.each($scope.Data.Header.split('\n'), function (index, item) {
+                    var key = (item.split(':')[0] || '').trim();
+                    var value = (item.split(':')[1] || '').trim();
+                    headers[key] = value;
+                })
 
                 $.ajax({
                     url: $scope.Data.Url,
                     type: $scope.Data.QueryType,
                     data: $scope.Data.Body,
-                    headers: header,
-                            complete: function (response) {
+                    headers: headers,
+                    complete: function (response) {
                         $scope.Result.StatusCode = response.status + ' ' + response.statusText;
-                                $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
-                                $scope.Result.Body = response.responseText;
-                                $scope.Result.Header = response.getAllResponseHeaders();
-                                console.log(response, response.getAllResponseHeaders());
-                                $scope.$apply();
-                            }
+                        $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
+
+                        if (response.status == 0) {
+                            $scope.Result.Body = '该地址禁止跨域请求, 请使用服务器方式调用接口。';
+                        } else {
+                            $scope.Result.Body = response.responseText;
+                            $scope.Result.Header = response.getAllResponseHeaders();
+                        }
+
+                        $scope.Data.Loading = false;
+                        $scope.$apply();
+                    }
                 })
+            }
+
+            //请求网络接口
+            $scope.Sutmit_Online = function () {
+                $scope.Data.Loading = true;
+                var headers = new Object();
+                $.each($scope.Data.Header.split('\n'), function (index, item) {
+                    var key = (item.split(':')[0] || '').trim();
+                    var value = (item.split(':')[1] || '').trim();
+                    headers[key] = value;
+                })
+
+                $.ajax({
+                    url: "/Controller/Index/DelegateQuery?url=" + encodeURIComponent($scope.Data.Url),
+                    type: $scope.Data.QueryType,
+                    data: $scope.Data.Body,
+                    headers: headers,
+                    complete: function (response) {
+                        $scope.Result.StatusCode = response.status + ' ' + response.statusText;
+                        $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
+
+                        if (response.status == 0) {
+                            $scope.Result.Body = '该地址禁止跨域请求, 请使用服务器方式调用接口。';
+                        } else {
+                            $scope.Result.Body = response.responseText;
+                            $scope.Result.Header = response.getAllResponseHeaders();
+                        }
+
+                        $scope.Data.Loading = false;
+                        $scope.$apply();
+                    }
+                })
+            }
+
+            //保存记录
+            $scope.Save = function () {
+                setCookie('ApiParameter', JSON.stringify($scope.Data));
+            }
+
+            //加载记录
+            $scope.Load = function () {
+                var data = JSON.parse(JSON.parse(localStorage['ApiParameter']));
+                if (!$scope.IsNull(data)) {
+                    $scope.Data = data;
+                }
             }
 
             $scope.GetStatusClass = function (statusCode) {
@@ -167,6 +235,8 @@
                         return 'text-danger';
                 }
             }
+
+            $scope.Load();
         })
     </script>
 </body>
