@@ -132,6 +132,7 @@
     <Content Include="Plugins\System.Data.SQLite.DLL" />
     <Content Include="Plugins\XYZZ.Library.dll" />
     <Content Include="Scripts\AngularJs1.4.6.js" />
+    <Content Include="Scripts\bootstrap-3.3.7-dist\css\blog.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-slider.min.css" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap-3.3.7-dist\css\bootstrap-theme.min.css.map" />
@@ -302,9 +303,11 @@
     <Content Include="Style\Css\HelloWorld.css" />
     <Content Include="Style\Css\Index.css" />
     <Content Include="Style\Css\Algorithm\AutoUI.css" />
+    <Content Include="Style\Css\NewIndex.css" />
     <Content Include="Style\Css\UnitTest.css" />
     <Content Include="Views\Algorithm\AStar.html" />
     <Content Include="Views\Algorithm\Tree.html" />
+    <Content Include="Views\NewIndex.html" />
     <Content Include="Views\ToolsBox\ApiTest.html" />
     <Content Include="Views\HelloWorld.html" />
     <Content Include="Views\Index.html" />

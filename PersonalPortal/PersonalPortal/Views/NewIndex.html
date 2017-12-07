@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>小雨个人网站</title>
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/blog.css" />
+    <link rel="stylesheet" href="/Style/Css/NewIndex.css" />
+</head>
+<body id="particles-js">
+    <div class="main" ng-app="app" ng-controller="controller">
+        <header>
+            <div class="blog-masthead">
+                <div class="container">
+                    <nav class="nav">
+                        <a class="nav-link active" href="NewIndex" target="_self">主页</a>
+                        <div class="nav-div ng-cloak" ng-cloak ng-repeat="x in Navigation" ng-class="{true:'active'}[selectIndex == $index]" ng-click="SetValue('selectIndex', $index)">
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame" class="nav-link nav-clear">{{x.LinkName}}</a>
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle nav-link nav-clear" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{x.LinkName}}<span ng-cloak class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-dositioning">
+                                <li role="presentation" ng-repeat="item in x.Navigation">
+                                    <a href="{{item.LinkUrl}}" target="{{item.Target||'Frame'}}">{{item.LinkName}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="row col-lg-6 input-group nav-div ng-cloak" ng-cloak>
+                            <div style="position: inherit;" ng-mouseleave="SetValue('SuggestionItems', null)">
+                                <input type="text" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keydown="Search($event)" placeholder="搜索">
+                                <ul class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems) && SuggestionItems.length != 0">
+                                    <li ng-class="{true:'active'}[SuggestionIndex == $index]" ng-mousemove="SetValue('SuggestionIndex', $index)" ng-repeat="item in SuggestionItems" ng-click="SetValue('searchText', item);" ng-bind="item"></li>
+                                </ul>
+                            </div>
+                            <div class="input-group-btn">
+                                <a id="search" class="btn btn-default" ng-click="Search($event)" ng-bind="SearchInfo[searchIndex].name"></a>
+                                <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="caret"></span>&zwnj;
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li ng-repeat="x in SearchInfo">
+                                        <a href="#" ng-click="SetValue('searchIndex', $index)" ng-bind="x.name"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <iframe id="Frame" name="Frame" scrolling="yes" src="/Views/HelloWorld.html"></iframe>
+    </div>
+    <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script>
+        //动态调整框架高度
+        $(document).ready(function () {
+            var frame = document.getElementById("Frame");
+            iframeResize = function () {
+                frame.height = window.innerHeight - $('header').height() - 5;
+            }
+            iframeResize();
+            window.onresize = iframeResize;
+        });
+
+        function transfer(text) {
+            return text;
+        }
+
+        Angular(function ($scope, factory) {
+            $scope.SearchInfo = [{
+                "name": "百度搜索",
+                "value": "https://www.baidu.com/s?wd="
+            }, {
+                "name": "必应搜索",
+                "value": "http://cn.bing.com/search?q="
+            }, {
+                "name": "百度地图",
+                "value": "http://map.baidu.com/?newmap=1&s=s%26wd%3D"
+            }, {
+                "name": "高德地图",
+                "value": "http://ditu.amap.com/search?query="
+            }];
+            $scope.Navigation = [{
+                "LinkName": "个人资料",
+                "LinkUrl": "/Views/Resume.html",
+                "Navigation": []
+            }, {
+                "LinkName": "算法验证",
+                "LinkUrl": "#",
+                "Navigation": [{
+                    "LinkName": "A*算法",
+                    "LinkUrl": "/Views/Algorithm/AStar.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "多叉树模拟",
+                    "LinkUrl": "/Views/Algorithm/Tree.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "AutoUI",
+                    "LinkUrl": "/Views/Algorithm/AutoUI.html",
+                    "Navigation": []
+                }]
+            }, {
+                "LinkName": "个人工具箱",
+                "LinkUrl": "#",
+                "Navigation": [{
+                    "LinkName": "Json验证及格式化",
+                    "LinkUrl": "/Views/ToolsBox/Json.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "在线翻译",
+                    "LinkUrl": "/Views/ToolsBox/Translator.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "数据加密解密",
+                    "LinkUrl": "/Views/ToolsBox/Encryption.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "正则表达式测试",
+                    "LinkUrl": "/Views/ToolsBox/Regexp.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "HTML/CSS美化",
+                    "LinkUrl": "/Views/ToolsBox/CodeBeautify.html",
+                    "Navigation": []
+                }, {
+                    "LinkName": "在线Api调试",
+                    "LinkUrl": "/Views/ToolsBox/ApiTest.html",
+                    "Navigation": []
+                }]
+            }];
+            $scope.searchIndex = 0;
+            $scope.IsNull = factory.IsNull;
+
+            $scope.SetValue = function (key, value) {
+                $scope[key] = value;
+            }
+
+            $scope.Search = function (event) {
+                switch (event.keyCode) {
+                    case 38: //向上
+                        if ($scope.SuggestionItems && $scope.SuggestionItems.length != 0) {
+                            $scope.SuggestionIndex--;
+                            if ($scope.SuggestionIndex < 0) {
+                                $scope.SuggestionIndex = $scope.SuggestionItems.length - 1;
+                            }
+                            $scope.searchText = $scope.SuggestionItems[$scope.SuggestionIndex];
+                        }
+                        return;
+                    case 40: //向下
+                        if ($scope.SuggestionItems && $scope.SuggestionItems.length != 0) {
+                            $scope.SuggestionIndex++;
+                            if ($scope.SuggestionIndex >= $scope.SuggestionItems.length) {
+                                $scope.SuggestionIndex = 0;
+                            }
+                            $scope.searchText = $scope.SuggestionItems[$scope.SuggestionIndex];
+                        }
+                        return;
+                    case 13: //Enter
+                    case undefined:  //鼠标点击事件
+                        $scope.SuggestionItems = [];
+                        Frame.location = $scope.SearchInfo[$scope.searchIndex].value + encodeURIComponent($scope.searchText);
+                        return;
+                    default:
+                        return;
+                }
+            }
+
+            $scope.Suggestion = function () {
+                if (!$scope.IsNull($scope.searchText)) {
+                    factory.Query('Controller/Index/DelegateQuery?url=http%3A%2F%2Fsuggestion.baidu.com%2Fsu%3Fcb%3Dtransfer%26wd%3D' + encodeURIComponent($scope.searchText), true, false).then(function (data) {
+                        $scope.SuggestionItems = eval(data.Result).s;
+                        $scope.SuggestionIndex = -1;
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
