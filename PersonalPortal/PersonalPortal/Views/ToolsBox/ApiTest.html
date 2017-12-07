@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/Scripts/bootstrap-3.3.7-dist/css/docs.min.css" />
     <link rel="stylesheet" href="/Style/Css/ApiTest.css" />
+    <link rel="stylesheet" href="/Scripts/prettify/prettify.css" />
 </head>
 <body>
     <div class="container ng-cloak" ng-app="app" ng-controller="controller" ng-cloak>
@@ -54,8 +55,8 @@
                     </ul>
                 </li>
             </ul>
-            <textarea class="form-control request_text" ng-show="Select.Request == 0" ng-model="Data.Body" placeholder="key1=value1&key2=value2"></textarea>
-            <textarea class="form-control request_text" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1
+            <textarea class="form-control lang-html" ng-show="Select.Request == 0" ng-model="Data.Body" placeholder="key1=value1&key2=value2"></textarea>
+            <textarea class="form-control lang-html" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1
 key2: value2"></textarea>
         </div>
         <h3>Response</h3>
@@ -64,16 +65,21 @@ key2: value2"></textarea>
                 <li ng-repeat="item in List.FillList" ng-class="{true: 'active'}[Select.Response == $index]" ng-click="SetValue('Select.Response', $index)">
                     <a href="javascript:void(0)" ng-bind="item"></a>
                 </li>
-                <li role="presentation" class="pull-right" ng-if="!IsNull(Result.StatusCode)">
-                    <a href="javascript:void(0)" class="{{Result.StatusClass}}" title="状态码" ng-bind="Result.StatusCode"></a>
+                <li role="presentation" class="pull-right" ng-if="!IsNull(Result.StatusCode + Result.StatusMessage)">
+                    <a href="javascript:void(0)" class="{{Result.StatusClass}}" title="状态码">
+                        <span ng-bind="Result.StatusCode" ng-if="Result.StatusCode != 0"></span>
+                        <span ng-bind="Result.StatusMessage"></span>
+                    </a>
                 </li>
             </ul>
-            <pre class="prettyprint response_text prettyprinted" ng-bind="Result.Body" ng-show="Select.Response == 0"></pre>
-            <pre class="prettyprint response_text prettyprinted" ng-bind="Result.Header" ng-show="Select.Response == 1"></pre>
+            <pre class="prettyprint response_text prettyprinted" ng-show="Select.Response == 0" ng-bind="Result.Body"></pre>
+            <pre class="prettyprint response_text prettyprinted" ng-show="Select.Response == 1" ng-bind="Result.Header"></pre>
         </div>
     </div>
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
+    <script type="text/javascript" src="/Scripts/prettify/run_prettify.js"></script>
     <script type="text/javascript">
+
         Angular(function ($scope, factory) {
             $scope.IsNull = factory.IsNull;
 
@@ -98,6 +104,8 @@ key2: value2"></textarea>
                 Header: '',
                 //状态码
                 StatusCode: '',
+                //状态信息
+                StatusMessage: '',
                 //状态样式
                 StatusClass: ''
             }
@@ -143,6 +151,9 @@ key2: value2"></textarea>
             //开始调用Api
             $scope.Sutmit = function () {
                 $scope.Save();
+                $scope.Result.StatusMessage = 'Loading';
+                $scope.Result.StatusClass = 'text-muted';
+
                 if ($scope.Data.IsLocal) {
                     $scope.Sutmit_Local();
                 } else {
@@ -166,11 +177,13 @@ key2: value2"></textarea>
                     data: $scope.Data.Body,
                     headers: headers,
                     complete: function (response) {
-                        $scope.Result.StatusCode = response.status + ' ' + response.statusText;
+                        $scope.Result.StatusCode = response.status;
+                        $scope.Result.StatusMessage = response.statusText;
                         $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
 
                         if (response.status == 0) {
                             $scope.Result.Body = '该地址禁止跨域请求, 请使用服务器方式调用接口。';
+                            $scope.Result.Header = '';
                         } else {
                             $scope.Result.Body = response.responseText;
                             $scope.Result.Header = response.getAllResponseHeaders();
@@ -178,6 +191,7 @@ key2: value2"></textarea>
 
                         $scope.Data.Loading = false;
                         $scope.$apply();
+                        prettyPrint();
                     }
                 })
             }
@@ -193,23 +207,25 @@ key2: value2"></textarea>
                 })
 
                 $.ajax({
-                    url: "/Controller/Index/DelegateQuery?url=" + encodeURIComponent($scope.Data.Url),
-                    type: $scope.Data.QueryType,
-                    data: $scope.Data.Body,
-                    headers: headers,
+                    url: "/Controller/Index/DelegateHttp",
+                    type: 'POST',
+                    data: {
+                        Url: $scope.Data.Url,
+                        Body: $scope.Data.Body,
+                        Headers: JSON.stringify(headers),
+                        QueryType: $scope.Data.QueryType
+                    },
                     complete: function (response) {
-                        $scope.Result.StatusCode = response.status + ' ' + response.statusText;
-                        $scope.Result.StatusClass = $scope.GetStatusClass(response.status);
-
-                        if (response.status == 0) {
-                            $scope.Result.Body = '该地址禁止跨域请求, 请使用服务器方式调用接口。';
-                        } else {
-                            $scope.Result.Body = response.responseText;
-                            $scope.Result.Header = response.getAllResponseHeaders();
-                        }
+                        var result = JSON.parse(response.responseText);
+                        $scope.Result.StatusCode = result.StatusCode;
+                        $scope.Result.StatusMessage = result.StatusMessage;
+                        $scope.Result.StatusClass = $scope.GetStatusClass(result.StatusCode);
+                        $scope.Result.Body = result.Body;
+                        $scope.Result.Header = result.Header.trim();
 
                         $scope.Data.Loading = false;
                         $scope.$apply();
+                        prettyPrint();
                     }
                 })
             }
@@ -237,7 +253,7 @@ key2: value2"></textarea>
             }
 
             $scope.Load();
-        })
+        });
     </script>
 </body>
 </html>

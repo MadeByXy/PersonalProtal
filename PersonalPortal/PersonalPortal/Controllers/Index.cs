@@ -1,8 +1,11 @@
-﻿using PersonalPortal.Content;
+﻿using Newtonsoft.Json.Linq;
+using PersonalPortal.Content;
 using PersonalPortal.Models.ApplyModels;
+using PersonalPortal.Models.ResultModels;
 using PersonalPortal.ResultModels.Models;
 using System;
 using System.Data;
+using System.IO;
 using XYZZ.Library;
 
 namespace PersonalPortal.Controllers
@@ -90,14 +93,59 @@ namespace PersonalPortal.Controllers
         /// 委托请求以解决js的跨域问题
         /// </summary>
         [HttpGet]
-        public string DelegateQuery(QueryModel query)
+        public string DelegateQuery(string url)
         {
             try
             {
-                return Network.GetHtml(query);
+                return Network.GetHtml(url, null);
             }
             catch (Exception e) { return e.ToString(); }
+        }
 
+        /// <summary>
+        /// 委托请求以解决js的跨域问题
+        /// </summary>
+        /// <param name="query">请求参数</param>
+        /// <returns></returns>
+        [HttpPost]
+        public HttpDelegateModel DelegateHttp(QueryModel query)
+        {
+            HttpDelegateModel model = new HttpDelegateModel();
+            try
+            {
+                var response = Network.GetHtml(query);
+
+                model.StatusCode = (int)response.StatusCode;
+                model.StatusMessage = response.StatusDescription;
+
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        model.Body = reader.ReadToEnd();
+                    }
+                }
+
+                try
+                {
+                    //如果结果为Json, 刷版式
+                    model.Body = JToken.Parse(model.Body).ToString();
+                }
+                catch { }
+
+                using (MemoryStream stream = new MemoryStream(response.Headers.ToByteArray()))
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        model.Header = reader.ReadToEnd();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                model.StatusMessage = e.Message;
+            }
+            return model;
         }
     }
 }

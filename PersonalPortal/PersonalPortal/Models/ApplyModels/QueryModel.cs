@@ -1,4 +1,8 @@
-﻿namespace PersonalPortal.Models.ApplyModels
+﻿using Newtonsoft.Json.Linq;
+using PersonalPortal.Models.Enum;
+using static PersonalPortal.Content.DataCheck;
+
+namespace PersonalPortal.Models.ApplyModels
 {
     /// <summary>
     /// 请求Api模型
@@ -8,6 +12,7 @@
         /// <summary>
         /// 请求Api地址
         /// </summary>
+        [NonEmpty(Name = "请求Api地址")]
         public string Url { get; set; }
 
         /// <summary>
@@ -18,11 +23,11 @@
         /// <summary>
         /// 请求头
         /// </summary>
-        public string Headers { get; set; }
+        public JObject Headers { get; set; }
 
         /// <summary>
         /// 请求方式
         /// </summary>
-        public string QueryType { get; set; }
+        public QueryTypeEnum QueryType { get; set; }
     }
 }

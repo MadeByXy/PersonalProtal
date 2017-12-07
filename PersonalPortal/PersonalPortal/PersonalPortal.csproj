@@ -293,6 +293,8 @@
     <Content Include="Scripts\particles\app.js" />
     <Content Include="Scripts\particles\lib\stats.js" />
     <Content Include="Scripts\particles\particles.js" />
+    <Content Include="Scripts\prettify\prettify.css" />
+    <Content Include="Scripts\prettify\run_prettify.js" />
     <Content Include="Scripts\switch-button\bootstrap-switch.css" />
     <Content Include="Scripts\switch-button\bootstrap-switch.js" />
     <Content Include="Style\Css\Algorithm\AStar.css" />
@@ -343,8 +345,10 @@
     <Compile Include="Models\ApplyModels\QueryModel.cs" />
     <Compile Include="Models\ApplyModels\ShortCutView.cs" />
     <Compile Include="Models\ApplyModels\UnitTestModel.cs" />
+    <Compile Include="Models\Enum\QueryTypeEnum.cs" />
     <Compile Include="Models\ResultModels\AlgorithmModel.cs" />
     <Compile Include="Models\ResultModels\ErrorModel.cs" />
+    <Compile Include="Models\ResultModels\HttpDelegateModel.cs" />
     <Compile Include="Models\ResultModels\PersonalDataModel.cs" />
     <Compile Include="Models\ResultModels\ProjectModel.cs" />
     <Compile Include="Models\ResultModels\ShortCutModel.cs" />

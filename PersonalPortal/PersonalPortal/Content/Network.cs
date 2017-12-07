@@ -100,12 +100,11 @@ namespace PersonalPortal
         /// </summary>
         /// <param name="query">请求参数</param>
         /// <returns></returns>
-        public static string GetHtml(QueryModel query)
+        public static HttpWebResponse GetHtml(QueryModel query)
         {
-            query.QueryType = query.QueryType.ToUpper();
 
             HttpWebRequest request;
-            if (!string.IsNullOrEmpty(query.Body) && query.QueryType == "GET")
+            if (!string.IsNullOrEmpty(query.Body) && query.QueryType == Models.Enum.QueryTypeEnum.GET)
             {
                 query.Url += "?" + query.Body;
             }
@@ -113,11 +112,55 @@ namespace PersonalPortal
             request.Headers.Clear();
 
             //POST的区别, 请求头的区分
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet)))
+            foreach (var jToken in query.Headers)
             {
-                return reader.ReadToEnd();
+                string key = jToken.Key?.ToString()?.Trim(), value = jToken.Value?.ToString()?.Trim();
+                switch (key?.ToLower())
+                {
+                    case null: case "": break;
+                    case "accept": request.Accept = value; break;
+                    case "connection": request.Connection = value; break;
+                    case "content-length": request.ContentLength = Convert.ToInt64(value); break;
+                    case "content-type": request.ContentType = value; break;
+                    case "expect": request.Expect = value; break;
+                    case "date": request.Date = Convert.ToDateTime(value); break;
+                    case "if-modified-since": request.IfModifiedSince = Convert.ToDateTime(value); break;
+                    case "referer": request.Referer = value; break;
+                    case "transfer-encoding": request.TransferEncoding = value; break;
+                    case "user-agent": request.UserAgent = value; break;
+                    case "host": request.Host = value; break;
+                    default: request.Headers.Add(key, value); break;
+                }
+            }
+
+            switch (query.QueryType)
+            {
+                case Models.Enum.QueryTypeEnum.POST:
+                    using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(query.Body)))
+                    {
+                        using (Stream stream = request.GetRequestStream())
+                        {
+                            memoryStream.WriteTo(stream);
+                        }
+                    }
+                    break;
+                default: break;
+            }
+
+            try
+            {
+                return request.GetResponse() as HttpWebResponse;
+            }
+            catch (WebException e)
+            {
+                if (e.Response == null)
+                {
+                    throw e;
+                }
+                else
+                {
+                    return e.Response as HttpWebResponse;
+                }
             }
         }
     }

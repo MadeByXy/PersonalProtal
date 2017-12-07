@@ -7,6 +7,12 @@ body {
     background: rgb(253, 253, 253);
 }
 
+textarea {
+    border-top: none !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
 button {
     outline: none !important;
 }
