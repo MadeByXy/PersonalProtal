@@ -14,8 +14,8 @@
             <div class="blog-masthead">
                 <div class="container">
                     <nav class="nav">
-                        <a class="nav-link active" href="NewIndex" target="_self">主页</a>
-                        <div class="nav-div ng-cloak" ng-cloak ng-repeat="x in Navigation" ng-class="{true:'active'}[selectIndex == $index]" ng-click="SetValue('selectIndex', $index)">
+                        <a class="nav-link" href="NewIndex" target="_self">主页</a>
+                        <div class="nav-div ng-cloak" ng-cloak ng-repeat="x in Navigation">
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame" class="nav-link nav-clear">{{x.LinkName}}</a>
                             <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle nav-link nav-clear" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 {{x.LinkName}}<span ng-cloak class="caret"></span>
@@ -57,7 +57,7 @@
         $(document).ready(function () {
             var frame = document.getElementById("Frame");
             iframeResize = function () {
-                frame.height = window.innerHeight - $('header').height() - 5;
+                frame.height = window.innerHeight - $('header').height();
             }
             iframeResize();
             window.onresize = iframeResize;
@@ -160,7 +160,7 @@
                     case 13: //Enter
                     case undefined:  //鼠标点击事件
                         $scope.SuggestionItems = [];
-                        Frame.location = $scope.SearchInfo[$scope.searchIndex].value + encodeURIComponent($scope.searchText);
+                        Frame.location = $scope.SearchInfo[$scope.searchIndex].value + encodeURIComponent($scope.searchText || '');
                         return;
                     default:
                         return;

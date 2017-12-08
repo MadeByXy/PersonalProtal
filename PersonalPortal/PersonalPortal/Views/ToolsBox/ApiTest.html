@@ -237,7 +237,7 @@ key2: value2"></textarea>
 
             //加载记录
             $scope.Load = function () {
-                var data = JSON.parse(JSON.parse(localStorage['ApiParameter']));
+                var data = JSON.parse(JSON.parse(localStorage['ApiParameter'] || null));
                 if (!$scope.IsNull(data)) {
                     $scope.Data = data;
                 }
