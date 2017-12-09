@@ -16,7 +16,7 @@
     <RootNamespace>PersonalPortal</RootNamespace>
     <AssemblyName>PersonalPortal</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -73,7 +73,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\PersonalPortal.accdb" />
     <Content Include="Controller.ashx" />
     <Content Include="Images\bg.png" />
     <Content Include="favicon.ico" />
@@ -239,12 +238,6 @@
     <Content Include="packages.config" />
     <Content Include="Lua\Spider.lua" />
     <Content Include="Lua\Spider\zhihu.lua" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Plugins\Newtonsoft.Json.dll" />
@@ -320,9 +313,6 @@
     <Content Include="Views\ToolsBox\Regexp.html" />
     <Content Include="Views\ToolsBox\Translator.html" />
     <Content Include="Views\UnitTest.html" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\Algorithm\DynamicProgramming.cs" />
@@ -360,6 +350,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Style\Fonts\" />
   </ItemGroup>
   <PropertyGroup>
