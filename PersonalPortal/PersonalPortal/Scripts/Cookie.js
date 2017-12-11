@@ -1,4 +1,7 @@
-﻿//写入cookies
+﻿//Cookie过期时间(毫秒)
+var cookie_ExpirationTime = 12 * 60 * 60 * 1000;
+
+//写入cookies
 function setCookie(name, value) {
     name = encodeURIComponent(encodeURIComponent(name));
     delCookie(name);
@@ -7,7 +10,10 @@ function setCookie(name, value) {
     } catch (e) {
         value = encodeURIComponent(encodeURIComponent(value));
     }
-    localStorage.setItem(name, value);
+    localStorage.setItem(name, JSON.stringify({
+        date: Date.parse(new Date()),
+        value: value
+    }));
 }
 
 //读取cookies
@@ -15,11 +21,23 @@ function getCookie(name) {
     name = encodeURIComponent(encodeURIComponent(name));
     var result = localStorage.getItem(name);
     try {
-        return JSON.parse(result);
+        result = JSON.parse(result);
+        if (result.date == undefined ||
+            Date.parse(new Date(result.date)) + cookie_ExpirationTime < Date.parse(new Date())) {
+            //过期
+            delCookie(name);
+            return null;
+        } else {
+            try {
+                return JSON.parse(result.value);
+            } catch (ex) {
+                return decodeURIComponent(decodeURIComponent(result.value));
+            }
+        }
     } catch (e) {
-        return decodeURIComponent(decodeURIComponent(result));
+        delCookie(name);
+        return null;
     }
-    return result;
 }
 
 //删除cookies

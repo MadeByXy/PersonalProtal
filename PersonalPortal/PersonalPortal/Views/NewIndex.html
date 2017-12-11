@@ -14,33 +14,33 @@
             <div class="blog-masthead">
                 <div class="container">
                     <nav class="nav">
-                        <a class="nav-link" href="NewIndex" target="_self">主页</a>
+                        <a class="nav-link shadow" href="NewIndex" target="_self">主页</a>
                         <div class="nav-div ng-cloak" ng-cloak ng-repeat="x in Navigation">
-                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame" class="nav-link nav-clear">{{x.LinkName}}</a>
-                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle nav-link nav-clear" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length == 0" target="Frame" class="nav-link nav-clear shadow" ng-bind="x.LinkName"></a>
+                            <a ng-cloak href="{{x.LinkUrl}}" ng-show="x.Navigation.length > 0" class="dropdown-toggle nav-link nav-clear shadow" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 {{x.LinkName}}<span ng-cloak class="caret"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-dositioning">
                                 <li role="presentation" ng-repeat="item in x.Navigation">
-                                    <a href="{{item.LinkUrl}}" target="{{item.Target||'Frame'}}">{{item.LinkName}}</a>
+                                    <a class="shadow" href="{{item.LinkUrl}}" target="{{item.Target||'Frame'}}" ng-bind="item.LinkName"></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="row col-lg-6 input-group nav-div ng-cloak" ng-cloak>
                             <div style="position: inherit;" ng-mouseleave="SetValue('SuggestionItems', null)">
-                                <input type="text" class="form-control" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keydown="Search($event)" placeholder="搜索">
+                                <input type="text" class="form-control shadow" ng-model="searchText" ng-click="Suggestion()" ng-change="Suggestion()" ng-keydown="Search($event)" placeholder="搜索">
                                 <ul class="Suggestion" ng-model="SuggestionItems" ng-show="!IsNull(SuggestionItems) && SuggestionItems.length != 0">
-                                    <li ng-class="{true:'active'}[SuggestionIndex == $index]" ng-mousemove="SetValue('SuggestionIndex', $index)" ng-repeat="item in SuggestionItems" ng-click="SetValue('searchText', item);" ng-bind="item"></li>
+                                    <li class="shadow" ng-class="{true:'active'}[SuggestionIndex == $index]" ng-mousemove="SetValue('SuggestionIndex', $index)" ng-repeat="item in SuggestionItems" ng-click="SetValue('searchText', item);" ng-bind="item"></li>
                                 </ul>
                             </div>
                             <div class="input-group-btn">
-                                <a id="search" class="btn btn-default" ng-click="Search($event)" ng-bind="SearchInfo[searchIndex].name"></a>
+                                <a id="search" class="btn btn-default shadow" ng-click="Search($event)" ng-bind="SearchInfo[searchIndex].name"></a>
                                 <button type="button" class="btn btn-default dropdown-toggle" style="padding-left:5px;padding-right:5px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="caret"></span>&zwnj;
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li ng-repeat="x in SearchInfo">
-                                        <a href="#" ng-click="SetValue('searchIndex', $index)" ng-bind="x.name"></a>
+                                        <a class="shadow" href="#" ng-click="SetValue('searchIndex', $index)" ng-bind="x.name"></a>
                                     </li>
                                 </ul>
                             </div>
