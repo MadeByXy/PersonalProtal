@@ -2,6 +2,7 @@
 document.write("<script type='text/javascript' src='/Scripts/bootstrap-3.3.7-dist/js/bootstrap.min.js'></script>");
 document.write("<script type='text/javascript' src='/Scripts/AngularJs1.4.6.js'></script>");
 document.write("<script type='text/javascript' src='/Scripts/Cookie.js'></script>");
+document.write("<script type='text/javascript' src='/Scripts/Linq.js'></script>");
 
 var Angular = function (func, appName, factoryName, controllerName) {
     $("[data-toggle='tooltip']").tooltip({ trigger: 'hover' });  //激活提示

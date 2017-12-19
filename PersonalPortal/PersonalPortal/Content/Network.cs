@@ -104,14 +104,14 @@ namespace PersonalPortal
         {
 
             HttpWebRequest request;
-            if (!string.IsNullOrEmpty(query.Body) && query.QueryType == Models.Enum.QueryTypeEnum.GET)
+            if (!string.IsNullOrEmpty(query.Body) && query.QueryType == "GET")
             {
                 query.Url += "?" + query.Body;
             }
             request = WebRequest.Create(query.Url) as HttpWebRequest;
             request.Headers.Clear();
+            request.Method = query.QueryType;
 
-            //POST的区别, 请求头的区分
             foreach (var jToken in query.Headers)
             {
                 string key = jToken.Key?.ToString()?.Trim(), value = jToken.Value?.ToString()?.Trim();
@@ -135,7 +135,7 @@ namespace PersonalPortal
 
             switch (query.QueryType)
             {
-                case Models.Enum.QueryTypeEnum.POST:
+                case "POST":
                     using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(query.Body)))
                     {
                         using (Stream stream = request.GetRequestStream())

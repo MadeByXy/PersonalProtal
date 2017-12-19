@@ -102,3 +102,30 @@ h1, h2, h3 {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#336699', endColorstr='#3399CC', GradientType=0);
     background-repeat: repeat-x;
 }
+
+.input-parameters {
+    width: 100%;
+    margin-top: 5px;
+}
+
+    .input-parameters input {
+        width: calc(48% - 13px) !important;
+        height: 30px !important;
+        margin-right: 2%;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+    }
+
+    .input-parameters span, .btn-icon {
+        padding: 6px;
+        border-radius: 15px;
+        cursor: pointer;
+    }
+
+.glyphicon-plus {
+    padding: 6px 5.5px 6px 6.5px !important;
+}
+
+.glyphicon-minus {
+    padding: 6px 7px 6px 5px !important;
+}

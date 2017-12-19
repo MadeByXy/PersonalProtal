@@ -16,7 +16,7 @@
     <RootNamespace>PersonalPortal</RootNamespace>
     <AssemblyName>PersonalPortal</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -284,6 +284,7 @@
     <Content Include="Scripts\Developer\Plugins\jquery-rss\src\jquery.rss.js" />
     <Content Include="Scripts\AngularInstance.js" />
     <Content Include="Scripts\JQuery3-1-1.js" />
+    <Content Include="Scripts\Linq.js" />
     <Content Include="Scripts\particles\app.js" />
     <Content Include="Scripts\particles\lib\stats.js" />
     <Content Include="Scripts\particles\particles.js" />

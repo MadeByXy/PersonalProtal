@@ -28,6 +28,7 @@ namespace PersonalPortal.Models.ApplyModels
         /// <summary>
         /// 请求方式
         /// </summary>
-        public QueryTypeEnum QueryType { get; set; }
+        [Enum(EnumType = typeof(QueryTypeEnum), Name = "请求方式")]
+        public string QueryType { get; set; }
     }
 }

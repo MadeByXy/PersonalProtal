@@ -49,15 +49,27 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="item in List.ContentTypeList" ng-click="SetValue('Data.Header', 'Content-Type: ' + item)">
+                        <li ng-repeat="item in List.ContentTypeList" ng-click="AddHeader('Content-Type', item)">
                             <a href="javascript:void(0)" class="content_type" ng-bind="item"></a>
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="javascript:void(0)" style="padding-top: 5px;" ng-click="AddItem()">
+                        <span class="glyphicon glyphicon-plus btn-primary btn-icon" aria-hidden="true"></span>
+                    </a>
+                </li>
             </ul>
-            <textarea class="form-control lang-html" ng-show="Select.Request == 0" ng-model="Data.Body" placeholder="key1=value1&key2=value2"></textarea>
-            <textarea class="form-control lang-html" ng-show="Select.Request == 1" ng-model="Data.Header" placeholder="key1: value1
-key2: value2"></textarea>
+            <div ng-show="Select.Request == 0" ng-repeat="body in Data.Body track by $index" class="input-group input-group-lg input-parameters">
+                <input class="form-control" placeholder="参数名" ng-model="body.key" />
+                <input class="form-control" placeholder="参数值" ng-model="body.value" />
+                <span class="glyphicon glyphicon-minus btn-primary" aria-hidden="true" ng-click="RemoveItem($index)"></span>
+            </div>
+            <div ng-show="Select.Request == 1" ng-repeat="header in Data.Header track by $index" class="input-group input-group-lg input-parameters">
+                <input class="form-control" placeholder="参数名" ng-model="header.key" />
+                <input class="form-control" placeholder="参数值" ng-model="header.value" />
+                <span class="glyphicon glyphicon-minus btn-primary" aria-hidden="true" ng-click="RemoveItem($index)"></span>
+            </div>
         </div>
         <h3>Response</h3>
         <div>
@@ -91,9 +103,9 @@ key2: value2"></textarea>
                 //访问地址
                 Url: '',
                 //Body数据
-                Body: '',
+                Body: [],
                 //Header数据
-                Header: '',
+                Header: [],
                 Loading: false
             }
 
@@ -148,11 +160,53 @@ key2: value2"></textarea>
                 eval('$scope.' + key + ' = ' + value);
             }
 
+            //添加数组项
+            $scope.AddItem = function () {
+                var array;
+                if ($scope.Select.Request == 0) {
+                    array = $scope.Data.Body;
+                } else {
+                    array = $scope.Data.Header;
+                }
+                array.push({
+                    key: '',
+                    value: ''
+                })
+            }
+
+            //删除数组项
+            $scope.RemoveItem = function (index) {
+                var array;
+                if ($scope.Select.Request == 0) {
+                    array = $scope.Data.Body;
+                } else {
+                    array = $scope.Data.Header;
+                }
+
+                array.removeAt(index);
+            }
+
+            //添加请求头
+            $scope.AddHeader = function (key, value) {
+                var index = $scope.Data.Header.firstIndex(item => item.key == key);
+                if (index != -1) {
+                    $scope.Data.Header[index].value = value;
+                } else {
+                    $scope.Data.Header.push({
+                        key: key,
+                        value: value
+                    })
+                }
+            }
+
             //开始调用Api
             $scope.Sutmit = function () {
                 $scope.Save();
+                $scope.Result.StatusCode = '';
                 $scope.Result.StatusMessage = 'Loading';
                 $scope.Result.StatusClass = 'text-muted';
+                $scope.Result.Body = '';
+                $scope.Result.Header = '';
 
                 if ($scope.Data.IsLocal) {
                     $scope.Sutmit_Local();
@@ -164,18 +218,12 @@ key2: value2"></textarea>
             //请求本地接口
             $scope.Sutmit_Local = function () {
                 $scope.Data.Loading = true;
-                var headers = new Object();
-                $.each($scope.Data.Header.split('\n'), function (index, item) {
-                    var key = (item.split(':')[0] || '').trim();
-                    var value = (item.split(':')[1] || '').trim();
-                    headers[key] = value;
-                })
 
                 $.ajax({
                     url: $scope.Data.Url,
                     type: $scope.Data.QueryType,
-                    data: $scope.Data.Body,
-                    headers: headers,
+                    data: $scope.Data.Body.select(item => (item.key || '').trim() + '&' + (item.value || '').trim()).join('&'),
+                    headers: $scope.Data.Header.select(item => (item.key || '').trim() + ':' + (item.value || '').trim()),
                     complete: function (response) {
                         $scope.Result.StatusCode = response.status;
                         $scope.Result.StatusMessage = response.statusText;
@@ -199,20 +247,14 @@ key2: value2"></textarea>
             //请求网络接口
             $scope.Sutmit_Online = function () {
                 $scope.Data.Loading = true;
-                var headers = new Object();
-                $.each($scope.Data.Header.split('\n'), function (index, item) {
-                    var key = (item.split(':')[0] || '').trim();
-                    var value = (item.split(':')[1] || '').trim();
-                    headers[key] = value;
-                })
 
                 $.ajax({
                     url: "/Controller/Index/DelegateHttp",
                     type: 'POST',
                     data: {
                         Url: $scope.Data.Url,
-                        Body: $scope.Data.Body,
-                        Headers: JSON.stringify(headers),
+                        Body: $scope.Data.Body.select(item=>(item.key || '').trim() + '=' + (item.value || '').trim()).join('&'),
+                        Headers: JSON.stringify($scope.Data.Header.toObject(item => (item.key || '').trim(), item => (item.value || '').trim())),
                         QueryType: $scope.Data.QueryType
                     },
                     complete: function (response) {
@@ -221,7 +263,7 @@ key2: value2"></textarea>
                         $scope.Result.StatusMessage = result.StatusMessage;
                         $scope.Result.StatusClass = $scope.GetStatusClass(result.StatusCode);
                         $scope.Result.Body = result.Body;
-                        $scope.Result.Header = result.Header.trim();
+                        $scope.Result.Header = (result.Header || '').trim();
 
                         $scope.Data.Loading = false;
                         $scope.$apply();
@@ -237,7 +279,7 @@ key2: value2"></textarea>
 
             //加载记录
             $scope.Load = function () {
-                var data = JSON.parse(JSON.parse(localStorage['ApiParameter'] || null));
+                var data = JSON.parse(getCookie('ApiParameter') || null);
                 if (!$scope.IsNull(data)) {
                     $scope.Data = data;
                 }
