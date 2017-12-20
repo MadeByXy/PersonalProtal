@@ -253,7 +253,7 @@
                     type: 'POST',
                     data: {
                         Url: $scope.Data.Url,
-                        Body: $scope.Data.Body.select(item=>(item.key || '').trim() + '=' + (item.value || '').trim()).join('&'),
+                        Body: $scope.Data.Body.select(item => (item.key || '').trim() + '=' + (item.value || '').trim()).join('&'),
                         Headers: JSON.stringify($scope.Data.Header.toObject(item => (item.key || '').trim(), item => (item.value || '').trim())),
                         QueryType: $scope.Data.QueryType
                     },

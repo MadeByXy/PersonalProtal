@@ -100,7 +100,7 @@
                 </ul>
             </div>
             <span class="input-group-btn">
-                <button class="btn btn-success" type="button" ng-click="Translate();">翻译</button>
+                <button class="btn btn-success" type="button" ng-disabled="IsLoading" ng-click="Translate();">翻译</button>
             </span>
         </div>
         <div class="navbar-form" style="padding:0;">
@@ -111,6 +111,8 @@
     <script type="text/javascript" src="/Scripts/AngularInstance.js"></script>
     <script type="text/javascript">
         Angular(function ($scope, factory) {
+            $scope.IsLoading = false;
+
             $scope.Data = {
                 From: 'zh-CHS',
                 To: 'en',
@@ -137,11 +139,15 @@
 
             //翻译
             $scope.Translate = function () {
+                $scope.IsLoading = true;
+                $scope.ResultText = '';
+
                 var url = 'http://cn.bing.com/ttaTranslate?from=' +
                     $scope.Data.From + '&to=' + $scope.Data.To + '&text=' + $scope.Data.InputText;
 
                 factory.Query('/Controller/Index/DelegateQuery?url=' + encodeURIComponent(url), true, false).then(function (data) {
                     eval(data.Result);
+                    $scope.IsLoading = false;
                 });
             }
 
