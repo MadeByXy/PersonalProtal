@@ -50,10 +50,10 @@ namespace PersonalPortal.Controllers
         public string SetShortCut(ShortCutView data, string userIp)
         {
             return DataBase.ExecuteSql<bool>(
-                "update shortCut set shortCutName = :shortCutName, shortCutUrl = '{1}' where id = :id and shortCutIp = :userIp"
+                "update shortCut set shortCutName = :shortCutName, shortCutUrl = :shortCutUrl where id = :id and shortCutIp = :userIp"
                 , new Parameter { Name = "shortCutName", Value = data.ShortCutName }
                 , new Parameter { Name = "shortCutUrl", Value = data.ShortCutUrl }
-                , new Parameter { Name = "shortCutName", Value = data.Id }
+                , new Parameter { Name = "id", Value = data.Id }
                 , new Parameter { Name = "userIp", Value = userIp }).ToString().ToLower();
         }
 
