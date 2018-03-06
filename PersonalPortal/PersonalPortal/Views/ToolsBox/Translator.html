@@ -114,14 +114,14 @@
             $scope.IsLoading = false;
 
             $scope.Data = {
-                From: 'zh-CHS',
+                From: 'zh',
                 To: 'en',
                 InputText: '',
                 ResultText: '',
                 TranslatorList: {
-                    'zh-CHS': '简体中文',
+                    'zh': '中文',
                     'en': '英语',
-                    'zh-CHT': '繁体中文',
+                    'cht': '繁体中文',
                     'ja': '日语'
                 }
             }
@@ -140,22 +140,14 @@
             //翻译
             $scope.Translate = function () {
                 $scope.IsLoading = true;
-                $scope.ResultText = '';
+                $scope.Data.ResultText = '';
 
-                var url = 'http://cn.bing.com/ttaTranslate?from=' +
-                    $scope.Data.From + '&to=' + $scope.Data.To + '&text=' + $scope.Data.InputText;
-
-                factory.Query('/Controller/Index/DelegateQuery?url=' + encodeURIComponent(url), true, false).then(function (data) {
-                    eval(data.Result);
+                factory.Query('/Controller/Index/Translate?to=' + $scope.Data.To +
+                    '&q=' + encodeURIComponent($scope.Data.InputText) + '&from=' + $scope.Data.From, true, false).then(function (data) {
+                    data = JSON.parse(data.Result);
+                    $scope.Data.ResultText = data.trans_result.select(item => item.dst).join('\n');
                     $scope.IsLoading = false;
                 });
-            }
-
-            //翻译接口回调方法
-            RichTranslator = {
-                handleTranslation: function (text) {
-                    $scope.SetValue('ResultText', unescape(text.replace(/\\/g, "%")));
-                }
             }
         });
     </script>

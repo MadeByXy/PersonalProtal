@@ -2,7 +2,7 @@
 Array.prototype.first = function (func, defaultValue) {
     for (var i = 0; i < this.length; i++) {
         if (func(this[i])) {
-            return key || defaultValue;
+            return this[i] || defaultValue;
         }
     }
     return defaultValue;
@@ -121,6 +121,11 @@ Array.prototype.where = function (func) {
     return array;
 }
 
+//删除数组指定位置元素
+Array.prototype.removeAt = function (index) {
+    return this.splice(index, 1);
+}
+
 //将数组转换成对象
 Array.prototype.toObject = function (funcKey, funcValue) {
     var object = {};
@@ -128,4 +133,42 @@ Array.prototype.toObject = function (funcKey, funcValue) {
         object[funcKey(this[i])] = funcValue(this[i]);
     }
     return object;
+}
+
+//验证数字是否在指定区间内
+Number.prototype.between = function (min, max) {
+    return this >= min && this <= max;
+}
+
+//验证时间是否在指定区间内
+Date.prototype.between = function (min, max) {
+    return this >= min && this <= max;
+}
+
+//日期格式化
+Date.prototype.format = function (fmt) { //author: meizz 
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+//获取日期所在周次
+Date.prototype.getWeek = function () {
+    var dayArray = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    return dayArray[this.getDay()];
+}
+
+//验证是否包含内容
+String.prototype.contains = function (text) {
+    return this.indexOf(text) > -1;
 }

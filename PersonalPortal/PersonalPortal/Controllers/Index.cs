@@ -4,6 +4,7 @@ using PersonalPortal.Models.ApplyModels;
 using PersonalPortal.Models.ResultModels;
 using PersonalPortal.ResultModels.Models;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using XYZZ.Library;
@@ -87,6 +88,35 @@ namespace PersonalPortal.Controllers
                 , new Parameter { Name = "userIp", Value = userIp }
                 , new Parameter { Name = "on", Value = on ? "1" : "0" });
             return "true";
+        }
+
+        /// <summary>
+        /// 翻译接口
+        /// </summary>
+        /// <param name="from">翻译源语言</param>
+        /// <param name="to">译文语言</param>
+        /// <param name="q">请求翻译query</param>
+        /// <returns></returns>
+        [HttpGet]
+        [HttpPost]
+        public string Translate(string from, string to, string q)
+        {
+            const string appid = "20180306000131905";
+            const string key = "JJ7D5nyJppWiMixmNoNI";
+            string salt = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            try
+            {
+                return Network.GetHtml("http://api.fanyi.baidu.com/api/trans/vip/translate", new Dictionary<string, string>()
+                {
+                    { "from", from },
+                    { "to", to },
+                    { "q", Uri.EscapeDataString(q) },
+                    { "appid", appid },
+                    { "salt", salt },
+                    { "sign", (appid + q + salt + key).ToMd5() },
+                });
+            }
+            catch (Exception e) { return e.ToString(); }
         }
 
         /// <summary>

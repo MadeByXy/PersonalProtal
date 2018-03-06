@@ -89,7 +89,8 @@ namespace PersonalPortal
             request.Date = DateTime.Now;
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet)))
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(),
+                Encoding.GetEncoding(string.IsNullOrWhiteSpace(response.CharacterSet) ? "UTF-8" : response.CharacterSet)))
             {
                 return reader.ReadToEnd();
             }

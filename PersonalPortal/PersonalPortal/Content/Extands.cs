@@ -1,6 +1,8 @@
 ﻿using Neo.IronLua;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
 using XYZZ.Library;
 
@@ -41,6 +43,22 @@ namespace PersonalPortal.Content
             return text;
         }
 
+        ///C#生成MD5的方法
+        public static string ToMd5(this string text)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] bytValue, bytHash;
+            bytValue = Encoding.UTF8.GetBytes(text);
+            bytHash = md5.ComputeHash(bytValue);
+            md5.Clear();
+            string sTemp = "";
+            for (int i = 0; i < bytHash.Length; i++)
+            {
+                sTemp += bytHash[i].ToString("X").PadLeft(2, '0');
+            }
+            return sTemp.ToLower();
+        }
+
         /// <summary>
         /// 通过特性值查找指定节点
         /// </summary>
@@ -50,7 +68,7 @@ namespace PersonalPortal.Content
         /// <returns></returns>
         public static XmlElement GetByAttribute(this XmlElement xmlElement, string attributeName, string attributeValue)
         {
-            foreach(var item in xmlElement.ChildNodes)
+            foreach (var item in xmlElement.ChildNodes)
             {
                 if (!(item is XmlElement)) { continue; }
 
